@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray", "GlucoseTray.csproj", "{342CE19D-D0D0-49C7-9E55-6585289A8DDC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC39EDBD-4C31-4382-9270-C3F0CFBAB652}
+	EndGlobalSection
+EndGlobal
