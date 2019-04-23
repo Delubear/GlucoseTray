@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GlucoseTray
@@ -23,10 +24,28 @@ namespace GlucoseTray
                 Visible = true
             };
 
+            trayIcon.Click += ShowBalloon;
+
             // Pull new data every 5 minutes
-            var startTimeSpan = TimeSpan.Zero;
-            var periodTimeSpan = TimeSpan.FromMinutes(5);
-            var timer = new System.Threading.Timer((_) => CreateIcon(), null, startTimeSpan, periodTimeSpan);
+            //var startTimeSpan = TimeSpan.Zero;
+            //var periodTimeSpan = TimeSpan.FromMinutes(5);
+            //var timer = new System.Threading.Timer((_) => CreateIcon(), null, startTimeSpan, periodTimeSpan);
+
+            // trying this since the above stopped updating after a few hours at work.
+            while (true)
+            {
+                try
+                {
+                    CreateIcon();
+                    Task.Delay(60000);
+                }
+                catch (Exception e)
+                {
+                    System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", e.Message + e.Message + e.InnerException + e.StackTrace);
+                    Application.Restart();
+                    Environment.Exit(0);
+                }
+            }
         }
 
         private void Exit(object sender, EventArgs e)
@@ -69,7 +88,6 @@ namespace GlucoseTray
             var service = new GlucoseFetch();
             FetchResult = service.GetLatestReading();
             trayIcon.Text = $"{FetchResult.Time.ToLongTimeString()}  {GetTrendArrow(FetchResult.Trend)}";
-            trayIcon.Click += ShowBalloon;
             CreateTextIcon(FetchResult.Value.ToString());
         }
 
