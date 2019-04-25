@@ -21,6 +21,9 @@ namespace GlucoseTray
             var trendString = rgx.Replace(content[3], "");
             var val = int.Parse(content[2]);
 
+            client.Dispose();
+            response.Dispose();
+
             return new GlucoseFetchResult()
             {
                 Value = val,
