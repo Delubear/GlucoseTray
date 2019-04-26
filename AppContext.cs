@@ -109,7 +109,7 @@ namespace GlucoseTray
 
         private void ShowBalloon(object sender, EventArgs e)
         {
-            trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Time.ToLongTimeString()}    {GetTrendArrow(FetchResult.Trend)}", ToolTipIcon.Info);
+            trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {GetTrendArrow(FetchResult.Trend)}", ToolTipIcon.Info);
         }
 
         private string GetTrendArrow(string trend)
