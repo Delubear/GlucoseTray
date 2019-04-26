@@ -78,6 +78,7 @@ namespace GlucoseTray
 
         private Brush SetColor()
         {
+            IsCriticalLow = false;
             switch (FetchResult.Value)
             {
                 case int n when n < Constants.HighBg && n > Constants.LowBg:
@@ -90,7 +91,7 @@ namespace GlucoseTray
                     return new SolidBrush(Color.Yellow);
                 case int n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg:
                     return new SolidBrush(Color.Red);
-                case int n when n <= Constants.CriticalLowBg:
+                case int n when n <= Constants.CriticalLowBg && n > 0:
                     IsCriticalLow = true;
                     return new SolidBrush(Color.Red);
                 default:
