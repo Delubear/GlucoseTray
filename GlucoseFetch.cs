@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 
@@ -7,7 +6,7 @@ namespace GlucoseTray
 {
     public class GlucoseFetch
     {
-        private readonly string _request = ConfigurationManager.AppSettings["NightscoutUrl"] + "/api/v1/entries/sgv?count=1";
+        private readonly string _request = Constants.NightscoutUrl + "/api/v1/entries/sgv?count=1";
 
         public GlucoseFetchResult GetLatestReading()
         {

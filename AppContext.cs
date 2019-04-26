@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -9,13 +8,13 @@ namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {
-        private NotifyIcon trayIcon;
-        private readonly int HighBg = int.Parse(ConfigurationManager.AppSettings["HighBg"]);
-        private readonly int LowBg = int.Parse(ConfigurationManager.AppSettings["LowBg"]);
+        private readonly NotifyIcon trayIcon;
+        private bool IsCriticalLow;
+
         private GlucoseFetchResult FetchResult;
 
-        IntPtr hIcon;
-        Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
+        private IntPtr hIcon;
+        private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
 
         public AppContext()
         {
@@ -37,8 +36,9 @@ namespace GlucoseTray
                 }
                 catch (Exception e)
                 {
-                    trayIcon?.Dispose();
                     System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                    DestroyIcon(hIcon);
+                    trayIcon?.Dispose();
                     Application.Restart();
                     Environment.Exit(0);
                 }
@@ -59,6 +59,10 @@ namespace GlucoseTray
         private void CreateTextIcon(string str)
         {
             Brush brushToUse = SetColor();
+
+            if (IsCriticalLow)
+                str = "DAN";
+
             Bitmap bitmapText = new Bitmap(16, 16);
             Graphics g = Graphics.FromImage(bitmapText);
 
@@ -72,12 +76,24 @@ namespace GlucoseTray
 
         private Brush SetColor()
         {
-            if (HighBg <= FetchResult.Value)
-                return new SolidBrush(Color.Yellow);
-            else if (LowBg >= FetchResult.Value)
-                return new SolidBrush(Color.Red);
-            else
-                return new SolidBrush(Color.White);
+            switch (FetchResult.Value)
+            {
+                case int n when n < Constants.HighBg && n > Constants.LowBg:
+                    return new SolidBrush(Color.White);
+                case int n when n >= Constants.HighBg && n < Constants.DangerHighBg:
+                    return new SolidBrush(Color.Yellow);
+                case int n when n > Constants.DangerHighBg:
+                    return new SolidBrush(Color.Red);
+                case int n when n <= Constants.LowBg && n > Constants.DangerLowBg:
+                    return new SolidBrush(Color.Yellow);
+                case int n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg:
+                    return new SolidBrush(Color.Red);
+                case int n when n <= Constants.CriticalLowBg:
+                    IsCriticalLow = true;
+                    return new SolidBrush(Color.Red);
+                default:
+                    return new SolidBrush(Color.White);
+            }
         }
 
         private void CreateIcon()
