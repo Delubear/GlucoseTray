@@ -10,25 +10,39 @@ namespace GlucoseTray
 
         public GlucoseFetchResult GetLatestReading()
         {
-            var client = new HttpClient();
-            var response = client.GetAsync(_request).Result;
-            var content = response.Content.ReadAsStringAsync().Result.Split('\t');
-
-            Regex rgx = new Regex("[^a-zA-Z]");
-            var time = ParseDate(content[0]);
-
-            var trendString = rgx.Replace(content[3], "");
-            var val = int.Parse(content[2]);
-
-            client.Dispose();
-            response.Dispose();
-
-            return new GlucoseFetchResult()
+            try
             {
-                Value = val,
-                Trend = trendString,
-                Time = time
-            };
+                var client = new HttpClient();
+                var response = client.GetAsync(_request).Result;
+                var content = response.Content.ReadAsStringAsync().Result.Split('\t');
+
+                Regex rgx = new Regex("[^a-zA-Z]");
+                var time = ParseDate(content[0]);
+
+                var trendString = rgx.Replace(content[3], "");
+                var val = int.Parse(content[2]);
+
+                client.Dispose();
+                response.Dispose();
+
+                return new GlucoseFetchResult()
+                {
+                    Value = val,
+                    Trend = trendString,
+                    Time = time
+                };
+            }
+            catch (Exception e)
+            {
+                System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+
+                return new GlucoseFetchResult()
+                {
+                    Value = 0,
+                    Trend = "Flat",
+                    Time = DateTime.Now
+                };
+            }
         }
 
         private DateTime ParseDate(string date)

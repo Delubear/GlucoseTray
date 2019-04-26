@@ -39,7 +39,7 @@ namespace GlucoseTray
                     System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
                     DestroyIcon(hIcon);
                     trayIcon?.Dispose();
-                    Application.Restart();
+                    //Application.Restart();
                     Environment.Exit(0);
                 }
             }
@@ -62,6 +62,8 @@ namespace GlucoseTray
 
             if (IsCriticalLow)
                 str = "DAN";
+            else if (str == "0")
+                str = "NUL";
 
             Bitmap bitmapText = new Bitmap(16, 16);
             Graphics g = Graphics.FromImage(bitmapText);
