@@ -12,8 +12,6 @@ namespace GlucoseTray
         private bool IsCriticalLow;
 
         private GlucoseFetchResult FetchResult;
-
-        private IntPtr hIcon;
         private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
 
         public AppContext()
@@ -37,9 +35,8 @@ namespace GlucoseTray
                 catch (Exception e)
                 {
                     System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
-                    DestroyIcon(hIcon);
+                    trayIcon.Visible = false;
                     trayIcon?.Dispose();
-                    //Application.Restart();
                     Environment.Exit(0);
                 }
             }
@@ -50,9 +47,6 @@ namespace GlucoseTray
 
         private void Exit(object sender, EventArgs e)
         {
-            // Hide tray icon, otherwise it will remain shown until user mouses over it
-            if(trayIcon != null)
-                trayIcon.Visible = false;
             Application.Exit();
         }
 
@@ -71,11 +65,14 @@ namespace GlucoseTray
             g.Clear(Color.Transparent);
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             g.DrawString(str, fontToUse, brushToUse, -2, 0);
-            hIcon = bitmapText.GetHicon();
+            var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
+
             DestroyIcon(myIcon.Handle);
             bitmapText.Dispose();
+            g.Dispose();
+            //myIcon.Dispose();
         }
 
         private Brush SetColor()
