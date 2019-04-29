@@ -10,10 +10,12 @@ namespace GlucoseTray
 
         public GlucoseFetchResult GetLatestReading()
         {
+            var client = new HttpClient();
+            HttpResponseMessage response = new HttpResponseMessage();
+
             try
             {
-                var client = new HttpClient();
-                var response = client.GetAsync(_request).Result;
+                response = client.GetAsync(_request).Result;
                 var content = response.Content.ReadAsStringAsync().Result.Split('\t');
 
                 Regex rgx = new Regex("[^a-zA-Z]");
@@ -21,9 +23,6 @@ namespace GlucoseTray
 
                 var trendString = rgx.Replace(content[3], "");
                 var val = int.Parse(content[2]);
-
-                client.Dispose();
-                response.Dispose();
 
                 return new GlucoseFetchResult()
                 {
@@ -42,6 +41,11 @@ namespace GlucoseTray
                     Trend = "Flat",
                     Time = DateTime.Now
                 };
+            }
+            finally
+            {
+                client.Dispose();
+                response.Dispose();
             }
         }
 

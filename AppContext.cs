@@ -47,6 +47,8 @@ namespace GlucoseTray
 
         private void Exit(object sender, EventArgs e)
         {
+            trayIcon.Visible = false;
+            trayIcon?.Dispose();
             Application.Exit();
         }
 
@@ -72,7 +74,7 @@ namespace GlucoseTray
             DestroyIcon(myIcon.Handle);
             bitmapText.Dispose();
             g.Dispose();
-            //myIcon.Dispose();
+            myIcon.Dispose();
         }
 
         private Brush SetColor()
