@@ -72,7 +72,9 @@ namespace GlucoseTray
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             g.DrawString(str, fontToUse, brushToUse, -2, 0);
             hIcon = bitmapText.GetHicon();
-            trayIcon.Icon = Icon.FromHandle(hIcon);
+            var myIcon = Icon.FromHandle(hIcon);
+            trayIcon.Icon = myIcon;
+            DestroyIcon(myIcon.Handle);
             bitmapText.Dispose();
         }
 
