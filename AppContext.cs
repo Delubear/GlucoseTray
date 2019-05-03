@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,21 +15,21 @@ namespace GlucoseTray
 
         private GlucoseFetchResult FetchResult;
         private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
-
+        
         public AppContext()
         {
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
                 ContextMenu = new ContextMenu(new MenuItem[] {
-                                                                new MenuItem("Exit", Exit),
-                                                                new MenuItem("Nightscout", OpenNightscout)
-                                                             }),
+                    new MenuItem("Nightscout", (obj,e) => Process.Start(Constants.NightscoutUrl)),
+                    new MenuItem("Exit", new EventHandler(Exit))
+                }),
                 Visible = true
             };
 
             trayIcon.DoubleClick += ShowBalloon;
-
+            
             while (true)
             {
                 try
@@ -43,11 +45,6 @@ namespace GlucoseTray
                     Environment.Exit(0);
                 }
             }
-        }
-
-        private void OpenNightscout(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(Constants.NightscoutUrl);
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
