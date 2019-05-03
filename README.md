@@ -8,20 +8,17 @@ Always verify the time of the last reading by hovering over the tray icon or cli
 Always check with your DexCom reader before making any treatment decisions.
 
 
-Step-by-step Instructions:
+<strong>Step-by-step Instructions:</strong> <br>
 Open GlucoseTray.exe.config in your text editor and set your desired values there.  Most important is to set the NightscoutUrl value to be your base Nightscout site url.
 
-HighBg displays yellow.
-DangerousHighBg displays red.
-LowBg displays yellow.
-DangerousLowBg displays red.
-CriticalLowBg displays as "DAN" for DANGER
-Normal blood glucose displays as white.
+HighBg displays yellow. <br>
+DangerousHighBg displays red. <br>
+LowBg displays yellow. <br>
+DangerousLowBg displays red. <br>
+CriticalLowBg displays as "DAN" for DANGER. <br>
+Normal blood glucose displays as white. <br>
 
-Features:
--Color coded glucose numbers set to your ranges.
-
--See latest glucose reading in taskbar.  Also get time of reading and trend on hover or double-click.
-
--Context Menu option to open up your Nightscout url in browser.
-
+<strong>Features:</strong> <br>
+-Color coded glucose numbers set to your ranges. <br>
+-See latest glucose reading in taskbar.  Also get time of reading and trend on hover or double-click. <br>
+-Context Menu option to open up your Nightscout url in browser. <br>
