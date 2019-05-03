@@ -55,6 +55,7 @@ namespace GlucoseTray
         {
             trayIcon.Visible = false;
             trayIcon?.Dispose();
+            Application.ExitThread();
             Application.Exit();
         }
 
