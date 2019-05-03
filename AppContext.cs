@@ -34,6 +34,7 @@ namespace GlucoseTray
             {
                 try
                 {
+                    Application.DoEvents();
                     CreateIcon();
                     Task.Delay(5000).Wait();
                 }
