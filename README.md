@@ -17,3 +17,8 @@ LowBg displays yellow.
 DangerousLowBg displays red.
 CriticalLowBg displays as "DAN" for DANGER
 Normal blood glucose displays as white.
+
+Features:
+-Color coded glucose numbers set to your ranges.
+-See latest glucose reading in taskbar.  Also get time of reading and trend on hover or double-click.
+-Context Menu option to open up your Nightscout url in browser.
