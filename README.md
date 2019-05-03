@@ -22,3 +22,5 @@ Normal blood glucose displays as white. <br>
 -Color coded glucose numbers set to your ranges. <br>
 -See latest glucose reading in taskbar.  Also get time of reading and trend on hover or double-click. <br>
 -Context Menu option to open up your Nightscout url in browser. <br>
+
+![alt text](https://raw.githubusercontent.com/Delubear/GlucoseTray/master/2019-05-03_16-18-24.png)
