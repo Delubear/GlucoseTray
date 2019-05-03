@@ -24,3 +24,6 @@ Normal blood glucose displays as white. <br>
 -Context Menu option to open up your Nightscout url in browser. <br>
 
 ![alt text](https://raw.githubusercontent.com/Delubear/GlucoseTray/master/2019-05-03_16-18-24.png)
+
+
+If missing configuration file, get a new copy at https://github.com/Delubear/GlucoseTray
