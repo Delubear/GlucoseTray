@@ -19,11 +19,14 @@ namespace GlucoseTray
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
-                ContextMenu = new ContextMenu(new MenuItem[] { new MenuItem("Exit", Exit) }),
+                ContextMenu = new ContextMenu(new MenuItem[] {
+                                                                new MenuItem("Exit", Exit),
+                                                                new MenuItem("Nightscout", OpenNightscout)
+                                                             }),
                 Visible = true
             };
 
-            trayIcon.Click += ShowBalloon;
+            trayIcon.DoubleClick += ShowBalloon;
 
             while (true)
             {
@@ -34,12 +37,17 @@ namespace GlucoseTray
                 }
                 catch (Exception e)
                 {
-                    System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                    System.IO.File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
                     Environment.Exit(0);
                 }
             }
+        }
+
+        private void OpenNightscout(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Constants.NightscoutUrl);
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -86,7 +94,7 @@ namespace GlucoseTray
                     return new SolidBrush(Color.White);
                 case int n when n >= Constants.HighBg && n < Constants.DangerHighBg:
                     return new SolidBrush(Color.Yellow);
-                case int n when n > Constants.DangerHighBg:
+                case int n when n >= Constants.DangerHighBg:
                     return new SolidBrush(Color.Red);
                 case int n when n <= Constants.LowBg && n > Constants.DangerLowBg:
                     return new SolidBrush(Color.Yellow);
@@ -104,7 +112,7 @@ namespace GlucoseTray
         {
             var service = new GlucoseFetch();
             FetchResult = service.GetLatestReading();
-            trayIcon.Text = $"{FetchResult.Time.ToLongTimeString()}  {GetTrendArrow(FetchResult.Trend)}";
+            trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {GetTrendArrow(FetchResult.Trend)}";
             CreateTextIcon(FetchResult.Value.ToString());
         }
 

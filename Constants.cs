@@ -10,5 +10,6 @@ namespace GlucoseTray
         public static int LowBg => int.Parse(ConfigurationManager.AppSettings["LowBg"]);
         public static int DangerLowBg => int.Parse(ConfigurationManager.AppSettings["DangerLowBg"]);
         public static int CriticalLowBg => int.Parse(ConfigurationManager.AppSettings["CriticalLowBg"]);
+        public static string ErrorLogPath => ConfigurationManager.AppSettings["ErrorLogPath"];
     }
 }
