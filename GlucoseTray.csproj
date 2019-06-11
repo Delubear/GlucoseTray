@@ -81,9 +81,11 @@
   <ItemGroup>
     <Compile Include="AppContext.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="GlucoseFetch.cs" />
+    <Compile Include="Services\GlucoseFetchService.cs" />
+    <Compile Include="Models\GlucoseFetchResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IconService.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

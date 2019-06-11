@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using GlucoseTray.Models;
 
-namespace GlucoseTray
+namespace GlucoseTray.Services
 {
-    public class GlucoseFetch
+    public class GlucoseFetchService
     {
         private readonly string _request = Constants.NightscoutUrl + "/api/v1/entries/sgv?count=1";
 
@@ -28,18 +29,20 @@ namespace GlucoseTray
                 {
                     Value = val,
                     Trend = trendString,
-                    Time = time
+                    Time = time,
+                    TrendIcon = GetTrendArrow(trendString)
                 };
             }
             catch (Exception e)
             {
-                System.IO.File.AppendAllText(@"c:\TEMP\TrayError.txt", DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                System.IO.File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
 
                 return new GlucoseFetchResult()
                 {
                     Value = 0,
                     Trend = "Flat",
-                    Time = DateTime.Now
+                    Time = DateTime.Now,
+                    TrendIcon = GetTrendArrow("Flat")
                 };
             }
             finally
@@ -68,12 +71,25 @@ namespace GlucoseTray
 
             return dateTime.ToLocalTime();
         }
-    }
 
-    public class GlucoseFetchResult
-    {
-        public int Value { get; set; }
-        public string Trend { get; set; }
-        public DateTime Time { get; set; }
+        private string GetTrendArrow(string trend)
+        {
+            if (string.Equals(trend, "Flat", StringComparison.OrdinalIgnoreCase))
+                return "→";
+            else if (string.Equals(trend, "FortyFiveDown", StringComparison.OrdinalIgnoreCase))
+                return "↘";
+            else if (string.Equals(trend, "FortyFiveUp", StringComparison.OrdinalIgnoreCase))
+                return "↗";
+            else if (string.Equals(trend, "SingleDown", StringComparison.OrdinalIgnoreCase))
+                return "↓";
+            else if (string.Equals(trend, "SingleUp", StringComparison.OrdinalIgnoreCase))
+                return "↑";
+            else if (string.Equals(trend, "DoubleDown", StringComparison.OrdinalIgnoreCase))
+                return "⮇";
+            else if (string.Equals(trend, "DoubleUp", StringComparison.OrdinalIgnoreCase))
+                return "⮅";
+            else
+                return "";
+        }
     }
 }
