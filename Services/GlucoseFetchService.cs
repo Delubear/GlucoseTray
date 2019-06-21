@@ -16,6 +16,8 @@ namespace GlucoseTray.Services
 
             try
             {
+                if(!string.IsNullOrWhiteSpace(Constants.ApiSecret))
+                    client.DefaultRequestHeaders.Add("api_secret", Constants.ApiSecret);
                 response = client.GetAsync(_request).Result;
                 var content = response.Content.ReadAsStringAsync().Result.Split('\t');
 

@@ -5,6 +5,7 @@ namespace GlucoseTray
     public static class Constants
     {
         public static string NightscoutUrl => ConfigurationManager.AppSettings["NightscoutUrl"];
+        public static string ApiSecret => ConfigurationManager.AppSettings["ApiSecret"];
         public static int HighBg => int.Parse(ConfigurationManager.AppSettings["HighBg"]);
         public static int DangerHighBg => int.Parse(ConfigurationManager.AppSettings["DangerHighBg"]);
         public static int LowBg => int.Parse(ConfigurationManager.AppSettings["LowBg"]);
