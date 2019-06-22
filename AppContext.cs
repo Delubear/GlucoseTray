@@ -22,16 +22,16 @@ namespace GlucoseTray
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
-                ContextMenu = new ContextMenu(new MenuItem[] 
-                {
-                    new MenuItem("Nightscout", (obj,e) => Process.Start(Constants.NightscoutUrl)),
-                    new MenuItem("Exit", new EventHandler(Exit))
-                }),
+                ContextMenu = new ContextMenu(new MenuItem[]{}),
                 Visible = true
             };
 
+            if(!string.IsNullOrWhiteSpace(Constants.NightscoutUrl))
+                trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Nightscout", (obj, e) => Process.Start(Constants.NightscoutUrl)));
+            trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Exit", new EventHandler(Exit)));
+
             trayIcon.DoubleClick += ShowBalloon;
-            
+
             while (true)
             {
                 try
