@@ -14,7 +14,7 @@ namespace GlucoseTray
 
         private GlucoseFetchResult FetchResult;
         private IconService _winService;
-        
+
         public AppContext()
         {
             _winService = new IconService();
