@@ -10,14 +10,11 @@ namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {
-        // TO-DO: Implement DI and an ILogger for logging.
-        // Throw a windows popup message for errors thrown before being able to be logged.
-
         private readonly NotifyIcon trayIcon;
         private bool IsCriticalLow;
 
         private GlucoseFetchResult FetchResult;
-        private IconService _iconService;
+        private readonly IconService _iconService;
 
         public AppContext()
         {
@@ -48,6 +45,7 @@ namespace GlucoseTray
                 }
                 catch (Exception e)
                 {
+                    MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
@@ -63,8 +61,9 @@ namespace GlucoseTray
                 if (!File.Exists(Constants.ErrorLogPath))
                     File.Create(Constants.ErrorLogPath);
             }
-            catch (Exception ex)
+            catch
             {
+                MessageBox.Show("ERROR: Log path unable to be created.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
         }
