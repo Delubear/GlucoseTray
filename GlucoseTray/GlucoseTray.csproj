@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="AppContext.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Enums\DexcomShareTrendResult.cs" />
+    <Compile Include="Enums\FetchMethod.cs" />
     <Compile Include="Models\ILogService.cs" />
     <Compile Include="Services\GlucoseFetchService.cs" />
     <Compile Include="Models\GlucoseFetchResult.cs" />

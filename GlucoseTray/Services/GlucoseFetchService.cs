@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using GlucoseTray.Enums;
 using GlucoseTray.Models;
 
 namespace GlucoseTray.Services
@@ -19,7 +20,7 @@ namespace GlucoseTray.Services
 
             try
             {
-                if(Convert.ToInt32(Constants.FetchMethod) == 0) // Dexcom method
+                if(Constants.FetchMethod == FetchMethod.DexcomShare)
                 {
                     // Get Session Id
                     request.RequestUri = new Uri($"{baseDexcomUrl}/ShareWebServices/Services/General/LoginPublisherAccountByName");
@@ -66,7 +67,7 @@ namespace GlucoseTray.Services
                         TrendIcon = trendIcon
                     };
                 }
-                else // Nightscout method
+                else if(Constants.FetchMethod == FetchMethod.NightscoutApi)
                 {
                     if (!string.IsNullOrWhiteSpace(Constants.AccessToken))
                         request.RequestUri = new Uri($"{nightscoutRequestUrl}&token={Constants.AccessToken}");
@@ -87,6 +88,15 @@ namespace GlucoseTray.Services
                         TrendIcon = GetTrendArrowNightscout(trendString)
                     };
                 }
+                else
+                {
+                    return new GlucoseFetchResult()
+                    {
+                        Value = 0,
+                        Time = DateTime.Now,
+                        TrendIcon = GetTrendArrowDexcom("4")
+                    };
+                }
             }
             catch (Exception e)
             {
@@ -101,9 +111,9 @@ namespace GlucoseTray.Services
             }
             finally
             {
-                client.Dispose();
-                response.Dispose();
-                request.Dispose();
+                client?.Dispose();
+                response?.Dispose();
+                request?.Dispose();
             }
         }
 
@@ -129,42 +139,37 @@ namespace GlucoseTray.Services
 
         private string GetTrendArrowDexcom(string trend)
         {
-            if (string.Equals(trend, "4", StringComparison.OrdinalIgnoreCase))
-                return "→";
-            else if (string.Equals(trend, "5", StringComparison.OrdinalIgnoreCase))
-                return "↘";
-            else if (string.Equals(trend, "3", StringComparison.OrdinalIgnoreCase))
-                return "↗";
-            else if (string.Equals(trend, "6", StringComparison.OrdinalIgnoreCase))
-                return "↓";
-            else if (string.Equals(trend, "2", StringComparison.OrdinalIgnoreCase))
-                return "↑";
-            else if (string.Equals(trend, "7", StringComparison.OrdinalIgnoreCase))
-                return "⮇";
-            else if (string.Equals(trend, "1", StringComparison.OrdinalIgnoreCase))
-                return "⮅";
+            if (int.TryParse(trend, out var trendInt))
+            {
+                switch ((TrendResult)trendInt)
+                {
+                    case TrendResult.DoubleUp: return "⮅";
+                    case TrendResult.SingleUp: return "↑";
+                    case TrendResult.FortyFiveUp: return "↗";
+                    case TrendResult.Flat: return "→";
+                    case TrendResult.FortFiveDown: return "↘";
+                    case TrendResult.SingleDown: return "↓";
+                    case TrendResult.DoubleDown: return "⮇";
+                    default: return string.Empty;
+                }
+            }
             else
-                return "";
+                return string.Empty;
         }
 
         private string GetTrendArrowNightscout(string trend)
         {
-            if (string.Equals(trend, "Flat", StringComparison.OrdinalIgnoreCase))
-                return "→";
-            else if (string.Equals(trend, "FortyFiveDown", StringComparison.OrdinalIgnoreCase))
-                return "↘";
-            else if (string.Equals(trend, "FortyFiveUp", StringComparison.OrdinalIgnoreCase))
-                return "↗";
-            else if (string.Equals(trend, "SingleDown", StringComparison.OrdinalIgnoreCase))
-                return "↓";
-            else if (string.Equals(trend, "SingleUp", StringComparison.OrdinalIgnoreCase))
-                return "↑";
-            else if (string.Equals(trend, "DoubleDown", StringComparison.OrdinalIgnoreCase))
-                return "⮇";
-            else if (string.Equals(trend, "DoubleUp", StringComparison.OrdinalIgnoreCase))
-                return "⮅";
-            else
-                return "";
+            switch (trend)
+            {
+                case nameof(TrendResult.DoubleUp): return "⮅";
+                case nameof(TrendResult.SingleUp): return "↑";
+                case nameof(TrendResult.FortyFiveUp): return "↗";
+                case nameof(TrendResult.Flat): return "→";
+                case nameof(TrendResult.FortFiveDown): return "↘";
+                case nameof(TrendResult.SingleDown): return "↓";
+                case nameof(TrendResult.DoubleDown): return "⮇";
+                default: return string.Empty;
+            }
         }
     }
 }
