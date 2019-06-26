@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTray.Models;
@@ -9,15 +10,20 @@ namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {
+        // TO-DO: Implement DI and an ILogger for logging.
+        // Throw a windows popup message for errors thrown before being able to be logged.
+
         private readonly NotifyIcon trayIcon;
         private bool IsCriticalLow;
 
         private GlucoseFetchResult FetchResult;
-        private IconService _winService;
+        private IconService _iconService;
 
         public AppContext()
         {
-            _winService = new IconService();
+            RunStartupChecks();
+
+            _iconService = new IconService();
 
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
@@ -42,11 +48,24 @@ namespace GlucoseTray
                 }
                 catch (Exception e)
                 {
-                    System.IO.File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                    File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
                     Environment.Exit(0);
                 }
+            }
+        }
+
+        private void RunStartupChecks()
+        {
+            try
+            {
+                if (!File.Exists(Constants.ErrorLogPath))
+                    File.Create(Constants.ErrorLogPath);
+            }
+            catch (Exception ex)
+            {
+                Environment.Exit(0);
             }
         }
 
@@ -66,7 +85,7 @@ namespace GlucoseTray
             trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
-            _winService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
+            _iconService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
         }
 
         private void ShowBalloon(object sender, EventArgs e)
