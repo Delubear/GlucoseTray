@@ -11,7 +11,7 @@ namespace GlucoseTray.Services
         private readonly string baseDexcomUrl = "https://share1.dexcom.com";
         private readonly string nightscoutRequestUrl = $"{Constants.NightscoutUrl}/api/v1/entries/sgv?count=1";
 
-        public GlucoseFetchResult GetLatestReading()
+        public GlucoseFetchResult GetLatestReading(ILogService logger)
         {
             var client = new HttpClient();
             var request = new HttpRequestMessage();
@@ -90,7 +90,7 @@ namespace GlucoseTray.Services
             }
             catch (Exception e)
             {
-                System.IO.File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                logger.Log(e);
 
                 return new GlucoseFetchResult()
                 {

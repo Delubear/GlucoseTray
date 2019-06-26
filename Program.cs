@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using GlucoseTray.Services;
 
 namespace GlucoseTray
 {
@@ -17,7 +18,7 @@ namespace GlucoseTray
             var configFile = Application.ExecutablePath + ".config";
             if (!File.Exists(configFile))
                 MessageBox.Show("ERROR: Configuration File is missing.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Run(new AppContext());
+            Application.Run(new AppContext(new TextLoggerService()));
         }
     }
 }

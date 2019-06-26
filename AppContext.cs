@@ -10,14 +10,16 @@ namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {
+        private readonly ILogService _logger;
         private readonly NotifyIcon trayIcon;
         private bool IsCriticalLow;
 
         private GlucoseFetchResult FetchResult;
         private readonly IconService _iconService;
 
-        public AppContext()
+        public AppContext(ILogService logger)
         {
+            _logger = logger;
             RunStartupChecks();
 
             _iconService = new IconService();
@@ -47,7 +49,7 @@ namespace GlucoseTray
                 {
                     if(Constants.EnableDebugMode)
                         MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
+                    logger.Log(e);
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
                     Environment.Exit(0);
@@ -81,7 +83,7 @@ namespace GlucoseTray
         {
             IsCriticalLow = false;
             var service = new GlucoseFetchService();
-            FetchResult = service.GetLatestReading();
+            FetchResult = service.GetLatestReading(_logger);
             trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
