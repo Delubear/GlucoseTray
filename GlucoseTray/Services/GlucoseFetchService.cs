@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using GlucoseTray.Enums;
+using GlucoseTray.Interfaces;
 using GlucoseTray.Models;
 
 namespace GlucoseTray.Services

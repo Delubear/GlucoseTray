@@ -83,7 +83,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\DexcomShareTrendResult.cs" />
     <Compile Include="Enums\FetchMethod.cs" />
-    <Compile Include="Models\ILogService.cs" />
+    <Compile Include="Interfaces\ILogService.cs" />
     <Compile Include="Services\GlucoseFetchService.cs" />
     <Compile Include="Models\GlucoseFetchResult.cs" />
     <Compile Include="Program.cs" />
@@ -115,9 +115,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>

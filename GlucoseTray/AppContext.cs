@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GlucoseTray.Interfaces;
 using GlucoseTray.Models;
 using GlucoseTray.Services;
 

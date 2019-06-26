@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using GlucoseTray.Models;
+using GlucoseTray.Interfaces;
 
 namespace GlucoseTray.Services
 {

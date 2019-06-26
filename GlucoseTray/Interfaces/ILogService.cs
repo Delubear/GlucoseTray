@@ -1,5 +1,6 @@
 ﻿using System;
-namespace GlucoseTray.Models
+
+namespace GlucoseTray.Interfaces
 {
     public interface ILogService
     {
