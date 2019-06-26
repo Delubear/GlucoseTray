@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace GlucoseTray
 {
@@ -15,5 +16,6 @@ namespace GlucoseTray
         public static int DangerLowBg => int.Parse(ConfigurationManager.AppSettings["DangerLowBg"]);
         public static int CriticalLowBg => int.Parse(ConfigurationManager.AppSettings["CriticalLowBg"]);
         public static string ErrorLogPath => ConfigurationManager.AppSettings["ErrorLogPath"];
+        public static bool EnableDebugMode => Convert.ToBoolean(ConfigurationManager.AppSettings["EnableDebugMode"]);
     }
 }

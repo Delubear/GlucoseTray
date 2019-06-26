@@ -45,7 +45,8 @@ namespace GlucoseTray
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if(Constants.EnableDebugMode)
+                        MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     File.AppendAllText(Constants.ErrorLogPath, DateTime.Now.ToString() + e.Message + e.Message + e.InnerException + e.StackTrace + Environment.NewLine + Environment.NewLine);
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
