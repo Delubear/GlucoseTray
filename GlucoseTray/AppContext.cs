@@ -44,7 +44,7 @@ namespace GlucoseTray
                 {
                     Application.DoEvents();
                     CreateIcon();
-                    Task.Delay(5000).Wait();
+                    Task.Delay(Constants.PollingThreshold * 1000).Wait();
                 }
                 catch (Exception e)
                 {
