@@ -62,6 +62,9 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dexcom.Fetch, Version=1.1.26.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dexcom.Fetch.1.1.26\lib\netstandard2.0\Dexcom.Fetch.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -110,12 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Dexcom.Fetch\Dexcom.Fetch.csproj">
-      <Project>{469a56e2-7a36-4865-aede-0359760c3c47}</Project>
-      <Name>Dexcom.Fetch</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
