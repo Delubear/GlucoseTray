@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/Delubear/GlucoseTray/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/Delubear/GlucoseTray/tree/master/Dexcom.Fetch</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Use to easily get your latest real-time Glucose reading from Dexcom or your own Nightscout instance.</description>
     <releaseNotes>Initial Release.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>dexcom glucose nightscout</tags>
