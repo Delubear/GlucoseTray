@@ -83,6 +83,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Enums\DexcomShareTrendResult.cs" />
     <Compile Include="Enums\FetchMethod.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Interfaces\ILogService.cs" />
     <Compile Include="Services\GlucoseFetchService.cs" />
     <Compile Include="Models\GlucoseFetchResult.cs" />
