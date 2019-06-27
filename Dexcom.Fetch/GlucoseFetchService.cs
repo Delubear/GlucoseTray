@@ -50,16 +50,23 @@ namespace Dexcom.Fetch
                 Method = HttpMethod.Get,
             };
 
-            var response = new HttpClient().SendAsync(request).Result;
-            var content = response.Content.ReadAsStringAsync().Result.Split('\t');
-            Regex rgx = new Regex("[^a-zA-Z]");
-            var time = content[0].ParseNightscoutDate();
-            var trendString = rgx.Replace(content[3], "");
-            var val = int.Parse(content[2]);
+            try
+            {
+                var response = new HttpClient().SendAsync(request).Result;
+                var content = response.Content.ReadAsStringAsync().Result.Split('\t');
+                Regex rgx = new Regex("[^a-zA-Z]");
+                var time = content[0].ParseNightscoutDate();
+                var trendString = rgx.Replace(content[3], "");
+                var val = int.Parse(content[2]);
+                fetchResult.Value = val;
+                fetchResult.Time = time;
+                fetchResult.TrendIcon = trendString.GetTrendArrowFromNightscout();
+            }
+            catch (Exception ex)
+            {
+                throw new HttpRequestException("Did not get expected request.", ex);
+            }
 
-            fetchResult.Value = val;
-            fetchResult.Time = time;
-            fetchResult.TrendIcon = trendString.GetTrendArrowFromNightscout();
             return fetchResult;
         }
 
@@ -75,32 +82,40 @@ namespace Dexcom.Fetch
                                                  "\"password\":\"" + _config.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
             };
 
-            var client = new HttpClient();
-            var response = client.SendAsync(request).Result;
-            var sessionId = response.Content.ReadAsStringAsync().Result.Replace("\"", "");
-
-            request = new HttpRequestMessage
+            try
             {
-                RequestUri = new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"),
-                Method = HttpMethod.Post
-            };
-            var result = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result.RemoveUnnecessaryCharacters().Split(',');
+                var client = new HttpClient();
+                var response = client.SendAsync(request).Result;
+                var sessionId = response.Content.ReadAsStringAsync().Result.Replace("\"", "");
 
-            // Get raw data seperated
-            var unixTime = result[1].Split('e')[1];
-            var trend = result[2].Split(':')[1];
-            var stringVal = result[3].Split(':')[1];
+                request = new HttpRequestMessage
+                {
+                    RequestUri = new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"),
+                    Method = HttpMethod.Post
+                };
+                var result = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result.RemoveUnnecessaryCharacters().Split(',');
 
-            // Convert raw to correct data
-            DateTime localTime = DateTime.MinValue;
-            if (!string.IsNullOrWhiteSpace(unixTime))
-                localTime = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime;
-            int.TryParse(stringVal, out int val);
-            var trendIcon = trend.GetTrendArrowFromDexcom();
+                // Get raw data seperated
+                var unixTime = result[1].Split('e')[1];
+                var trend = result[2].Split(':')[1];
+                var stringVal = result[3].Split(':')[1];
 
-            fetchResult.Value = val;
-            fetchResult.Time = localTime;
-            fetchResult.TrendIcon = trendIcon;
+                // Convert raw to correct data
+                DateTime localTime = DateTime.MinValue;
+                if (!string.IsNullOrWhiteSpace(unixTime))
+                    localTime = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime;
+                int.TryParse(stringVal, out int val);
+                var trendIcon = trend.GetTrendArrowFromDexcom();
+
+                fetchResult.Value = val;
+                fetchResult.Time = localTime;
+                fetchResult.TrendIcon = trendIcon;
+            }
+            catch (Exception ex)
+            {
+                throw new HttpRequestException("Did not get expected request.", ex);
+            }
+
             return fetchResult;
         }
     }
