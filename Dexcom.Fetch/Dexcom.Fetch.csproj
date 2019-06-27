@@ -1,7 +1,7 @@
+<Version>1.0.1</Version>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-<Version>1.0.1</Version>
 </Project>
