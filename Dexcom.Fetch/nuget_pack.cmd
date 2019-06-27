@@ -1,1 +1,1 @@
-nuget pack Seq.App.AzureDevOps.csproj -build -properties Configuration=Release
+nuget pack Dexcom.Fetch.csproj -build -properties Configuration=Release
