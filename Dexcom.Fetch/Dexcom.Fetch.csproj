@@ -3,5 +3,5 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
+<Version>1.0.1</Version>
 </Project>
