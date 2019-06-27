@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /GlucoseTray.Tests/UnitTest1.cs
+/Dexcom.Fetch/nuget (1).exe
