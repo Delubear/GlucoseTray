@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using GlucoseTray.Enums;
+using Dexcom.Fetch.Enums;
 
-namespace GlucoseTray.Extensions
+namespace Dexcom.Fetch.Extensions
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         public static string RemoveUnnecessaryCharacters(this string input)
         {

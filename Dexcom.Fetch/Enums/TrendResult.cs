@@ -1,6 +1,6 @@
-﻿namespace GlucoseTray.Enums
+﻿namespace Dexcom.Fetch.Enums
 {
-    public enum TrendResult
+    internal enum TrendResult
     {
         DoubleUp = 1,
         SingleUp = 2,

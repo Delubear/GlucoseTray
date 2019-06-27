@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GlucoseTray.Models
+namespace Dexcom.Fetch.Models
 {
     public class GlucoseFetchResult
     {

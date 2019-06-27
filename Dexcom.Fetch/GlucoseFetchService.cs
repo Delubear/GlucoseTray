@@ -2,38 +2,41 @@
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using GlucoseTray.Enums;
-using GlucoseTray.Extensions;
-using GlucoseTray.Interfaces;
-using GlucoseTray.Models;
+using Dexcom.Fetch.Enums;
+using Dexcom.Fetch.Extensions;
+using Dexcom.Fetch.Models;
 
-namespace GlucoseTray.Services
+namespace Dexcom.Fetch
 {
     public class GlucoseFetchService
     {
-        private readonly string baseDexcomUrl = "https://share1.dexcom.com";
-        private readonly string nightscoutRequestUrl = $"{Constants.NightscoutUrl}/api/v1/entries/sgv?count=1";
+        private readonly GlucoseFetchConfiguration _config;
 
-        public GlucoseFetchResult GetLatestReading(ILogService logger)
+        public GlucoseFetchService(GlucoseFetchConfiguration config)
+        {
+            _config = config;
+        }
+
+        public GlucoseFetchResult GetLatestReading()
         {
             var fetchResult = new GlucoseFetchResult();
 
             try
             {
-                if(Constants.FetchMethod == FetchMethod.DexcomShare)
+                if (_config.FetchMethod == FetchMethod.DexcomShare)
                     GetFetchResultFromDexcom(fetchResult);
-                else if(Constants.FetchMethod == FetchMethod.NightscoutApi)
+                else if (_config.FetchMethod == FetchMethod.NightscoutApi)
                     GetFetchResultFromNightscout(fetchResult);
                 else
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
             }
-            catch (Exception e)
+            catch
             {
-                logger.Log(e);
-
                 fetchResult.Value = 0;
                 fetchResult.Time = DateTime.Now;
                 fetchResult.TrendIcon = "4".GetTrendArrowFromDexcom();
+
+                throw;
             }
 
             return fetchResult;
@@ -43,7 +46,7 @@ namespace GlucoseTray.Services
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{nightscoutRequestUrl}" + (!string.IsNullOrWhiteSpace(Constants.AccessToken) ? $"&token={Constants.AccessToken}" : "")),
+                RequestUri = new Uri($"{_config.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_config.NightscoutAccessToken) ? $"&token={_config.NightscoutAccessToken}" : "")),
                 Method = HttpMethod.Get,
             };
 
@@ -65,11 +68,11 @@ namespace GlucoseTray.Services
             // Get Session Id
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{baseDexcomUrl}/ShareWebServices/Services/General/LoginPublisherAccountByName"),
+                RequestUri = new Uri("https://share1.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName"),
                 Method = HttpMethod.Post,
-                Content = new StringContent("{\"accountName\":\"" + Constants.DexcomUsername + "\"," +
+                Content = new StringContent("{\"accountName\":\"" + _config.DexcomUsername + "\"," +
                                                  "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
-                                                 "\"password\":\"" + Constants.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
+                                                 "\"password\":\"" + _config.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
             };
 
             var client = new HttpClient();
@@ -78,7 +81,7 @@ namespace GlucoseTray.Services
 
             request = new HttpRequestMessage
             {
-                RequestUri = new Uri($"{baseDexcomUrl}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"),
+                RequestUri = new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"),
                 Method = HttpMethod.Post
             };
             var result = client.SendAsync(request).Result.Content.ReadAsStringAsync().Result.RemoveUnnecessaryCharacters().Split(',');

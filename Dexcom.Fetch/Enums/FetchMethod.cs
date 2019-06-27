@@ -1,4 +1,4 @@
-﻿namespace GlucoseTray.Enums
+﻿namespace Dexcom.Fetch.Enums
 {
     public enum FetchMethod
     {

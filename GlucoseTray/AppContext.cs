@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Dexcom.Fetch;
+using Dexcom.Fetch.Models;
 using GlucoseTray.Interfaces;
-using GlucoseTray.Models;
 using GlucoseTray.Services;
 
 namespace GlucoseTray
@@ -83,8 +84,14 @@ namespace GlucoseTray
         private void CreateIcon()
         {
             IsCriticalLow = false;
-            var service = new GlucoseFetchService();
-            FetchResult = service.GetLatestReading(_logger);
+            var service = new GlucoseFetchService(new GlucoseFetchConfiguration
+            {
+                DexcomUsername = Constants.DexcomUsername,
+                DexcomPassword = Constants.DexcomPassword,
+                FetchMethod = Constants.FetchMethod,
+                NightscoutUrl = Constants.NightscoutUrl
+            });
+            FetchResult = service.GetLatestReading();
             trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;

@@ -81,12 +81,7 @@
   <ItemGroup>
     <Compile Include="AppContext.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Enums\DexcomShareTrendResult.cs" />
-    <Compile Include="Enums\FetchMethod.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Interfaces\ILogService.cs" />
-    <Compile Include="Services\GlucoseFetchService.cs" />
-    <Compile Include="Models\GlucoseFetchResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IconService.cs" />
@@ -116,7 +111,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Dexcom.Fetch\Dexcom.Fetch.csproj">
+      <Project>{469a56e2-7a36-4865-aede-0359760c3c47}</Project>
+      <Name>Dexcom.Fetch</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>

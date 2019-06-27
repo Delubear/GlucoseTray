@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using GlucoseTray.Enums;
+using Dexcom.Fetch.Enums;
 
 namespace GlucoseTray
 {
