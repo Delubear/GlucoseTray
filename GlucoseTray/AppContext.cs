@@ -5,25 +5,24 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dexcom.Fetch;
 using Dexcom.Fetch.Models;
-using GlucoseTray.Interfaces;
 using GlucoseTray.Services;
+using Microsoft.Extensions.Logging;
 
 namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {
-        private readonly ILogService _logger;
+        private readonly ILogger _logger;
         private readonly NotifyIcon trayIcon;
         private bool IsCriticalLow;
 
         private GlucoseFetchResult FetchResult;
         private readonly IconService _iconService;
 
-        public AppContext(ILogService logger)
+        public AppContext(ILogger logger)
         {
             _logger = logger;
             RunStartupChecks();
-
             _iconService = new IconService();
 
             // Initialize Tray Icon
@@ -51,7 +50,7 @@ namespace GlucoseTray
                 {
                     if(Constants.EnableDebugMode)
                         MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    logger.Log(e);
+                    _logger.LogError(e.ToString());
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();
                     Environment.Exit(0);

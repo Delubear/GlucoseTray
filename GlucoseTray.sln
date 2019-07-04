@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray.Tests", "Glucos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray", "GlucoseTray\GlucoseTray.csproj", "{342CE19D-D0D0-49C7-9E55-6585289A8DDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dexcom.Fetch", "Dexcom.Fetch\Dexcom.Fetch.csproj", "{469A56E2-7A36-4865-AEDE-0359760C3C47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dexcom.Fetch", "Dexcom.Fetch\Dexcom.Fetch.csproj", "{469A56E2-7A36-4865-AEDE-0359760C3C47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

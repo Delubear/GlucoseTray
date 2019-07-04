@@ -5,16 +5,19 @@ using System.Text.RegularExpressions;
 using Dexcom.Fetch.Enums;
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Dexcom.Fetch
 {
     public class GlucoseFetchService
     {
         private readonly GlucoseFetchConfiguration _config;
+        private readonly ILogger _logger;
 
-        public GlucoseFetchService(GlucoseFetchConfiguration config)
+        public GlucoseFetchService(GlucoseFetchConfiguration config, ILogger logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         public GlucoseFetchResult GetLatestReading()
