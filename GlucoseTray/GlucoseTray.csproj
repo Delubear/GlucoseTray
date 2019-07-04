@@ -54,9 +54,6 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dexcom.Fetch, Version=1.1.30.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dexcom.Fetch.1.1.30\lib\netstandard2.0\Dexcom.Fetch.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.0.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.DotNet.PlatformAbstractions.2.0.4\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
     </Reference>
@@ -180,6 +177,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dexcom.Fetch\Dexcom.Fetch.csproj">
+      <Project>{469A56E2-7A36-4865-AEDE-0359760C3C47}</Project>
+      <Name>Dexcom.Fetch</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
