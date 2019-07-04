@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray", "GlucoseTray\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dexcom.Fetch", "Dexcom.Fetch\Dexcom.Fetch.csproj", "{469A56E2-7A36-4865-AEDE-0359760C3C47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTrayCore", "GlucoseTrayCore\GlucoseTrayCore.csproj", "{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
