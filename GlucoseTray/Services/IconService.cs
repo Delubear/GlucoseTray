@@ -2,12 +2,19 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 
 namespace GlucoseTray.Services
 {
     public class IconService
     {
         private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
+        private readonly ILogger _logger;
+
+        public IconService(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         extern static bool DestroyIcon(IntPtr handle);
@@ -44,9 +51,15 @@ namespace GlucoseTray.Services
             Brush brushToUse = SetColor(val);
 
             if (isCriticalLow)
+            {
+                _logger.LogInformation("Critical low glucose read.");
                 str = "DAN";
+            }
             else if (str == "0")
+            {
+                _logger.LogWarning("Empty glucose result received.");
                 str = "NUL";
+            }
 
             Bitmap bitmapText = new Bitmap(16, 16);
             Graphics g = Graphics.FromImage(bitmapText);

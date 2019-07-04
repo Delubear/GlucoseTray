@@ -31,10 +31,14 @@ namespace Dexcom.Fetch
                 else if (_config.FetchMethod == FetchMethod.NightscoutApi)
                     GetFetchResultFromNightscout(fetchResult);
                 else
+                {
+                    _logger.LogError("Invalid fetch method specified.");
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
+                }
             }
             catch
             {
+                _logger.LogError("Failed to get data.");
                 fetchResult.Value = 0;
                 fetchResult.Time = DateTime.Now;
                 fetchResult.TrendIcon = "4".GetTrendArrowFromDexcom();
@@ -67,6 +71,7 @@ namespace Dexcom.Fetch
             }
             catch (Exception ex)
             {
+                _logger.LogError("Nightscout fetching failed or received incorrect format.");
                 throw new HttpRequestException("Did not get expected request.", ex);
             }
 
@@ -116,6 +121,7 @@ namespace Dexcom.Fetch
             }
             catch (Exception ex)
             {
+                _logger.LogError("Dexcom fetching failed or received incorrect format.");
                 throw new HttpRequestException("Did not get expected request.", ex);
             }
 

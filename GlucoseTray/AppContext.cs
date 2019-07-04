@@ -22,8 +22,7 @@ namespace GlucoseTray
         public AppContext(ILogger logger)
         {
             _logger = logger;
-            RunStartupChecks();
-            _iconService = new IconService();
+            _iconService = new IconService(_logger);
 
             // Initialize Tray Icon
             trayIcon = new NotifyIcon()
@@ -32,8 +31,11 @@ namespace GlucoseTray
                 Visible = true
             };
 
-            if(!string.IsNullOrWhiteSpace(Constants.NightscoutUrl))
+            if (!string.IsNullOrWhiteSpace(Constants.NightscoutUrl))
+            {
+                _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
                 trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Nightscout", (obj, e) => Process.Start(Constants.NightscoutUrl)));
+            }
             trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Exit", new EventHandler(Exit)));
 
             trayIcon.DoubleClick += ShowBalloon;
@@ -58,22 +60,9 @@ namespace GlucoseTray
             }
         }
 
-        private void RunStartupChecks()
-        {
-            try
-            {
-                if (!File.Exists(Constants.ErrorLogPath))
-                    File.Create(Constants.ErrorLogPath);
-            }
-            catch
-            {
-                MessageBox.Show("ERROR: Log path unable to be created.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Environment.Exit(0);
-            }
-        }
-
         private void Exit(object sender, EventArgs e)
         {
+            _logger.LogInformation("Exiting application.");
             trayIcon.Visible = false;
             trayIcon?.Dispose();
             Application.ExitThread();
