@@ -18,17 +18,11 @@ namespace GlucoseTrayCore
 
             var switcher = new LoggingLevelSwitch(LogEventLevel.Verbose);
             Log.Logger = new LoggerConfiguration()
-                //.Enrich.FromLogContext()
                 .MinimumLevel.ControlledBy(switcher)
                 .WriteTo.File(Constants.ErrorLogPath, rollingInterval: RollingInterval.Day)
                 .Enrich.WithProperty("process", "Worker")
                 .CreateLogger();
             var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
-
-            // TO-DO: Enable appsettings.json and serilog configs there.
-            //IConfigurationRoot config = new ConfigurationBuilder()
-            //    .SetBasePath(Directory.GetCurrentDirectory())
-            //    .AddJsonFile(path: "AppSettings.json", optional: false, reloadOnChange: true).Build();
 
             var provider = new ServiceCollection()
                 .AddOptions()
@@ -47,7 +41,6 @@ namespace GlucoseTrayCore
 
             Constants.LogCurrentConfig(logger);
             switcher.MinimumLevel = Constants.LogLevel;
-
             Application.Run(new AppContext(logger));
         }
     }
