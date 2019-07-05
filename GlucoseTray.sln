@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray.Tests", "GlucoseTray.Tests\GlucoseTray.Tests.csproj", "{7BA94FA8-B69F-4EDB-B442-520784027F3F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray", "GlucoseTray\GlucoseTray.csproj", "{342CE19D-D0D0-49C7-9E55-6585289A8DDC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dexcom.Fetch", "Dexcom.Fetch\Dexcom.Fetch.csproj", "{469A56E2-7A36-4865-AEDE-0359760C3C47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTrayCore", "GlucoseTrayCore\GlucoseTrayCore.csproj", "{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTrayCore", "GlucoseTrayCore\GlucoseTrayCore.csproj", "{2778CBCC-020C-4F3D-99BC-E8C231FB7F53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7BA94FA8-B69F-4EDB-B442-520784027F3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7BA94FA8-B69F-4EDB-B442-520784027F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7BA94FA8-B69F-4EDB-B442-520784027F3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7BA94FA8-B69F-4EDB-B442-520784027F3F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{342CE19D-D0D0-49C7-9E55-6585289A8DDC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{469A56E2-7A36-4865-AEDE-0359760C3C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
