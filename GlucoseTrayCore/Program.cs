@@ -33,6 +33,11 @@ namespace GlucoseTrayCore
                         File.Copy(file, exeConfigPath);
                         configFile = exeConfigPath.Replace(".config", "");
                     }
+                    else
+                    {
+                        configFile = file.Replace(".dll.", ".exe.");
+                    }
+
                     Constants.config = ConfigurationManager.OpenExeConfiguration(configFile);
                 }
             }
