@@ -36,14 +36,10 @@ namespace Dexcom.Fetch
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
                 }
             }
-            catch
+            catch ( Exception ex )
             {
-                _logger.LogError("Failed to get data.");
-                fetchResult.Value = 0;
-                fetchResult.Time = DateTime.Now;
-                fetchResult.TrendIcon = "4".GetTrendArrowFromDexcom();
-
-                throw;
+                _logger.LogError("Failed to get data. {0}", ex);
+                fetchResult = GetDefaultFetchResult();
             }
 
             return fetchResult;
@@ -71,8 +67,8 @@ namespace Dexcom.Fetch
             }
             catch (Exception ex)
             {
-                _logger.LogError("Nightscout fetching failed or received incorrect format.");
-                throw new HttpRequestException("Did not get expected request.", ex);
+                _logger.LogError("Nightscout fetching failed or received incorrect format. {0}", ex);
+                fetchResult = GetDefaultFetchResult();
             }
 
             return fetchResult;
@@ -121,11 +117,22 @@ namespace Dexcom.Fetch
             }
             catch (Exception ex)
             {
-                _logger.LogError("Dexcom fetching failed or received incorrect format.");
-                throw new HttpRequestException("Did not get expected request.", ex);
+                _logger.LogError("Dexcom fetching failed or received incorrect format. {0}", ex);
+                fetchResult = GetDefaultFetchResult();
             }
 
             return fetchResult;
+        }
+
+        private GlucoseFetchResult GetDefaultFetchResult()
+        {
+            return new GlucoseFetchResult
+            {
+                Value = 0,
+                Time = DateTime.Now,
+                TrendIcon = "4".GetTrendArrowFromDexcom(),
+                ErrorResult = true
+            };
         }
     }
 }
