@@ -17,8 +17,6 @@ namespace GlucoseTrayCore
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            
-
             string configFile = string.Empty;
             if(Directory.GetFiles(Directory.GetCurrentDirectory(), "*.dll.config").Length < 1)
             {
