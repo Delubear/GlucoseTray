@@ -39,13 +39,18 @@ namespace GlucoseTrayCore
 
             trayIcon.DoubleClick += ShowBalloon;
 
+            BeginCycle();
+        }
+
+        private async void BeginCycle()
+        {
             while (true)
             {
                 try
                 {
                     Application.DoEvents();
                     CreateIcon();
-                    Task.Delay(Constants.PollingThreshold).Wait();
+                    await Task.Delay(Constants.PollingThreshold);
                 }
                 catch (Exception e)
                 {
