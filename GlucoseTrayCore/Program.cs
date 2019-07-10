@@ -38,15 +38,16 @@ namespace GlucoseTrayCore
             foreach( var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.dll.config"))
             {
                 configFile = file;
-                ConfigurationManager.OpenExeConfiguration(configFile);
             }
 
             if (string.IsNullOrWhiteSpace(configFile))
             {
                 MessageBox.Show("ERROR: Configuration File is missing.  Create or Add GlucoseTraycore.dll.config to executable directory.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 logger.LogCritical("ERROR: Configuration File is missing.");
+                throw new InvalidOperationException("Missing config file.");
             }
 
+            Constants.config = ConfigurationManager.OpenExeConfiguration(configFile);
             Constants.LogCurrentConfig(logger);
             logger.LogDebug(configFile);
             switcher.MinimumLevel = Constants.LogLevel;
