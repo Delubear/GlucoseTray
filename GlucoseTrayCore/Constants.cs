@@ -9,21 +9,21 @@ namespace GlucoseTrayCore
     public static class Constants
     {
         public static Configuration config { get; set; }
-
-        public static FetchMethod FetchMethod => (FetchMethod)Convert.ToInt32(config.AppSettings.Settings["FetchMethod"].ToString());
-        public static string NightscoutUrl => config.AppSettings.Settings["NightscoutUrl"].ToString();
-        public static string DexcomUsername => config.AppSettings.Settings["DexcomUsername"].ToString();
-        public static string DexcomPassword => config.AppSettings.Settings["DexcomPassword"].ToString();
-        public static string AccessToken => config.AppSettings.Settings["AccessToken"].ToString();
-        public static int HighBg => int.Parse(config.AppSettings.Settings["HighBg"].ToString());
-        public static int DangerHighBg => int.Parse(config.AppSettings.Settings["DangerHighBg"].ToString());
-        public static int LowBg => int.Parse(config.AppSettings.Settings["LowBg"].ToString());
-        public static int DangerLowBg => int.Parse(config.AppSettings.Settings["DangerLowBg"].ToString());
-        public static int CriticalLowBg => int.Parse(config.AppSettings.Settings["CriticalLowBg"].ToString());
-        public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(config.AppSettings.Settings["PollingThreshold"].ToString()));
-        public static string ErrorLogPath => config.AppSettings.Settings["ErrorLogPath"].ToString();
-        public static bool EnableDebugMode => Convert.ToBoolean(config.AppSettings.Settings["EnableDebugMode"].ToString());
-        public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(config.AppSettings.Settings["LogLevel"].ToString());
+        
+        public static FetchMethod FetchMethod => (FetchMethod)Convert.ToInt32(config.AppSettings.Settings["FetchMethod"].Value);
+        public static string NightscoutUrl => config.AppSettings.Settings["NightscoutUrl"].Value;
+        public static string DexcomUsername => config.AppSettings.Settings["DexcomUsername"].Value;
+        public static string DexcomPassword => config.AppSettings.Settings["DexcomPassword"].Value;
+        public static string AccessToken => config.AppSettings.Settings["AccessToken"].Value;
+        public static int HighBg => int.Parse(config.AppSettings.Settings["HighBg"].Value);
+        public static int DangerHighBg => int.Parse(config.AppSettings.Settings["DangerHighBg"].Value);
+        public static int LowBg => int.Parse(config.AppSettings.Settings["LowBg"].Value);
+        public static int DangerLowBg => int.Parse(config.AppSettings.Settings["DangerLowBg"].Value);
+        public static int CriticalLowBg => int.Parse(config.AppSettings.Settings["CriticalLowBg"].Value);
+        public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(config.AppSettings.Settings["PollingThreshold"].Value));
+        public static string ErrorLogPath => config.AppSettings.Settings["ErrorLogPath"].Value;
+        public static bool EnableDebugMode => Convert.ToBoolean(config.AppSettings.Settings["EnableDebugMode"].Value);
+        public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(config.AppSettings.Settings["LogLevel"].Value);
 
         public static void LogCurrentConfig(ILogger logger)
         {

@@ -17,6 +17,23 @@ namespace GlucoseTrayCore
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            
+
+            string configFile = string.Empty;
+            if(Directory.GetFiles(Directory.GetCurrentDirectory(), "*.dll.config").Length < 1)
+            {
+                MessageBox.Show("ERROR: Configuration File is missing.  Create or Add GlucoseTraycore.dll.config to executable directory.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new InvalidOperationException("Missing config file.");
+            }
+            else
+            {
+                foreach (var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.dll.config"))
+                {
+                    configFile = file.Replace(".dll.config", ".dll");
+                    Constants.config = ConfigurationManager.OpenExeConfiguration(configFile);
+                }
+            }
+
             var switcher = new LoggingLevelSwitch(LogEventLevel.Verbose);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(switcher)
@@ -33,21 +50,6 @@ namespace GlucoseTrayCore
             var logger = provider.GetService<ILoggerFactory>().CreateLogger("Worker.Program");
             logger.LogDebug("Current directory:{CurrentDirectory}", Directory.GetCurrentDirectory());
 
-            string configFile = string.Empty;
-
-            foreach( var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.dll.config"))
-            {
-                configFile = file;
-            }
-
-            if (string.IsNullOrWhiteSpace(configFile))
-            {
-                MessageBox.Show("ERROR: Configuration File is missing.  Create or Add GlucoseTraycore.dll.config to executable directory.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                logger.LogCritical("ERROR: Configuration File is missing.");
-                throw new InvalidOperationException("Missing config file.");
-            }
-
-            Constants.config = ConfigurationManager.OpenExeConfiguration(configFile);
             Constants.LogCurrentConfig(logger);
             logger.LogDebug(configFile);
             switcher.MinimumLevel = Constants.LogLevel;
