@@ -81,7 +81,8 @@ namespace GlucoseTrayCore
                 DexcomUsername = Constants.DexcomUsername,
                 DexcomPassword = Constants.DexcomPassword,
                 FetchMethod = Constants.FetchMethod,
-                NightscoutUrl = Constants.NightscoutUrl
+                NightscoutUrl = Constants.NightscoutUrl,
+                NightscoutAccessToken = Constants.AccessToken
             }, _logger);
             FetchResult = service.GetLatestReading();
             trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
