@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Microsoft.Extensions.Configuration.FileExtensions;
+using Microsoft.Extensions.Configuration.Json;
 
 namespace GlucoseTrayCore
 {
@@ -17,30 +21,8 @@ namespace GlucoseTrayCore
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            string configFile = string.Empty;
-            if(Directory.GetFiles(Directory.GetCurrentDirectory(), "*.dll.config").Length < 1 && Directory.GetFiles(Directory.GetCurrentDirectory(), "*.exe.config").Length < 1)
-            {
-                MessageBox.Show("ERROR: Configuration File is missing.  Create or Add GlucoseTraycore.dll.config to executable directory.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new InvalidOperationException("Missing config file.");
-            }
-            else
-            {
-                foreach (var file in Directory.EnumerateFiles(Directory.GetCurrentDirectory(), "*.dll.config"))
-                {
-                    if(Directory.GetFiles(Directory.GetCurrentDirectory(), "*.exe.config").Length < 1)
-                    {
-                        var exeConfigPath = file.Replace(".dll.", ".exe.");
-                        File.Copy(file, exeConfigPath);
-                        configFile = exeConfigPath.Replace(".config", "");
-                    }
-                    else
-                    {
-                        configFile = file.Replace(".dll.", ".exe.");
-                    }
-
-                    Constants.config = ConfigurationManager.OpenExeConfiguration(configFile);
-                }
-            }
+            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            Constants.config = builder.Build();
 
             var switcher = new LoggingLevelSwitch(LogEventLevel.Verbose);
             Log.Logger = new LoggerConfiguration()
@@ -59,7 +41,6 @@ namespace GlucoseTrayCore
             logger.LogDebug("Current directory:{CurrentDirectory}", Directory.GetCurrentDirectory());
 
             Constants.LogCurrentConfig(logger);
-            logger.LogDebug(configFile);
             switcher.MinimumLevel = Constants.LogLevel;
             Application.Run(new AppContext(logger));
         }
