@@ -1,7 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Microsoft.Extensions.Configuration.FileExtensions;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace GlucoseTrayCore
 {
