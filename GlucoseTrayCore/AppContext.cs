@@ -86,8 +86,10 @@ namespace GlucoseTrayCore
                 UnitDisplayType = Constants.GlucoseUnitType
             }, _logger);
             FetchResult = service.GetLatestReading();
-
-            trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
+            var value = FetchResult.Value.ToString();
+            if (value.Contains("."))
+                value = FetchResult.Value.ToString("0.0");
+            trayIcon.Text = $"{value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
             _iconService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
