@@ -93,6 +93,12 @@ namespace GlucoseTrayCore
             _iconService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
         }
 
-        private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
+        private void ShowBalloon(object sender, EventArgs e)
+        {
+            var value = FetchResult.Value.ToString();
+            if (value.Contains("."))
+                value = FetchResult.Value.ToString("0.0");
+            trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
+        }
     }
 }
