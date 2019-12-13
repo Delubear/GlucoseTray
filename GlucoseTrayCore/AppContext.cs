@@ -98,7 +98,7 @@ namespace GlucoseTrayCore
             var value = FetchResult.Value.ToString();
             if (value.Contains("."))
                 value = FetchResult.Value.ToString("0.0");
-            trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
+            trayIcon.ShowBalloonTip(2000, "Glucose", $"{value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
         }
     }
 }
