@@ -1,8 +1,8 @@
-﻿using System;
-using Dexcom.Fetch.Enums;
+﻿using Dexcom.Fetch.Enums;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog.Events;
-using Microsoft.Extensions.Configuration;
+using System;
 
 namespace GlucoseTrayCore
 {
@@ -10,12 +10,13 @@ namespace GlucoseTrayCore
     {
         public static IConfiguration config { get; set; }
         private static IConfigurationSection AppSettings => config.GetSection("appsettings");
-        
-        public static FetchMethod FetchMethod => (FetchMethod)Convert.ToInt32(AppSettings["FetchMethod"]);
+
+        public static FetchMethod FetchMethod => (FetchMethod) Convert.ToInt32(AppSettings["FetchMethod"]);
         public static string NightscoutUrl => AppSettings["NightscoutUrl"];
         public static string DexcomUsername => AppSettings["DexcomUsername"];
         public static string DexcomPassword => AppSettings["DexcomPassword"];
         public static string AccessToken => AppSettings["AccessToken"];
+        public static GlucoseUnitType GlucoseUnitType => (GlucoseUnitType) Convert.ToInt32(AppSettings["GlucoseUnit"]);
         public static int HighBg => int.Parse(AppSettings["HighBg"]);
         public static int DangerHighBg => int.Parse(AppSettings["DangerHighBg"]);
         public static int LowBg => int.Parse(AppSettings["LowBg"]);
@@ -24,7 +25,7 @@ namespace GlucoseTrayCore
         public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(AppSettings["PollingThreshold"]));
         public static string ErrorLogPath => AppSettings["ErrorLogPath"];
         public static bool EnableDebugMode => Convert.ToBoolean(AppSettings["EnableDebugMode"]);
-        public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(AppSettings["LogLevel"]);
+        public static LogEventLevel LogLevel => (LogEventLevel) Convert.ToInt32(AppSettings["LogLevel"]);
 
         public static void LogCurrentConfig(ILogger logger)
         {
@@ -33,6 +34,7 @@ namespace GlucoseTrayCore
             logger.LogDebug($"{nameof(DexcomUsername)}: {DexcomUsername}");
             logger.LogDebug($"{nameof(DexcomPassword)}: {DexcomPassword}");
             logger.LogDebug($"{nameof(AccessToken)}: {AccessToken}");
+            logger.LogDebug($"{nameof(GlucoseUnitType)}: {GlucoseUnitType}");
             logger.LogDebug($"{nameof(HighBg)}: {HighBg}");
             logger.LogDebug($"{nameof(DangerHighBg)}: {DangerHighBg}");
             logger.LogDebug($"{nameof(LowBg)}: {LowBg}");

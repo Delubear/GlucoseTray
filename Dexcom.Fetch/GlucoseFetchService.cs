@@ -1,11 +1,11 @@
-﻿using System;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using Dexcom.Fetch.Enums;
+﻿using Dexcom.Fetch.Enums;
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Dexcom.Fetch
 {
@@ -36,14 +36,20 @@ namespace Dexcom.Fetch
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
                 }
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 _logger.LogError("Failed to get data. {0}", ex);
                 fetchResult = GetDefaultFetchResult();
             }
 
+            fetchResult.UnitDisplayType = _config.UnitDisplayType;
+            if (fetchResult.UnitDisplayType == GlucoseUnitType.MMOL)
+                ConvertMGtoMMOL(fetchResult);
+
             return fetchResult;
         }
+
+        private void ConvertMGtoMMOL(GlucoseFetchResult fetchResult) => fetchResult.Value /= 18;
 
         private GlucoseFetchResult GetFetchResultFromNightscout(GlucoseFetchResult fetchResult)
         {
@@ -124,15 +130,12 @@ namespace Dexcom.Fetch
             return fetchResult;
         }
 
-        private GlucoseFetchResult GetDefaultFetchResult()
+        private GlucoseFetchResult GetDefaultFetchResult() => new GlucoseFetchResult
         {
-            return new GlucoseFetchResult
-            {
-                Value = 0,
-                Time = DateTime.Now,
-                TrendIcon = "4".GetTrendArrowFromDexcom(),
-                ErrorResult = true
-            };
-        }
+            Value = 0,
+            Time = DateTime.Now,
+            TrendIcon = "4".GetTrendArrowFromDexcom(),
+            ErrorResult = true
+        };
     }
 }

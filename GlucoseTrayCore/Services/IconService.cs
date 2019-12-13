@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Extensions.Logging;
 
 namespace GlucoseTrayCore.Services
 {
@@ -11,43 +11,45 @@ namespace GlucoseTrayCore.Services
         private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
         private readonly ILogger _logger;
 
-        public IconService(ILogger logger)
-        {
-            _logger = logger;
-        }
+        public IconService(ILogger logger) => _logger = logger;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        extern static bool DestroyIcon(IntPtr handle);
+        private static extern bool DestroyIcon(IntPtr handle);
 
-        public void DestroyMyIcon(IntPtr handle)
-        {
-            DestroyIcon(handle);
-        }
+        public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
-        internal Brush SetColor(int val)
+        internal Brush SetColor(double val)
         {
             switch (val)
             {
-                case int n when n < Constants.HighBg && n > Constants.LowBg:
+                case double n when n < Constants.HighBg && n > Constants.LowBg:
                     return new SolidBrush(Color.White);
-                case int n when n >= Constants.HighBg && n < Constants.DangerHighBg:
+
+                case double n when n >= Constants.HighBg && n < Constants.DangerHighBg:
                     return new SolidBrush(Color.Yellow);
-                case int n when n >= Constants.DangerHighBg:
+
+                case double n when n >= Constants.DangerHighBg:
                     return new SolidBrush(Color.Red);
-                case int n when n <= Constants.LowBg && n > Constants.DangerLowBg:
+
+                case double n when n <= Constants.LowBg && n > Constants.DangerLowBg:
                     return new SolidBrush(Color.Yellow);
-                case int n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg:
+
+                case double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg:
                     return new SolidBrush(Color.Red);
-                case int n when n <= Constants.CriticalLowBg && n > 0:
+
+                case double n when n <= Constants.CriticalLowBg && n > 0:
                     return new SolidBrush(Color.Red);
+
                 default:
                     return new SolidBrush(Color.White);
             }
         }
 
-        internal void CreateTextIcon(int val, bool isCriticalLow, NotifyIcon trayIcon)
+        internal void CreateTextIcon(double val, bool isCriticalLow, NotifyIcon trayIcon)
         {
             var str = val.ToString();
+            if (str.Contains(".")) // Round MMOL decimal values to one decimal place.
+                str = val.ToString("0.0");
             Brush brushToUse = SetColor(val);
 
             if (isCriticalLow)

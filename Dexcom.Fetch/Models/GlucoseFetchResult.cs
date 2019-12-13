@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dexcom.Fetch.Enums;
+using System;
 
 namespace Dexcom.Fetch.Models
 {
@@ -7,7 +8,7 @@ namespace Dexcom.Fetch.Models
         /// <summary>
         /// Glucose value
         /// </summary>
-        public int Value { get; set; }
+        public double Value { get; set; }
 
         /// <summary>
         /// Arrow indicating direction
@@ -23,5 +24,7 @@ namespace Dexcom.Fetch.Models
         /// Was this result generated from an error or fallback process?
         /// </summary>
         public bool ErrorResult { get; set; }
+
+        public GlucoseUnitType UnitDisplayType { get; set; }
     }
 }

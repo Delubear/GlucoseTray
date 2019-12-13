@@ -1,11 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Dexcom.Fetch;
+﻿using Dexcom.Fetch;
 using Dexcom.Fetch.Models;
 using GlucoseTrayCore.Services;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GlucoseTrayCore
 {
@@ -35,7 +35,7 @@ namespace GlucoseTrayCore
                 _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
                 trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Nightscout", (obj, e) => Process.Start(Constants.NightscoutUrl)));
             }
-            trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Exit", new EventHandler(Exit)));
+            trayIcon.ContextMenu.MenuItems.Add(new MenuItem(nameof(Exit), new EventHandler(Exit)));
 
             trayIcon.DoubleClick += ShowBalloon;
 
@@ -82,18 +82,17 @@ namespace GlucoseTrayCore
                 DexcomPassword = Constants.DexcomPassword,
                 FetchMethod = Constants.FetchMethod,
                 NightscoutUrl = Constants.NightscoutUrl,
-                NightscoutAccessToken = Constants.AccessToken
+                NightscoutAccessToken = Constants.AccessToken,
+                UnitDisplayType = Constants.GlucoseUnitType
             }, _logger);
             FetchResult = service.GetLatestReading();
+
             trayIcon.Text = $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
             _iconService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
         }
 
-        private void ShowBalloon(object sender, EventArgs e)
-        {
-            trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
-        }
+        private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", $"{FetchResult.Value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
     }
 }

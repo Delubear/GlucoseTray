@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Dexcom.Fetch.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Dexcom.Fetch.Enums;
 
 namespace Dexcom.Fetch.Models
 {
@@ -33,5 +33,9 @@ namespace Dexcom.Fetch.Models
         /// </summary>
         public string DexcomPassword { get; set; }
 
+        /// <summary>
+        /// MG/DL or MMOL/L
+        /// </summary>
+        public GlucoseUnitType UnitDisplayType { get; set; }
     }
 }

@@ -1,17 +1,17 @@
-﻿using System.IO;
-using System.Windows.Forms;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using System.IO;
+using System.Windows.Forms;
 
 namespace GlucoseTrayCore
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -22,7 +22,7 @@ namespace GlucoseTrayCore
             var switcher = new LoggingLevelSwitch(LogEventLevel.Verbose);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(switcher)
-                .WriteTo.File(Constants.ErrorLogPath, rollingInterval: RollingInterval.Day)
+                .WriteTo.File(Constants.ErrorLogPath, rollingInterval: RollingInterval.Day) // Default is to clean up logs over 31 days old.
                 .Enrich.WithProperty("process", "Worker")
                 .CreateLogger();
             var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
