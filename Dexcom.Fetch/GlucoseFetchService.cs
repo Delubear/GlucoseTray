@@ -49,7 +49,11 @@ namespace Dexcom.Fetch
             return fetchResult;
         }
 
-        private void ConvertMGtoMMOL(GlucoseFetchResult fetchResult) => fetchResult.Value /= 18;
+        private void ConvertMGtoMMOL(GlucoseFetchResult fetchResult)
+        {
+            if(!fetchResult.Value.ToString().Contains(".")) // If decimal value, then it is already MMOL
+                fetchResult.Value /= 18;
+        }
 
         private GlucoseFetchResult GetFetchResultFromNightscout(GlucoseFetchResult fetchResult)
         {
