@@ -17,11 +17,11 @@ namespace GlucoseTrayCore
         public static string DexcomPassword => AppSettings["DexcomPassword"];
         public static string AccessToken => AppSettings["AccessToken"];
         public static GlucoseUnitType GlucoseUnitType => (GlucoseUnitType) Convert.ToInt32(AppSettings["GlucoseUnit"]);
-        public static int HighBg => int.Parse(AppSettings["HighBg"]);
-        public static int DangerHighBg => int.Parse(AppSettings["DangerHighBg"]);
-        public static int LowBg => int.Parse(AppSettings["LowBg"]);
-        public static int DangerLowBg => int.Parse(AppSettings["DangerLowBg"]);
-        public static int CriticalLowBg => int.Parse(AppSettings["CriticalLowBg"]);
+        public static double HighBg => double.Parse(AppSettings["HighBg"]);
+        public static double DangerHighBg => double.Parse(AppSettings["DangerHighBg"]);
+        public static double LowBg => double.Parse(AppSettings["LowBg"]);
+        public static double DangerLowBg => double.Parse(AppSettings["DangerLowBg"]);
+        public static double CriticalLowBg => double.Parse(AppSettings["CriticalLowBg"]);
         public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(AppSettings["PollingThreshold"]));
         public static string ErrorLogPath => AppSettings["ErrorLogPath"];
         public static bool EnableDebugMode => Convert.ToBoolean(AppSettings["EnableDebugMode"]);
