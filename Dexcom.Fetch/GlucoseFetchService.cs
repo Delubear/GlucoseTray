@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dexcom.Fetch
@@ -56,16 +55,17 @@ namespace Dexcom.Fetch
         private async Task<GlucoseFetchResult> GetFetchResultFromNightscout(GlucoseFetchResult fetchResult)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_config.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_config.NightscoutAccessToken) ? $"&token={_config.NightscoutAccessToken}" : "")));
+            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             var client = new HttpClient();
             try
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
-                var content = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Split('\t');
-                Regex rgx = new Regex("[^a-zA-Z]");
-                fetchResult.Value = int.Parse(content[2]);
-                fetchResult.Time = content[0].ParseNightscoutDate();
-                fetchResult.TrendIcon = rgx.Replace(content[3], "").GetTrendArrowFromNightscout();
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var content = JsonConvert.DeserializeObject<List<NightScoutResult>>(result).FirstOrDefault();
+                fetchResult.Value = content.sgv;
+                fetchResult.Time =  DateTime.Parse(content.dateString);
+                fetchResult.TrendIcon = content.trend.GetTrendArrow();
                 response.Dispose();
             }
             catch (Exception ex)
@@ -101,12 +101,11 @@ namespace Dexcom.Fetch
                 var result = JsonConvert.DeserializeObject<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
-                var trend = result.Trend.ToString();
-                var stringVal = result.Value.ToString();
+                var trend = result.Trend;
 
-                fetchResult.Value = Convert.ToInt32(stringVal);
+                fetchResult.Value = result.Value;
                 fetchResult.Time = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime : DateTime.MinValue;
-                fetchResult.TrendIcon = trend.GetTrendArrowFromDexcom();
+                fetchResult.TrendIcon = trend.GetTrendArrow();
                 response.Dispose();
             }
             catch (Exception ex)
@@ -127,7 +126,7 @@ namespace Dexcom.Fetch
         {
             Value = 0,
             Time = DateTime.Now,
-            TrendIcon = "4".GetTrendArrowFromDexcom(),
+            TrendIcon = 4.GetTrendArrow(),
             ErrorResult = true
         };
     }
