@@ -2,7 +2,10 @@
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -95,16 +98,13 @@ namespace Dexcom.Fetch
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
-                var result = (await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).RemoveUnnecessaryCharacters().Split(',');
+                var result = JsonConvert.DeserializeObject<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
 
-                // Get raw data seperated
-                var unixTime = result[1].Split('e')[1];
-                var trend = result[2].Split(':')[1];
-                var stringVal = result[3].Split(':')[1];
+                var unixTime = string.Join("", result.ST.Where(char.IsDigit));
+                var trend = result.Trend.ToString();
+                var stringVal = result.Value.ToString();
 
-                int.TryParse(stringVal, out int val);
-
-                fetchResult.Value = val;
+                fetchResult.Value = Convert.ToInt32(stringVal);
                 fetchResult.Time = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime : DateTime.MinValue;
                 fetchResult.TrendIcon = trend.GetTrendArrowFromDexcom();
                 response.Dispose();
