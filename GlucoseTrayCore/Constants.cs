@@ -32,8 +32,8 @@ namespace GlucoseTrayCore
             logger.LogDebug($"{nameof(FetchMethod)}: {FetchMethod}");
             logger.LogDebug($"{nameof(NightscoutUrl)}: {NightscoutUrl}");
             logger.LogDebug($"{nameof(DexcomUsername)}: {DexcomUsername}");
-            logger.LogDebug($"{nameof(DexcomPassword)}: {DexcomPassword}");
-            logger.LogDebug($"{nameof(AccessToken)}: {AccessToken}");
+            logger.LogDebug($"{nameof(DexcomPassword)}: xxx");
+            logger.LogDebug($"{nameof(AccessToken)}: xxx");
             logger.LogDebug($"{nameof(GlucoseUnitType)}: {GlucoseUnitType}");
             logger.LogDebug($"{nameof(HighBg)}: {HighBg}");
             logger.LogDebug($"{nameof(DangerHighBg)}: {DangerHighBg}");

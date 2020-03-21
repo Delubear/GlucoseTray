@@ -1,4 +1,5 @@
 ﻿using Dexcom.Fetch;
+using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
 using GlucoseTrayCore.Services;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,6 @@ namespace GlucoseTrayCore
             _logger = logger;
             _iconService = new IconService(_logger);
 
-            // Initialize Tray Icon
             trayIcon = new NotifyIcon()
             {
                 ContextMenu = new ContextMenu(new MenuItem[] { }),
@@ -36,9 +36,7 @@ namespace GlucoseTrayCore
                 trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Nightscout", (obj, e) => Process.Start(Constants.NightscoutUrl)));
             }
             trayIcon.ContextMenu.MenuItems.Add(new MenuItem(nameof(Exit), new EventHandler(Exit)));
-
             trayIcon.DoubleClick += ShowBalloon;
-
             BeginCycle();
         }
 
@@ -49,7 +47,7 @@ namespace GlucoseTrayCore
                 try
                 {
                     Application.DoEvents();
-                    CreateIcon();
+                    await CreateIcon();
                     await Task.Delay(Constants.PollingThreshold);
                 }
                 catch (Exception e)
@@ -73,7 +71,7 @@ namespace GlucoseTrayCore
             Application.Exit();
         }
 
-        private void CreateIcon()
+        private async Task CreateIcon()
         {
             IsCriticalLow = false;
             var service = new GlucoseFetchService(new GlucoseFetchConfiguration
@@ -85,22 +83,15 @@ namespace GlucoseTrayCore
                 NightscoutAccessToken = Constants.AccessToken,
                 UnitDisplayType = Constants.GlucoseUnitType
             }, _logger);
-            FetchResult = service.GetLatestReading();
-            var value = FetchResult.Value.ToString();
-            if (value.Contains("."))
-                value = FetchResult.Value.ToString("0.0");
-            trayIcon.Text = $"{value}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
+            FetchResult = await service.GetLatestReading();
+            trayIcon.Text = GetGlucoseMessage();
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
-            _iconService.CreateTextIcon(FetchResult.Value, IsCriticalLow, trayIcon);
+            _iconService.CreateTextIcon(FetchResult, IsCriticalLow, trayIcon);
         }
 
-        private void ShowBalloon(object sender, EventArgs e)
-        {
-            var value = FetchResult.Value.ToString();
-            if (value.Contains("."))
-                value = FetchResult.Value.ToString("0.0");
-            trayIcon.ShowBalloonTip(2000, "Glucose", $"{value}   {FetchResult.Time.ToLongTimeString()}    {FetchResult.TrendIcon}", ToolTipIcon.Info);
-        }
+        private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(), ToolTipIcon.Info);
+
+        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue()}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
     }
 }

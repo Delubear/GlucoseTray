@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Dexcom.Fetch.Extensions;
+using Dexcom.Fetch.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -20,55 +22,38 @@ namespace GlucoseTrayCore.Services
 
         internal Brush SetColor(double val)
         {
-            switch (val)
+            return val switch
             {
-                case double n when n < Constants.HighBg && n > Constants.LowBg:
-                    return new SolidBrush(Color.White);
-
-                case double n when n >= Constants.HighBg && n < Constants.DangerHighBg:
-                    return new SolidBrush(Color.Yellow);
-
-                case double n when n >= Constants.DangerHighBg:
-                    return new SolidBrush(Color.Red);
-
-                case double n when n <= Constants.LowBg && n > Constants.DangerLowBg:
-                    return new SolidBrush(Color.Yellow);
-
-                case double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg:
-                    return new SolidBrush(Color.Red);
-
-                case double n when n <= Constants.CriticalLowBg && n > 0:
-                    return new SolidBrush(Color.Red);
-
-                default:
-                    return new SolidBrush(Color.White);
-            }
+                double n when n < Constants.HighBg && n > Constants.LowBg => new SolidBrush(Color.White),
+                double n when n >= Constants.HighBg && n < Constants.DangerHighBg => new SolidBrush(Color.Yellow),
+                double n when n >= Constants.DangerHighBg => new SolidBrush(Color.Red),
+                double n when n <= Constants.LowBg && n > Constants.DangerLowBg => new SolidBrush(Color.Yellow),
+                double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg => new SolidBrush(Color.Red),
+                double n when n <= Constants.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                _ => new SolidBrush(Color.White),
+            };
         }
 
-        internal void CreateTextIcon(double val, bool isCriticalLow, NotifyIcon trayIcon)
+        internal void CreateTextIcon(GlucoseFetchResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
         {
-            var str = val.ToString();
-            if (str.Contains(".")) // Round MMOL decimal values to one decimal place.
-                str = val.ToString("0.0");
-            Brush brushToUse = SetColor(val);
+            var result = fetchResult.GetFormattedStringValue();
 
             if (isCriticalLow)
             {
                 _logger.LogInformation("Critical low glucose read.");
-                str = "DAN";
+                result = "DAN";
             }
-            else if (str == "0")
+            else if (result == "0")
             {
                 _logger.LogWarning("Empty glucose result received.");
-                str = "NUL";
+                result = "NUL";
             }
 
             Bitmap bitmapText = new Bitmap(16, 16);
             Graphics g = Graphics.FromImage(bitmapText);
-
             g.Clear(Color.Transparent);
             g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-            g.DrawString(str, fontToUse, brushToUse, -2, 0);
+            g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -2, 0);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
