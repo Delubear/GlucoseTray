@@ -28,9 +28,9 @@ namespace Dexcom.Fetch
             try
             {
                 if (_config.FetchMethod == FetchMethod.DexcomShare)
-                    await GetFetchResultFromDexcom(fetchResult);
+                    await GetFetchResultFromDexcom(fetchResult).ConfigureAwait(false);
                 else if (_config.FetchMethod == FetchMethod.NightscoutApi)
-                    await GetFetchResultFromNightscout(fetchResult);
+                    await GetFetchResultFromNightscout(fetchResult).ConfigureAwait(false);
                 else
                 {
                     _logger.LogError("Invalid fetch method specified.");
@@ -57,8 +57,8 @@ namespace Dexcom.Fetch
             var client = new HttpClient();
             try
             {
-                var response = await client.SendAsync(request);
-                var content = (await response.Content.ReadAsStringAsync()).Split('\t');
+                var response = await client.SendAsync(request).ConfigureAwait(false);
+                var content = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Split('\t');
                 Regex rgx = new Regex("[^a-zA-Z]");
                 fetchResult.Value = int.Parse(content[2]);
                 fetchResult.Time = content[0].ParseNightscoutDate();
@@ -92,10 +92,10 @@ namespace Dexcom.Fetch
             var client = new HttpClient();
             try
             {
-                var response = await client.SendAsync(request);
-                var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
+                var response = await client.SendAsync(request).ConfigureAwait(false);
+                var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
-                var result = (await (await client.SendAsync(request)).Content.ReadAsStringAsync()).RemoveUnnecessaryCharacters().Split(',');
+                var result = (await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).RemoveUnnecessaryCharacters().Split(',');
 
                 // Get raw data seperated
                 var unixTime = result[1].Split('e')[1];

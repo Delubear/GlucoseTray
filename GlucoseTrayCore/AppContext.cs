@@ -47,7 +47,7 @@ namespace GlucoseTrayCore
                 try
                 {
                     Application.DoEvents();
-                    await CreateIcon();
+                    await CreateIcon().ConfigureAwait(false);
                     await Task.Delay(Constants.PollingThreshold);
                 }
                 catch (Exception e)
@@ -83,7 +83,7 @@ namespace GlucoseTrayCore
                 NightscoutAccessToken = Constants.AccessToken,
                 UnitDisplayType = Constants.GlucoseUnitType
             }, _logger);
-            FetchResult = await service.GetLatestReading();
+            FetchResult = await service.GetLatestReading().ConfigureAwait(false);
             trayIcon.Text = GetGlucoseMessage();
             if (FetchResult.Value <= Constants.CriticalLowBg)
                 IsCriticalLow = true;
