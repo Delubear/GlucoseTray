@@ -38,15 +38,15 @@ namespace GlucoseTrayCore.Services
         {
             var result = fetchResult.GetFormattedStringValue();
 
-            if (isCriticalLow)
-            {
-                _logger.LogInformation("Critical low glucose read.");
-                result = "DAN";
-            }
-            else if (result == "0")
+            if (result == "0")
             {
                 _logger.LogWarning("Empty glucose result received.");
                 result = "NUL";
+            }
+            else if (isCriticalLow)
+            {
+                _logger.LogInformation("Critical low glucose read.");
+                result = "DAN";
             }
 
             Bitmap bitmapText = new Bitmap(16, 16);
