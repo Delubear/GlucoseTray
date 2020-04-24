@@ -4,6 +4,7 @@ using Dexcom.Fetch.Models;
 using GlucoseTrayCore.Services;
 using Microsoft.Extensions.Logging;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,16 +27,21 @@ namespace GlucoseTrayCore
 
             trayIcon = new NotifyIcon()
             {
-                ContextMenu = new ContextMenu(new MenuItem[] { }),
+                ContextMenuStrip = new ContextMenuStrip(new Container()),
                 Visible = true
             };
 
             if (!string.IsNullOrWhiteSpace(Constants.NightscoutUrl))
             {
                 _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
-                trayIcon.ContextMenu.MenuItems.Add(new MenuItem("Nightscout", (obj, e) => Process.Start(Constants.NightscoutUrl)));
+
+                var process = new Process();
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.FileName = Constants.NightscoutUrl;
+
+                trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
             }
-            trayIcon.ContextMenu.MenuItems.Add(new MenuItem(nameof(Exit), new EventHandler(Exit)));
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(nameof(Exit), null, new EventHandler(Exit)));
             trayIcon.DoubleClick += ShowBalloon;
             BeginCycle();
         }
