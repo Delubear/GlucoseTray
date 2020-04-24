@@ -11,12 +11,12 @@ namespace GlucoseTrayCore
         public static IConfiguration config { get; set; }
         private static IConfigurationSection AppSettings => config.GetSection("appsettings");
 
-        public static FetchMethod FetchMethod => (FetchMethod) Convert.ToInt32(AppSettings["FetchMethod"]);
+        public static FetchMethod FetchMethod => (FetchMethod)Convert.ToInt32(AppSettings["FetchMethod"]);
         public static string NightscoutUrl => AppSettings["NightscoutUrl"];
         public static string DexcomUsername => AppSettings["DexcomUsername"];
         public static string DexcomPassword => AppSettings["DexcomPassword"];
         public static string AccessToken => AppSettings["AccessToken"];
-        public static GlucoseUnitType GlucoseUnitType => (GlucoseUnitType) Convert.ToInt32(AppSettings["GlucoseUnit"]);
+        public static GlucoseUnitType GlucoseUnitType => (GlucoseUnitType)Convert.ToInt32(AppSettings["GlucoseUnit"]);
         public static double HighBg => double.Parse(AppSettings["HighBg"]);
         public static double DangerHighBg => double.Parse(AppSettings["DangerHighBg"]);
         public static double LowBg => double.Parse(AppSettings["LowBg"]);
@@ -25,7 +25,7 @@ namespace GlucoseTrayCore
         public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(AppSettings["PollingThreshold"]));
         public static string ErrorLogPath => AppSettings["ErrorLogPath"];
         public static bool EnableDebugMode => Convert.ToBoolean(AppSettings["EnableDebugMode"]);
-        public static LogEventLevel LogLevel => (LogEventLevel) Convert.ToInt32(AppSettings["LogLevel"]);
+        public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(AppSettings["LogLevel"]);
 
         public static void LogCurrentConfig(ILogger logger)
         {
