@@ -12,7 +12,7 @@ namespace GlucoseTrayCore.Services
 {
     public class IconService
     {
-        private readonly Font fontToUse = new Font("Trebuchet MS", 35, FontStyle.Regular, GraphicsUnit.Pixel);
+        private readonly Font fontToUse = new Font("Tahoma", 34, FontStyle.Regular, GraphicsUnit.Pixel);
         private readonly ILogger _logger;
 
         public IconService(ILogger logger) => _logger = logger;
@@ -35,7 +35,7 @@ namespace GlucoseTrayCore.Services
 
         internal void CreateTextIcon(GlucoseFetchResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
         {
-            var result = fetchResult.GetFormattedStringValue();
+            var result = fetchResult.GetFormattedStringValue().Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
             if (result == "0")
             {
@@ -51,7 +51,7 @@ namespace GlucoseTrayCore.Services
             var bitmapText = new Bitmap(64, 64);
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
             g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -6f, 5f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
