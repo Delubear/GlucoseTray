@@ -3,6 +3,7 @@ using Dexcom.Fetch.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -51,7 +52,7 @@ namespace GlucoseTrayCore.Services
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
             g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-            g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -6f, 0);
+            g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -6f, 5f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
