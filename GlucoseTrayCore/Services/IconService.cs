@@ -75,9 +75,7 @@ namespace GlucoseTrayCore.Services
             var value = result.Value;
             if (result.UnitDisplayType == GlucoseUnitType.MG) // Non MMOL display, use our standard offset.
                 return _standardOffset;
-            if (value > 9.9 && value < 20) // MMOL display with 3 digits, use a greater offset to fit display.
-                return -5f;
-            if (value > 19.9) // MMOL with 3 digits over 20.  Since 2 is a lot wider than 1, this requires also changing the font size from 10 to 9.
+            if (value > 9.9) // MMOL with 3 digits over 20. This requires also changing the font size from 10 to 9.
             {
                 _useDefaultFontSize = false;
                 return _standardOffset;
