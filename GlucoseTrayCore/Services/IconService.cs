@@ -3,6 +3,7 @@ using Dexcom.Fetch.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -10,7 +11,7 @@ namespace GlucoseTrayCore.Services
 {
     public class IconService
     {
-        private readonly Font fontToUse = new Font("Trebuchet MS", 10, FontStyle.Regular, GraphicsUnit.Pixel);
+        private readonly Font fontToUse = new Font("Trebuchet MS", 35, FontStyle.Regular, GraphicsUnit.Pixel);
         private readonly ILogger _logger;
 
         public IconService(ILogger logger) => _logger = logger;
@@ -20,19 +21,16 @@ namespace GlucoseTrayCore.Services
 
         public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
-        internal Brush SetColor(double val)
+        internal Brush SetColor(double val) => val switch
         {
-            return val switch
-            {
-                double n when n < Constants.HighBg && n > Constants.LowBg => new SolidBrush(Color.White),
-                double n when n >= Constants.HighBg && n < Constants.DangerHighBg => new SolidBrush(Color.Yellow),
-                double n when n >= Constants.DangerHighBg => new SolidBrush(Color.Red),
-                double n when n <= Constants.LowBg && n > Constants.DangerLowBg => new SolidBrush(Color.Yellow),
-                double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg => new SolidBrush(Color.Red),
-                double n when n <= Constants.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
-                _ => new SolidBrush(Color.White),
-            };
-        }
+            double n when n < Constants.HighBg && n > Constants.LowBg => new SolidBrush(Color.White),
+            double n when n >= Constants.HighBg && n < Constants.DangerHighBg => new SolidBrush(Color.Yellow),
+            double n when n >= Constants.DangerHighBg => new SolidBrush(Color.Red),
+            double n when n <= Constants.LowBg && n > Constants.DangerLowBg => new SolidBrush(Color.Yellow),
+            double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg => new SolidBrush(Color.Red),
+            double n when n <= Constants.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+            _ => new SolidBrush(Color.White),
+        };
 
         internal void CreateTextIcon(GlucoseFetchResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
         {
@@ -49,11 +47,11 @@ namespace GlucoseTrayCore.Services
                 result = "DAN";
             }
 
-            Bitmap bitmapText = new Bitmap(16, 16);
-            Graphics g = Graphics.FromImage(bitmapText);
+            var bitmapText = new Bitmap(64, 64);
+            var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-            g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -2, 0);
+            g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            g.DrawString(result, fontToUse, SetColor(fetchResult.Value), -6f, 0);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;

@@ -64,7 +64,7 @@ namespace Dexcom.Fetch
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var content = JsonConvert.DeserializeObject<List<NightScoutResult>>(result).FirstOrDefault();
                 fetchResult.Value = content.sgv;
-                fetchResult.Time =  DateTime.Parse(content.dateString);
+                fetchResult.Time = DateTime.Parse(content.dateString);
                 fetchResult.TrendIcon = content.direction.GetTrendArrow();
                 if (fetchResult.TrendIcon.Length > 1)
                     _logger.LogWarning($"Un-expected value for direction/Trend {content.direction}");
