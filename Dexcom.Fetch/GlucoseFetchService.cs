@@ -16,11 +16,28 @@ namespace Dexcom.Fetch
     {
         private readonly GlucoseFetchConfiguration _config;
         private readonly ILogger _logger;
+        private readonly string _dexcomShareHost;
 
         public GlucoseFetchService(GlucoseFetchConfiguration config, ILogger logger)
         {
             _config = config;
             _logger = logger;
+
+            switch (_config.DexcomServer)
+            {
+                case DexcomServerLocation.DexcomShare1:
+                    _dexcomShareHost = "share1.dexcom.com";
+                    break;
+                case DexcomServerLocation.DexcomShare2:
+                    _dexcomShareHost = "share2.dexcom.com";
+                    break;
+                case DexcomServerLocation.DexcomInternational:
+                    _dexcomShareHost = "shareous1.dexcom.com";
+                    break;
+                default:
+                    _dexcomShareHost = "share1.dexcom.com";
+                    break;
+            }
         }
 
         public async Task<GlucoseFetchResult> GetLatestReading()
@@ -88,7 +105,7 @@ namespace Dexcom.Fetch
         private async Task<GlucoseFetchResult> GetFetchResultFromDexcom(GlucoseFetchResult fetchResult)
         {
             // Get Session Id
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri("https://share1.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName"))
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{_dexcomShareHost}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
                 Content = new StringContent("{\"accountName\":\"" + _config.DexcomUsername + "\"," +
                                                  "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
@@ -100,7 +117,7 @@ namespace Dexcom.Fetch
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
-                request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
+                request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{_dexcomShareHost}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
                 var result = JsonConvert.DeserializeObject<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));

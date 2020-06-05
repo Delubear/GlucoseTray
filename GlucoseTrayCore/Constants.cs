@@ -13,6 +13,7 @@ namespace GlucoseTrayCore
 
         public static FetchMethod FetchMethod => (FetchMethod)Convert.ToInt32(AppSettings["FetchMethod"]);
         public static string NightscoutUrl => AppSettings["NightscoutUrl"];
+        public static DexcomServerLocation DexcomServer => (DexcomServerLocation)Convert.ToInt32(AppSettings["DexcomServer"]);
         public static string DexcomUsername => AppSettings["DexcomUsername"];
         public static string DexcomPassword => AppSettings["DexcomPassword"];
         public static string AccessToken => AppSettings["AccessToken"];

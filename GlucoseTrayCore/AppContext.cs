@@ -82,6 +82,7 @@ namespace GlucoseTrayCore
             IsCriticalLow = false;
             var service = new GlucoseFetchService(new GlucoseFetchConfiguration
             {
+                DexcomServer = Constants.DexcomServer,
                 DexcomUsername = Constants.DexcomUsername,
                 DexcomPassword = Constants.DexcomPassword,
                 FetchMethod = Constants.FetchMethod,
