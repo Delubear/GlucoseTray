@@ -33,6 +33,8 @@ namespace Dexcom.Fetch.Models
         /// </summary>
         public string DexcomPassword { get; set; }
 
+        public DexcomServerLocation DexcomServer { get; set; }
+
         /// <summary>
         /// MG/DL or MMOL/L
         /// </summary>
