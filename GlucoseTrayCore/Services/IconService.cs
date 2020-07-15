@@ -40,6 +40,8 @@ namespace GlucoseTrayCore.Services
         {
             var result = fetchResult.GetFormattedStringValue().Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
+            var isStale = fetchResult.IsStale(Constants.StaleResultsThreshold);
+
             if (result == "0")
             {
                 _logger.LogWarning("Empty glucose result received.");
@@ -53,7 +55,7 @@ namespace GlucoseTrayCore.Services
 
             var xOffset = CalculateXPosition(fetchResult);
             var fontSize = _useDefaultFontSize ? _defaultFontSize : _smallerFontSize;
-            _fontToUse = new Font("Roboto", fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
+            _fontToUse = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
             var bitmapText = new Bitmap(16, 16);
             var g = Graphics.FromImage(bitmapText);

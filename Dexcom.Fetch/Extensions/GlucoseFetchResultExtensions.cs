@@ -11,5 +11,19 @@ namespace Dexcom.Fetch.Extensions
                 value = fetchResult.Value.ToString("0.0");
             return value;
         }
+
+        public static bool IsStale(this GlucoseFetchResult fetchResult, int minutes)
+        {
+            var ts = System.DateTime.Now - fetchResult.Time;
+
+            return ts.TotalMinutes > minutes;
+        }
+
+        public static string StaleMessage(this GlucoseFetchResult fetchResult, int minutes)
+        {
+            var ts = System.DateTime.Now - fetchResult.Time;
+
+            return ts.TotalMinutes > minutes ? $"\r\n{ts.TotalMinutes:#} minutes ago" : "";
+        }
     }
 }

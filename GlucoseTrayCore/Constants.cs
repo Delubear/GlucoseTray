@@ -28,6 +28,8 @@ namespace GlucoseTrayCore
         public static bool EnableDebugMode => Convert.ToBoolean(AppSettings["EnableDebugMode"]);
         public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(AppSettings["LogLevel"]);
 
+        public static int StaleResultsThreshold => Convert.ToInt32(AppSettings["StaleResultsThreshold"] ?? "15");
+
         public static void LogCurrentConfig(ILogger logger)
         {
             logger.LogDebug($"{nameof(FetchMethod)}: {FetchMethod}");
@@ -45,6 +47,7 @@ namespace GlucoseTrayCore
             logger.LogDebug($"{nameof(ErrorLogPath)}: {ErrorLogPath}");
             logger.LogDebug($"{nameof(EnableDebugMode)}: {EnableDebugMode}");
             logger.LogDebug($"{nameof(LogLevel)}: {LogLevel}");
+            logger.LogDebug($"{nameof(StaleResultsThreshold)}: {StaleResultsThreshold}");
         }
     }
 }
