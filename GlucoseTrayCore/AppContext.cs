@@ -99,6 +99,6 @@ namespace GlucoseTrayCore
 
         private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(), ToolTipIcon.Info);
 
-        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue()}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}";
+        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue()}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.TrendIcon}{FetchResult.StaleMessage(Constants.StaleResultsThreshold)}";
     }
 }
