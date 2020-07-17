@@ -25,9 +25,7 @@ jobs:
       uses: ashley-taylor/read-json-property-action@v1.0
       with:
         # path to json file
-        path: ./GlucoseTraycore/
-        # json input
-        json: appsettings.json
+        path: ./GlucoseTraycore/appsettings.json
         # which property to read
         property: Version
         outputs: AppVersion
