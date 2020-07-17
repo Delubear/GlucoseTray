@@ -29,10 +29,15 @@ jobs:
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
         prop_path: appsettings.Version
-    - name: Publish Release
-      uses: eregon/publish-release@v1.0.3
+        
+    - name: Create a Release
+      uses: elgohr/Github-Release-Action@v3.1
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        # The ID of the draft release to publish
-        release_id: ${{ steps.read_property.outputs.prop }}
+        GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+      with: 
+        files: |
+          ./GlucoseTrayCore\bin\Release\netcoreapp3.1\win-x64\publish\appsettings.json
+          ./GlucoseTrayCore\bin\Release\netcoreapp3.1\win-x64\publish\GlucoseTrayCore.exe
+        name: 'Glucose Tray - ${{steps.read_property.outputs.prop}}'
+        draft: false
+        prerelease: false
