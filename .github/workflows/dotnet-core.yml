@@ -29,16 +29,15 @@ jobs:
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
         prop_path: appsettings.Version
-    
     - name: Create Release
       uses: ncipollo/release-action@v1.7.1
       with:
         # An optional flag which indicates if we should update a release if it already exists. Defaults to false.
         allowUpdates: true
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        artifact: ./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/appsettings.json,./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/GlucoseTrayCore.exe
+        #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        #artifacts: # optional, default is 
+        artifacts: './GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/appsettings.json,./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/GlucoseTrayCore.exe'
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
@@ -50,7 +49,7 @@ jobs:
         # Optionally marks this release as a draft release. Set to true to enable.
         draft: false
         # An optional name for the release. If this is omitted the tag will be used.
-        name: 'Glucose Tray ${{ secrets.GITHUB_TOKEN }}'
+        name: 'Glucose Tray ${{steps.version.outputs.prop}}'
         # Indicates if the release body should be omitted.
         #omitBody: # optional, default is false
         # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
