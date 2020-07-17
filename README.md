@@ -1,5 +1,3 @@
-Dexcom.Fetch Nuget: <img src="https://ci.appveyor.com/api/projects/status/xvjv4m8p6lo9agt8?svg=true" /> 
-
 # GlucoseTray
 Tray Icon for displaying current BG information in taskbar.
 
