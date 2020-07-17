@@ -29,11 +29,10 @@ jobs:
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
         prop_path: appsettings.Version
-        
     - name: Create a Release
       uses: softprops/action-gh-release@v0.1.5
       env:
-        GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with: 
         files: |
           ./GlucoseTrayCore\bin\Release\netcoreapp3.1\win-x64\publish\appsettings.json
