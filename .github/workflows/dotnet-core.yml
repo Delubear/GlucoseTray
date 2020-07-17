@@ -31,7 +31,7 @@ jobs:
         prop_path: appsettings.Version
         
     - name: Create a Release
-      uses: elgohr/Github-Release-Action@v3.1
+      uses: softprops/action-gh-release@v0.1.5
       env:
         GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
       with: 
