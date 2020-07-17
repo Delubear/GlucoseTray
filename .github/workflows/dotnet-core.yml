@@ -30,11 +30,41 @@ jobs:
         # which property to read
         prop_path: appsettings.Version
     
-    - name: GitHub Tag and Release
-      uses: kevinhwang/action-github-tag-release@v1
+    - name: Create Release
+      uses: ncipollo/release-action@v1.7.1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        # Name of release. Defaults to %YYYY.%mm.%dd-${GIT_HASH}-RELEASE
+        # An optional flag which indicates if we should update a release if it already exists. Defaults to false.
+        allowUpdates: true
+        # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
+        artifact: ./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/appsettings.json,./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/GlucoseTrayCore.exe
+        # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
+        #artifacts: # optional, default is 
+        # The content type of the artifact. Defaults to raw
+        #artifactContentType: # optional, default is 
+        # An optional body for the release.
+        #body: # optional, default is 
+        # An optional body file for the release. This should be the path to the file
+        #bodyFile: # optional, default is 
+        # An optional commit reference. This will be used to create the tag if it does not exist.
+        #commit: # optional, default is 
+        # Optionally marks this release as a draft release. Set to true to enable.
+        draft: false
+        # An optional name for the release. If this is omitted the tag will be used.
         name: 'Glucose Tray ${{ secrets.GITHUB_TOKEN }}'
-        path: ./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/
+        # Indicates if the release body should be omitted.
+        #omitBody: # optional, default is false
+        # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
+        #omitBodyDuringUpdate: # optional, default is false
+        # Indicates if the release name should be omitted.
+        #omitName: # optional, default is false
+        # Indicates if the release name should be omitted during updates. The name will still be applied for newly created releases. This will preserve the existing name during updates.
+        #omitNameDuringUpdate: # optional, default is false
+        # Optionally marks this release as prerelease. Set to true to enable.
+        prerelease: false
+        # Indicates if existing release artifacts should be replaced. Defaults to true.
+        replacesArtifacts: true
+        # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
+        #tag: ''
+        # The Github token.
+        token: ${{ secrets.GITHUB_TOKEN }}
 
