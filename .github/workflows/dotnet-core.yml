@@ -39,5 +39,6 @@ jobs:
           ./GlucoseTrayCore\bin\Release\netcoreapp3.1\win-x64\publish\appsettings.json
           ./GlucoseTrayCore\bin\Release\netcoreapp3.1\win-x64\publish\GlucoseTrayCore.exe
         name: 'Glucose Tray - ${{steps.read_property.outputs.prop}}'
+        tag_name: ${{steps.read_property.outputs.prop}}
         draft: false
         prerelease: false
