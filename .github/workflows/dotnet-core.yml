@@ -28,7 +28,7 @@ jobs:
         # path to json file
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
-        prop_path: Version
+        prop_path: appsettings.Version
     - name: Publish Release
       uses: eregon/publish-release@v1.0.3
       env:
