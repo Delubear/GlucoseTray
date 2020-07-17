@@ -5,7 +5,7 @@
     <title>Dexcom.Fetch</title>
     <author>Chris Baker</author>
     <description>Use to easily get your latest real-time Glucose reading from Dexcom or your own Nightscout instance.</description>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
