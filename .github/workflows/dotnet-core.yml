@@ -22,17 +22,17 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: read JSON property
-      uses: ashley-taylor/read-json-property-action@v1.0
+      id: read_property
+      uses: notiz-dev/github-action-json-property@release
       with:
         # path to json file
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
-        property: Version
-        outputs: AppVersion
+        prop_path: Version
     - name: Publish Release
       uses: eregon/publish-release@v1.0.3
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         # The ID of the draft release to publish
-        release_id: ${{ steps.read_property.outputs.value }}
+        release_id: ${{ steps.read_property.outputs.prop }}
