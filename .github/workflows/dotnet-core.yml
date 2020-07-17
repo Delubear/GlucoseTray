@@ -29,8 +29,12 @@ jobs:
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
         prop_path: appsettings.Version
-    - name: Release
-      uses: fnkr/github-action-ghr@v1
-      env:
-        GHR_PATH: ./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: GitHub Tag and Release
+      uses: kevinhwang/action-github-tag-release@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # Name of release. Defaults to %YYYY.%mm.%dd-${GIT_HASH}-RELEASE
+        name: 'Glucose Tray ${{ secrets.GITHUB_TOKEN }}'
+        path: ./GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/
+
