@@ -29,6 +29,10 @@ jobs:
         path: ./GlucoseTraycore/appsettings.json
         # which property to read
         prop_path: appsettings.Version
+    - name: Tag
+      run: |
+        git tag ${{steps.read_property.outputs.prop}}
+        git push origin ${{steps.read_property.outputs.prop}}
     - name: Create a Release
       uses: softprops/action-gh-release@v0.1.5
       env:
