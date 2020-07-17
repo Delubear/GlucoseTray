@@ -21,6 +21,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore
     - name: read JSON property
       id: version
       uses: notiz-dev/github-action-json-property@release
