@@ -62,11 +62,21 @@ namespace Dexcom.Fetch
                 fetchResult = GetDefaultFetchResult();
             }
 
-            fetchResult.UnitDisplayType = _config.UnitDisplayType;
-            if (fetchResult.UnitDisplayType == GlucoseUnitType.MMOL && !fetchResult.Value.ToString().Contains(".")) // If decimal value, then it is already MMOL
-                fetchResult.Value /= 18;
-
             return fetchResult;
+        }
+
+        private void CalculateValues(GlucoseFetchResult result, double value)
+        {
+            if (value.ToString().Contains("."))
+            {
+                result.MmolValue = value;
+                result.MgValue = Convert.ToInt32(value *= 18);
+            }
+            else
+            {
+                result.MgValue = Convert.ToInt32(value);
+                result.MmolValue = value /= 18;
+            }
         }
 
         private async Task<GlucoseFetchResult> GetFetchResultFromNightscout(GlucoseFetchResult fetchResult)
@@ -80,10 +90,10 @@ namespace Dexcom.Fetch
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var content = JsonConvert.DeserializeObject<List<NightScoutResult>>(result).FirstOrDefault();
-                fetchResult.Value = content.sgv;
+                CalculateValues(fetchResult, content.sgv);
                 fetchResult.Time = DateTime.Parse(content.dateString);
-                fetchResult.TrendIcon = content.direction.GetTrendArrow();
-                if (fetchResult.TrendIcon.Length > 1)
+                fetchResult.Trend = content.direction.GetTrend();
+                if (fetchResult.Trend == TrendResult.Unknown)
                     _logger.LogWarning($"Un-expected value for direction/Trend {content.direction}");
 
                 response.Dispose();
@@ -99,6 +109,7 @@ namespace Dexcom.Fetch
                 request.Dispose();
             }
 
+            fetchResult.Source = FetchMethod.NightscoutApi;
             return fetchResult;
         }
 
@@ -123,9 +134,9 @@ namespace Dexcom.Fetch
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;
 
-                fetchResult.Value = result.Value;
+                CalculateValues(fetchResult, result.Value);
                 fetchResult.Time = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime : DateTime.MinValue;
-                fetchResult.TrendIcon = trend.GetTrendArrow();
+                fetchResult.Trend = (TrendResult)trend;
                 response.Dispose();
             }
             catch (Exception ex)
@@ -139,14 +150,16 @@ namespace Dexcom.Fetch
                 request.Dispose();
             }
 
+            fetchResult.Source = FetchMethod.DexcomShare;
             return fetchResult;
         }
 
         private GlucoseFetchResult GetDefaultFetchResult() => new GlucoseFetchResult
         {
-            Value = 0,
+            MmolValue = 0,
+            MgValue = 0,
             Time = DateTime.Now,
-            TrendIcon = "",
+            Trend = TrendResult.Unknown,
             ErrorResult = true
         };
     }

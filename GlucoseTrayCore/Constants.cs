@@ -24,7 +24,7 @@ namespace GlucoseTrayCore
         public static double DangerLowBg => double.Parse(AppSettings["DangerLowBg"]);
         public static double CriticalLowBg => double.Parse(AppSettings["CriticalLowBg"]);
         public static TimeSpan PollingThreshold => TimeSpan.FromSeconds(Convert.ToInt32(AppSettings["PollingThreshold"]));
-        public static string ErrorLogPath => AppSettings["ErrorLogPath"];
+        public static string DatabaseLocation => AppSettings["DatabaseLocation"];
         public static bool EnableDebugMode => Convert.ToBoolean(AppSettings["EnableDebugMode"]);
         public static LogEventLevel LogLevel => (LogEventLevel)Convert.ToInt32(AppSettings["LogLevel"]);
 
@@ -44,7 +44,7 @@ namespace GlucoseTrayCore
             logger.LogDebug($"{nameof(DangerLowBg)}: {DangerLowBg}");
             logger.LogDebug($"{nameof(CriticalLowBg)}: {CriticalLowBg}");
             logger.LogDebug($"{nameof(PollingThreshold)}: {PollingThreshold}");
-            logger.LogDebug($"{nameof(ErrorLogPath)}: {ErrorLogPath}");
+            logger.LogDebug($"{nameof(DatabaseLocation)}: {DatabaseLocation}");
             logger.LogDebug($"{nameof(EnableDebugMode)}: {EnableDebugMode}");
             logger.LogDebug($"{nameof(LogLevel)}: {LogLevel}");
             logger.LogDebug($"{nameof(StaleResultsThreshold)}: {StaleResultsThreshold}");

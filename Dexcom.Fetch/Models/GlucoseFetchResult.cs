@@ -6,14 +6,14 @@ namespace Dexcom.Fetch.Models
     public class GlucoseFetchResult
     {
         /// <summary>
-        /// Glucose value
+        /// MMOL Glucose value
         /// </summary>
-        public double Value { get; set; }
+        public double MmolValue { get; set; }
 
         /// <summary>
-        /// Arrow indicating direction
+        /// MG Glucose value
         /// </summary>
-        public string TrendIcon { get; set; }
+        public int MgValue { get; set; }
 
         /// <summary>
         /// Time of result
@@ -25,6 +25,14 @@ namespace Dexcom.Fetch.Models
         /// </summary>
         public bool ErrorResult { get; set; }
 
-        public GlucoseUnitType UnitDisplayType { get; set; }
+        /// <summary>
+        /// Where result was received from
+        /// </summary>
+        public FetchMethod Source { get; set; }
+
+        /// <summary>
+        /// The current BG trend
+        /// </summary>
+        public TrendResult Trend { get; set; }
     }
 }
