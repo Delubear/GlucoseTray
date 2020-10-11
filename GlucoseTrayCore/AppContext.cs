@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -108,6 +109,9 @@ namespace GlucoseTrayCore
         private void LogResultToDb(GlucoseFetchResult result)
         {
             using var db = new SQLiteDbContext();
+
+            if (db.GlucoseResults.Any(g => g.DateTimeUTC == result.Time.ToUniversalTime()))
+                return;
 
             var model = new GlucoseResult
             {
