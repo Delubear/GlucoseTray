@@ -110,7 +110,7 @@ namespace GlucoseTrayCore
         {
             using var db = new SQLiteDbContext();
 
-            if (db.GlucoseResults.Any(g => g.DateTimeUTC == result.Time.ToUniversalTime()))
+            if (db.GlucoseResults.Any(g => g.DateTimeUTC == result.Time.ToUniversalTime() && !result.ErrorResult && g.MgValue == result.MgValue))
                 return;
 
             var model = new GlucoseResult
