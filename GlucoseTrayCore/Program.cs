@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -31,17 +32,19 @@ namespace GlucoseTrayCore
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .ConfigureLogging((context, logging) =>
                 {
-                    var switcher = new LoggingLevelSwitch(LogEventLevel.Verbose);
                     Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(switcher)
+                    .MinimumLevel.Is(Constants.LogLevel)
                     .WriteTo.SQLite(Constants.DatabaseLocation, "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180))
                     .CreateLogger();
-                    switcher.MinimumLevel = Constants.LogLevel;
                     logging.AddSerilog(Log.Logger);
+                    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning); // Limit excessive EF logging.
                 })
                 .Build();
 
             var services = host.Services;
+
+            // Logger setup creates Database before we have a chance to run EnsureCreated with no table which would normally handle the GlucoseResults table.
+            // Manually call CreateTables afterwards to prevent crashes from table not existing since we check it before writing our first record.
             var context = services.GetRequiredService<IGlucoseTrayDbContext>();
             context.Database.EnsureCreated();
             try
@@ -62,21 +65,20 @@ namespace GlucoseTrayCore
         {
             Constants.config = configuration;
             
-            services.AddLogging(o => o.AddSerilog())
-            .AddScoped<AppContext, AppContext>()
-            .AddScoped<IconService, IconService>()
-            .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
-            .AddScoped<GlucoseFetchConfiguration, GlucoseFetchConfiguration>(o => new GlucoseFetchConfiguration
-            {
-                DexcomServer = Constants.DexcomServer,
-                DexcomUsername = Constants.DexcomUsername,
-                DexcomPassword = Constants.DexcomPassword,
-                FetchMethod = Constants.FetchMethod,
-                NightscoutUrl = Constants.NightscoutUrl,
-                NightscoutAccessToken = Constants.AccessToken,
-                UnitDisplayType = Constants.GlucoseUnitType
-            })
-            .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Constants.DatabaseLocation));
+            services.AddScoped<AppContext, AppContext>()
+                    .AddScoped<IconService, IconService>()
+                    .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
+                    .AddScoped<GlucoseFetchConfiguration, GlucoseFetchConfiguration>(o => new GlucoseFetchConfiguration
+                    {
+                        DexcomServer = Constants.DexcomServer,
+                        DexcomUsername = Constants.DexcomUsername,
+                        DexcomPassword = Constants.DexcomPassword,
+                        FetchMethod = Constants.FetchMethod,
+                        NightscoutUrl = Constants.NightscoutUrl,
+                        NightscoutAccessToken = Constants.AccessToken,
+                        UnitDisplayType = Constants.GlucoseUnitType
+                    })
+                    .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Constants.DatabaseLocation));
         }
     }
 }
