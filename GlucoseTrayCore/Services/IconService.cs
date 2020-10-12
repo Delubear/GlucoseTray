@@ -11,14 +11,14 @@ namespace GlucoseTrayCore.Services
 {
     public class IconService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<IconService> _logger;
         private readonly float _standardOffset = -3f;
         private readonly int _defaultFontSize = 10;
         private readonly int _smallerFontSize = 9;
         private Font _fontToUse;
         private bool _useDefaultFontSize = true;
 
-        public IconService(ILogger logger) => _logger = logger;
+        public IconService(ILogger<IconService> logger) => _logger = logger;
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);

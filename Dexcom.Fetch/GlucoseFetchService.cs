@@ -12,13 +12,18 @@ using System.Threading.Tasks;
 
 namespace Dexcom.Fetch
 {
-    public class GlucoseFetchService
+    public interface IGlucoseFetchService
+    {
+        Task<GlucoseFetchResult> GetLatestReading();
+    }
+
+    public class GlucoseFetchService : IGlucoseFetchService
     {
         private readonly GlucoseFetchConfiguration _config;
-        private readonly ILogger _logger;
+        private readonly ILogger<IGlucoseFetchService> _logger;
         private readonly string _dexcomShareHost;
 
-        public GlucoseFetchService(GlucoseFetchConfiguration config, ILogger logger)
+        public GlucoseFetchService(GlucoseFetchConfiguration config, ILogger<IGlucoseFetchService> logger)
         {
             _config = config;
             _logger = logger;

@@ -1,14 +1,24 @@
 ﻿using Dexcom.Fetch.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 
 namespace GlucoseTrayCore.Data
 {
-    public class SQLiteDbContext : DbContext
+    public interface IGlucoseTrayDbContext
     {
-        public DbSet<GlucoseResult> GlucoseResults { get; set; }
+        DbSet<GlucoseResult> GlucoseResults { get; set; }
+        int SaveChanges();
+        DatabaseFacade Database { get; }
+    }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite("Data Source=" + Constants.DatabaseLocation);
+    public class SQLiteDbContext : DbContext, IGlucoseTrayDbContext
+    {
+        public SQLiteDbContext(DbContextOptions<SQLiteDbContext> options) : base(options)
+        {
+        }
+
+        public DbSet<GlucoseResult> GlucoseResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
