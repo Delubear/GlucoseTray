@@ -13,6 +13,7 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore
@@ -25,7 +26,7 @@ namespace GlucoseTrayCore
             Application.SetCompatibleTextRenderingDefault(false);
 
             var host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
+                .ConfigureAppConfiguration((context, builder) => builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .ConfigureLogging((context, logging) =>
                 {
