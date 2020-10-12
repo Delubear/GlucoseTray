@@ -35,9 +35,9 @@ namespace GlucoseTrayCore
                     Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Is(Constants.LogLevel)
                     .WriteTo.SQLite(Constants.DatabaseLocation, "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180))
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Limit EF/MS logging noise
                     .CreateLogger();
                     logging.AddSerilog(Log.Logger);
-                    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning); // Limit excessive EF logging.
                 })
                 .Build();
 

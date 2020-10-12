@@ -1,6 +1,9 @@
 ﻿namespace Dexcom.Fetch.Models
 {
-    public class NightScoutResult
+    /// <summary>
+    /// Class that maps to the JSON from NightScout queries.
+    /// </summary>
+    internal class NightScoutResult
     {
         public string _id { get; set; }
         public double sgv { get; set; }
