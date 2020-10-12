@@ -2,6 +2,7 @@
 using Dexcom.Fetch.Models;
 using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Sqlite.Storage.Internal;
@@ -43,8 +44,16 @@ namespace GlucoseTrayCore
             var services = host.Services;
             var context = services.GetRequiredService<IGlucoseTrayDbContext>();
             context.Database.EnsureCreated();
-            var creatorService = (SqliteDatabaseCreator) context.Database.GetService<IDatabaseCreator>();
-            creatorService.CreateTables();
+            try
+            {
+                var creatorService = (SqliteDatabaseCreator) context.Database.GetService<IDatabaseCreator>();
+                creatorService.CreateTables();
+            }
+            catch (SqliteException)
+            {
+                Log.Logger.Verbose("Tables already created.");
+            }
+
             var app = services.GetRequiredService<AppContext>();
             Application.Run(app);
         }
