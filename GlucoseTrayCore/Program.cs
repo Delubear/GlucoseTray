@@ -1,6 +1,4 @@
-﻿using Dexcom.Fetch;
-using Dexcom.Fetch.Models;
-using GlucoseTrayCore.Data;
+﻿using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore

@@ -1,6 +1,6 @@
-﻿using Dexcom.Fetch.Enums;
+﻿using GlucoseTrayCore.Enums;
 
-namespace Dexcom.Fetch.Extensions
+namespace GlucoseTrayCore.Extensions
 {
     public static class StringExtensions
     {

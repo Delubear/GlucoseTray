@@ -1,4 +1,4 @@
-﻿namespace Dexcom.Fetch.Enums
+﻿namespace GlucoseTrayCore.Enums
 {
     public enum GlucoseUnitType
     {

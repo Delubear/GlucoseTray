@@ -1,4 +1,4 @@
-﻿using Dexcom.Fetch.Enums;
+﻿using GlucoseTrayCore.Enums;
 using Serilog.Events;
 using System;
 

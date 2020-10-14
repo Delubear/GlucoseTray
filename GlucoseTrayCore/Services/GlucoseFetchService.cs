@@ -1,8 +1,4 @@
-﻿using Dexcom.Fetch.Enums;
-using Dexcom.Fetch.Extensions;
-using Dexcom.Fetch.Models;
-using GlucoseTrayCore;
-using GlucoseTrayCore.Data;
+﻿using GlucoseTrayCore.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -12,8 +8,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using GlucoseTrayCore.Extensions;
+using GlucoseTrayCore.Models;
 
-namespace Dexcom.Fetch
+namespace GlucoseTrayCore.Services
 {
     public interface IGlucoseFetchService
     {

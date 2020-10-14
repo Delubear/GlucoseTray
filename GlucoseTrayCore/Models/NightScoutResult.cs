@@ -1,4 +1,4 @@
-﻿namespace Dexcom.Fetch.Models
+﻿namespace GlucoseTrayCore.Models
 {
     /// <summary>
     /// Class that maps to the JSON from NightScout queries.

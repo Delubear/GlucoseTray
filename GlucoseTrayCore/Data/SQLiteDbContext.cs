@@ -1,4 +1,5 @@
-﻿using Dexcom.Fetch.Enums;
+﻿using GlucoseTrayCore.Enums;
+using GlucoseTrayCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;

@@ -1,8 +1,7 @@
-﻿using Dexcom.Fetch.Enums;
-using Dexcom.Fetch.Models;
-using GlucoseTrayCore.Data;
+﻿using GlucoseTrayCore.Enums;
+using GlucoseTrayCore.Models;
 
-namespace Dexcom.Fetch.Extensions
+namespace GlucoseTrayCore.Extensions
 {
     public static class GlucoseFetchResultExtensions
     {

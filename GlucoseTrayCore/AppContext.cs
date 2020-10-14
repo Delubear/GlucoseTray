@@ -1,8 +1,5 @@
-﻿using Dexcom.Fetch;
-using Dexcom.Fetch.Enums;
-using Dexcom.Fetch.Extensions;
-using Dexcom.Fetch.Models;
-using GlucoseTrayCore.Data;
+﻿using GlucoseTrayCore.Data;
+using GlucoseTrayCore.Enums;
 using GlucoseTrayCore.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,6 +9,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GlucoseTrayCore.Extensions;
+using GlucoseTrayCore.Models;
 
 namespace GlucoseTrayCore
 {
