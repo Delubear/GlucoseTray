@@ -2,6 +2,7 @@
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
 using GlucoseTrayCore;
+using GlucoseTrayCore.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace Dexcom.Fetch
 {
     public interface IGlucoseFetchService
     {
-        Task<GlucoseFetchResult> GetLatestReading();
+        Task<GlucoseResult> GetLatestReading();
     }
 
     public class GlucoseFetchService : IGlucoseFetchService
@@ -47,9 +48,9 @@ namespace Dexcom.Fetch
             }
         }
 
-        public async Task<GlucoseFetchResult> GetLatestReading()
+        public async Task<GlucoseResult> GetLatestReading()
         {
-            var fetchResult = new GlucoseFetchResult();
+            var fetchResult = new GlucoseResult();
 
             try
             {
@@ -72,7 +73,7 @@ namespace Dexcom.Fetch
             return fetchResult;
         }
 
-        private void CalculateValues(GlucoseFetchResult result, double value)
+        private void CalculateValues(GlucoseResult result, double value)
         {
             if (value.ToString().Contains("."))
             {
@@ -86,7 +87,7 @@ namespace Dexcom.Fetch
             }
         }
 
-        private async Task<GlucoseFetchResult> GetFetchResultFromNightscout(GlucoseFetchResult fetchResult)
+        private async Task<GlucoseResult> GetFetchResultFromNightscout(GlucoseResult fetchResult)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.AccessToken) ? $"&token={_options.AccessToken}" : "")));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
@@ -98,7 +99,7 @@ namespace Dexcom.Fetch
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var content = JsonConvert.DeserializeObject<List<NightScoutResult>>(result).FirstOrDefault();
                 CalculateValues(fetchResult, content.sgv);
-                fetchResult.Time = DateTime.Parse(content.dateString);
+                fetchResult.DateTimeUTC = DateTime.Parse(content.dateString).ToUniversalTime();
                 fetchResult.Trend = content.direction.GetTrend();
                 if (fetchResult.Trend == TrendResult.Unknown)
                     _logger.LogWarning($"Un-expected value for direction/Trend {content.direction}");
@@ -120,7 +121,7 @@ namespace Dexcom.Fetch
             return fetchResult;
         }
 
-        private async Task<GlucoseFetchResult> GetFetchResultFromDexcom(GlucoseFetchResult fetchResult)
+        private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)
         {
             // Get Session Id
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{_dexcomShareHost}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
@@ -142,7 +143,7 @@ namespace Dexcom.Fetch
                 var trend = result.Trend;
 
                 CalculateValues(fetchResult, result.Value);
-                fetchResult.Time = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).LocalDateTime : DateTime.MinValue;
+                fetchResult.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
                 fetchResult.Trend = (TrendResult)trend;
                 response.Dispose();
             }
@@ -161,13 +162,13 @@ namespace Dexcom.Fetch
             return fetchResult;
         }
 
-        private GlucoseFetchResult GetDefaultFetchResult() => new GlucoseFetchResult
+        private GlucoseResult GetDefaultFetchResult() => new GlucoseResult
         {
             MmolValue = 0,
             MgValue = 0,
-            Time = DateTime.Now,
+            DateTimeUTC = DateTime.Now.ToUniversalTime(),
             Trend = TrendResult.Unknown,
-            ErrorResult = true
+            WasError = true
         };
     }
 }

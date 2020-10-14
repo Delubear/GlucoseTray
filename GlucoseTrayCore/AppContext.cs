@@ -24,7 +24,7 @@ namespace GlucoseTrayCore
         private readonly NotifyIcon trayIcon;
         private bool IsCriticalLow;
 
-        private GlucoseFetchResult FetchResult;
+        private GlucoseResult FetchResult;
         private readonly IconService _iconService;
 
         public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptions<GlucoseTraySettings> options)
@@ -100,24 +100,14 @@ namespace GlucoseTrayCore
 
         private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(), ToolTipIcon.Info);
 
-        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue(_options.GlucoseUnit)}   {FetchResult.Time.ToLongTimeString()}  {FetchResult.Trend.GetTrendArrow()}{FetchResult.StaleMessage(_options.StaleResultsThreshold)}";
+        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue(_options.GlucoseUnit)}   {FetchResult.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {FetchResult.Trend.GetTrendArrow()}{FetchResult.StaleMessage(_options.StaleResultsThreshold)}";
 
-        private void LogResultToDb(GlucoseFetchResult result)
+        private void LogResultToDb(GlucoseResult result)
         {
-            if (_context.GlucoseResults.Any(g => g.DateTimeUTC == result.Time.ToUniversalTime() && !result.ErrorResult && g.MgValue == result.MgValue))
+            if (_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC.ToUniversalTime() && !result.WasError && g.MgValue == result.MgValue))
                 return;
 
-            var model = new GlucoseResult
-            {
-                DateTimeUTC = result.Time.ToUniversalTime(),
-                Source = result.Source,
-                MgValue = result.MgValue,
-                MmolValue = result.MmolValue,
-                Trend = result.Trend,
-                WasError = result.ErrorResult
-            };
-
-            _context.GlucoseResults.Add(model);
+            _context.GlucoseResults.Add(result);
             _context.SaveChanges();
         }
     }

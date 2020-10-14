@@ -1,6 +1,7 @@
 ﻿using Dexcom.Fetch.Enums;
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
+using GlucoseTrayCore.Data;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -42,7 +43,7 @@ namespace GlucoseTrayCore.Services
             _ => new SolidBrush(Color.White),
         };
 
-        internal void CreateTextIcon(GlucoseFetchResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
+        internal void CreateTextIcon(GlucoseResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
         {
             var result = fetchResult.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
@@ -77,7 +78,7 @@ namespace GlucoseTrayCore.Services
             myIcon.Dispose();
         }
 
-        private float CalculateXPosition(GlucoseFetchResult result)
+        private float CalculateXPosition(GlucoseResult result)
         {
             _useDefaultFontSize = true;
             var value = _options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
