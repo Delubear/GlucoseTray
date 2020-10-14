@@ -22,11 +22,13 @@ namespace GlucoseTrayCore.Services
     {
         private readonly GlucoseTraySettings _options;
         private readonly ILogger<IGlucoseFetchService> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public GlucoseFetchService(IOptions<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger)
+        public GlucoseFetchService(IOptions<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _options = options.Value;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<GlucoseResult> GetLatestReading()
@@ -79,7 +81,7 @@ namespace GlucoseTrayCore.Services
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.AccessToken) ? $"&token={_options.AccessToken}" : "")));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-            var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             try
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
@@ -100,7 +102,6 @@ namespace GlucoseTrayCore.Services
             }
             finally
             {
-                client.Dispose();
                 request.Dispose();
             }
 
@@ -126,7 +127,7 @@ namespace GlucoseTrayCore.Services
                                                  "\"password\":\"" + _options.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
             };
 
-            var client = new HttpClient();
+            var client = _httpClientFactory.CreateClient();
             try
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
@@ -149,7 +150,6 @@ namespace GlucoseTrayCore.Services
             }
             finally
             {
-                client.Dispose();
                 request.Dispose();
             }
 

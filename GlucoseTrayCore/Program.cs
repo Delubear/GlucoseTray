@@ -63,6 +63,7 @@ namespace GlucoseTrayCore
         {
             Configuration = configuration.GetSection("appsettings");
             services.Configure<GlucoseTraySettings>(Configuration)
+                    .AddHttpClient()
                     .AddScoped<AppContext, AppContext>()
                     .AddScoped<IconService, IconService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
