@@ -60,7 +60,9 @@ namespace GlucoseTrayCore.Services
 
         private void CalculateValues(GlucoseResult result, double value)
         {
-            if (value.ToString().Contains("."))
+            // 25 MMOL is > 540 MG, most readers wont go below 40 or above 400.
+            // Catch any full value MMOL readings that may be perfect integers that are delivered without a '.', i.e., 7.0 coming in as just 7
+            if (value.ToString().Contains(".") || value <= 30) 
             {
                 result.MmolValue = value;
                 result.MgValue = Convert.ToInt32(value *= 18);
