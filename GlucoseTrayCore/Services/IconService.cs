@@ -2,6 +2,7 @@
 using Dexcom.Fetch.Extensions;
 using Dexcom.Fetch.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -12,13 +13,18 @@ namespace GlucoseTrayCore.Services
     public class IconService
     {
         private readonly ILogger<IconService> _logger;
+        private readonly GlucoseTraySettings _options;
         private readonly float _standardOffset = -3f;
         private readonly int _defaultFontSize = 10;
         private readonly int _smallerFontSize = 9;
         private Font _fontToUse;
         private bool _useDefaultFontSize = true;
 
-        public IconService(ILogger<IconService> logger) => _logger = logger;
+        public IconService(ILogger<IconService> logger, IOptions<GlucoseTraySettings> options)
+        {
+            _logger = logger;
+            _options = options.Value;
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
@@ -27,20 +33,20 @@ namespace GlucoseTrayCore.Services
 
         internal Brush SetColor(double val) => val switch
         {
-            double n when n < Constants.HighBg && n > Constants.LowBg => new SolidBrush(Color.White),
-            double n when n >= Constants.HighBg && n < Constants.DangerHighBg => new SolidBrush(Color.Yellow),
-            double n when n >= Constants.DangerHighBg => new SolidBrush(Color.Red),
-            double n when n <= Constants.LowBg && n > Constants.DangerLowBg => new SolidBrush(Color.Yellow),
-            double n when n <= Constants.DangerLowBg && n > Constants.CriticalLowBg => new SolidBrush(Color.Red),
-            double n when n <= Constants.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+            double n when n < _options.HighBg && n > _options.LowBg => new SolidBrush(Color.White),
+            double n when n >= _options.HighBg && n < _options.DangerHighBg => new SolidBrush(Color.Yellow),
+            double n when n >= _options.DangerHighBg => new SolidBrush(Color.Red),
+            double n when n <= _options.LowBg && n > _options.DangerLowBg => new SolidBrush(Color.Yellow),
+            double n when n <= _options.DangerLowBg && n > _options.CriticalLowBg => new SolidBrush(Color.Red),
+            double n when n <= _options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
             _ => new SolidBrush(Color.White),
         };
 
         internal void CreateTextIcon(GlucoseFetchResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
         {
-            var result = fetchResult.GetFormattedStringValue(Constants.GlucoseUnitType).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
+            var result = fetchResult.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
-            var isStale = fetchResult.IsStale(Constants.StaleResultsThreshold);
+            var isStale = fetchResult.IsStale(_options.StaleResultsThreshold);
 
             if (result == "0")
             {
@@ -60,7 +66,7 @@ namespace GlucoseTrayCore.Services
             var bitmapText = new Bitmap(16, 16);
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.DrawString(result, _fontToUse, SetColor(Constants.GlucoseUnitType == GlucoseUnitType.MG ? fetchResult.MgValue : fetchResult.MmolValue), xOffset, 0f);
+            g.DrawString(result, _fontToUse, SetColor(_options.GlucoseUnit == GlucoseUnitType.MG ? fetchResult.MgValue : fetchResult.MmolValue), xOffset, 0f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
@@ -74,8 +80,8 @@ namespace GlucoseTrayCore.Services
         private float CalculateXPosition(GlucoseFetchResult result)
         {
             _useDefaultFontSize = true;
-            var value = Constants.GlucoseUnitType == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
-            if (Constants.GlucoseUnitType == GlucoseUnitType.MG) // Non MMOL display, use our standard offset.
+            var value = _options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
+            if (_options.GlucoseUnit == GlucoseUnitType.MG) // Non MMOL display, use our standard offset.
                 return _standardOffset;
             if (value > 9.9) // MMOL with 3 digits over 20. This requires also changing the font size from 10 to 9.
             {

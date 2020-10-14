@@ -40,8 +40,4 @@
     <PackageReference Include="System.Text.Json" Version="4.7.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Dexcom.Fetch\Dexcom.Fetch.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -16,12 +16,15 @@ using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore
 {
     internal class Program
     {
+        private static IConfigurationSection Configuration { get; set; }
+
         private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
@@ -33,8 +36,8 @@ namespace GlucoseTrayCore
                 .ConfigureLogging((context, logging) =>
                 {
                     Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Is(Constants.LogLevel)
-                    .WriteTo.SQLite(Constants.DatabaseLocation, "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180))
+                    .MinimumLevel.Is(Configuration.GetValue<LogEventLevel>(nameof(GlucoseTraySettings.LogLevel)))
+                    .WriteTo.SQLite(Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation)), "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180))
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Limit EF/MS logging noise
                     .CreateLogger();
                     logging.AddSerilog(Log.Logger);
@@ -63,22 +66,12 @@ namespace GlucoseTrayCore
 
         private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            Constants.config = configuration;
-            
-            services.AddScoped<AppContext, AppContext>()
+            Configuration = configuration.GetSection("appsettings");
+            services.Configure<GlucoseTraySettings>(Configuration)
+                    .AddScoped<AppContext, AppContext>()
                     .AddScoped<IconService, IconService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
-                    .AddScoped<GlucoseFetchConfiguration, GlucoseFetchConfiguration>(o => new GlucoseFetchConfiguration
-                    {
-                        DexcomServer = Constants.DexcomServer,
-                        DexcomUsername = Constants.DexcomUsername,
-                        DexcomPassword = Constants.DexcomPassword,
-                        FetchMethod = Constants.FetchMethod,
-                        NightscoutUrl = Constants.NightscoutUrl,
-                        NightscoutAccessToken = Constants.AccessToken,
-                        UnitDisplayType = Constants.GlucoseUnitType
-                    })
-                    .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Constants.DatabaseLocation));
+                    .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
         }
     }
 }
