@@ -103,7 +103,7 @@ namespace GlucoseTrayCore
 
         private void LogResultToDb(GlucoseResult result)
         {
-            if (_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC.ToUniversalTime() && !result.WasError && g.MgValue == result.MgValue))
+            if (_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC && !result.WasError && g.MgValue == result.MgValue))
                 return;
 
             _context.GlucoseResults.Add(result);
