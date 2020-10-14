@@ -20,5 +20,7 @@ namespace GlucoseTrayCore.Models
         public bool WasError { get; set; }
 
         public FetchMethod Source { get; set; }
+
+        public bool IsCriticalLow { get; set; }
     }
 }

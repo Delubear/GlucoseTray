@@ -21,9 +21,8 @@ namespace GlucoseTrayCore
         private readonly IGlucoseTrayDbContext _context;
         private readonly IGlucoseFetchService _fetchService;
         private readonly NotifyIcon trayIcon;
-        private bool IsCriticalLow;
 
-        private GlucoseResult FetchResult;
+        private GlucoseResult GlucoseResult;
         private readonly IconService _iconService;
 
         public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptions<GlucoseTraySettings> options)
@@ -88,18 +87,15 @@ namespace GlucoseTrayCore
 
         private async Task CreateIcon()
         {
-            IsCriticalLow = false;
-            FetchResult = await _fetchService.GetLatestReading().ConfigureAwait(false);
-            LogResultToDb(FetchResult);
-            trayIcon.Text = GetGlucoseMessage();
-            if ((_options.GlucoseUnit == GlucoseUnitType.MMOL && FetchResult.MmolValue <= _options.CriticalLowBg) || (_options.GlucoseUnit == GlucoseUnitType.MG && FetchResult.MgValue <= _options.CriticalLowBg))
-                IsCriticalLow = true;
-            _iconService.CreateTextIcon(FetchResult, IsCriticalLow, trayIcon);
+            GlucoseResult = await _fetchService.GetLatestReading().ConfigureAwait(false);
+            LogResultToDb(GlucoseResult);
+            trayIcon.Text = GetGlucoseMessage(GlucoseResult);
+            _iconService.CreateTextIcon(GlucoseResult, trayIcon);
         }
 
-        private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(), ToolTipIcon.Info);
+        private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(GlucoseResult), ToolTipIcon.Info);
 
-        private string GetGlucoseMessage() => $"{FetchResult.GetFormattedStringValue(_options.GlucoseUnit)}   {FetchResult.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {FetchResult.Trend.GetTrendArrow()}{FetchResult.StaleMessage(_options.StaleResultsThreshold)}";
+        private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.StaleResultsThreshold)}";
 
         private void LogResultToDb(GlucoseResult result)
         {

@@ -22,28 +22,11 @@ namespace GlucoseTrayCore.Services
     {
         private readonly GlucoseTraySettings _options;
         private readonly ILogger<IGlucoseFetchService> _logger;
-        private readonly string _dexcomShareHost;
 
         public GlucoseFetchService(IOptions<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger)
         {
             _logger = logger;
             _options = options.Value;
-
-            switch (_options.DexcomServer)
-            {
-                case DexcomServerLocation.DexcomShare1:
-                    _dexcomShareHost = "share1.dexcom.com";
-                    break;
-                case DexcomServerLocation.DexcomShare2:
-                    _dexcomShareHost = "share2.dexcom.com";
-                    break;
-                case DexcomServerLocation.DexcomInternational:
-                    _dexcomShareHost = "shareous1.dexcom.com";
-                    break;
-                default:
-                    _dexcomShareHost = "share1.dexcom.com";
-                    break;
-            }
         }
 
         public async Task<GlucoseResult> GetLatestReading()
@@ -61,6 +44,8 @@ namespace GlucoseTrayCore.Services
                     _logger.LogError("Invalid fetch method specified.");
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
                 }
+
+                fetchResult.IsCriticalLow = IsCriticalLow(fetchResult);
             }
             catch (Exception ex)
             {
@@ -70,6 +55,8 @@ namespace GlucoseTrayCore.Services
 
             return fetchResult;
         }
+
+        private bool IsCriticalLow(GlucoseResult result) => (_options.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CriticalLowBg) || (_options.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CriticalLowBg);
 
         private void CalculateValues(GlucoseResult result, double value)
         {
@@ -121,8 +108,16 @@ namespace GlucoseTrayCore.Services
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)
         {
+            var host = _options.DexcomServer switch
+            {
+                DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
+                DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",
+                DexcomServerLocation.DexcomInternational => "shareous1.dexcom.com",
+                _ => "share1.dexcom.com",
+            };
+
             // Get Session Id
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{_dexcomShareHost}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
                 Content = new StringContent("{\"accountName\":\"" + _options.DexcomUsername + "\"," +
                                                  "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
@@ -134,7 +129,7 @@ namespace GlucoseTrayCore.Services
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
-                request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{_dexcomShareHost}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
+                request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
                 var result = JsonConvert.DeserializeObject<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));

@@ -42,31 +42,31 @@ namespace GlucoseTrayCore.Services
             _ => new SolidBrush(Color.White),
         };
 
-        internal void CreateTextIcon(GlucoseResult fetchResult, bool isCriticalLow, NotifyIcon trayIcon)
+        internal void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
         {
-            var result = fetchResult.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
+            var glucoseValue = result.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
-            var isStale = fetchResult.IsStale(_options.StaleResultsThreshold);
+            var isStale = result.IsStale(_options.StaleResultsThreshold);
 
-            if (result == "0")
+            if (glucoseValue == "0")
             {
                 _logger.LogWarning("Empty glucose result received.");
-                result = "NUL";
+                glucoseValue = "NUL";
             }
-            else if (isCriticalLow)
+            else if (result.IsCriticalLow)
             {
                 _logger.LogInformation("Critical low glucose read.");
-                result = "DAN";
+                glucoseValue = "DAN";
             }
 
-            var xOffset = CalculateXPosition(fetchResult);
+            var xOffset = CalculateXPosition(result);
             var fontSize = _useDefaultFontSize ? _defaultFontSize : _smallerFontSize;
             _fontToUse = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
             var bitmapText = new Bitmap(16, 16);
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.DrawString(result, _fontToUse, SetColor(_options.GlucoseUnit == GlucoseUnitType.MG ? fetchResult.MgValue : fetchResult.MmolValue), xOffset, 0f);
+            g.DrawString(glucoseValue, _fontToUse, SetColor(_options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), xOffset, 0f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
