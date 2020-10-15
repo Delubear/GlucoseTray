@@ -63,6 +63,7 @@ namespace GlucoseTrayCore
                     .AddHttpClient()
                     .AddScoped<AppContext, AppContext>()
                     .AddScoped<IconService, IconService>()
+                    .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
                     .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
         }

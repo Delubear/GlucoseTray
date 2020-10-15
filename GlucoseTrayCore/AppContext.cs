@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
-using Microsoft.Win32;
 
 namespace GlucoseTrayCore
 {
@@ -25,14 +24,16 @@ namespace GlucoseTrayCore
 
         private GlucoseResult GlucoseResult;
         private readonly IconService _iconService;
+        private readonly TaskSchedulerService _taskScheduler;
 
-        public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptions<GlucoseTraySettings> options)
+        public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptions<GlucoseTraySettings> options, TaskSchedulerService taskScheduler)
         {
             _logger = logger;
             _context = context;
             _iconService = iconService;
             _fetchService = fetchService;
             _options = options.Value;
+            _taskScheduler = taskScheduler;
 
             trayIcon = new NotifyIcon()
             {
@@ -59,21 +60,14 @@ namespace GlucoseTrayCore
                 trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
             }
 
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
-            var enabledAtStartupAlready = registryKey.GetValue("GlucoseTray") != null;
-            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(enabledAtStartupAlready ? "Disable Run on startup" : "Run on startup", null, (obj, e) => RegisterInStartup(!enabledAtStartupAlready)));
-
+            var taskEnabled = _taskScheduler.HasTaskEnabled();
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(taskEnabled ? "Disable Run on startup" : "Run on startup", null, (obj, e) => ToggleTask(!taskEnabled)));
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(nameof(Exit), null, new EventHandler(Exit)));
         }
 
-        private void RegisterInStartup(bool enable)
+        private void ToggleTask(bool enable)
         {
-            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
-            if (enable)
-                registryKey.SetValue("GlucoseTray", Application.ExecutablePath);
-            else
-                registryKey.DeleteValue("GlucoseTray");
-
+            _taskScheduler.ToggleTask(enable);
             PopulateContextMenu();
         }
 
