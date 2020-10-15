@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
+using Microsoft.Win32;
 
 namespace GlucoseTrayCore
 {
@@ -39,19 +40,41 @@ namespace GlucoseTrayCore
                 Visible = true
             };
 
-            if (!string.IsNullOrWhiteSpace(_options.NightscoutUrl))
+            PopulateContextMenu();
+            trayIcon.DoubleClick += ShowBalloon;
+            BeginCycle();
+        }
+
+        private void PopulateContextMenu()
+        {
+            trayIcon.ContextMenuStrip.Items.Clear(); // Remove all existing items
+
+            if (!string.IsNullOrWhiteSpace(_options.NightscoutUrl)) // Add Nightscout website shortcut
             {
                 _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
 
                 var process = new Process();
                 process.StartInfo.UseShellExecute = true;
                 process.StartInfo.FileName = _options.NightscoutUrl;
-
                 trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
             }
+
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", false);
+            var enabledAtStartupAlready = registryKey.GetValue("GlucoseTray") != null;
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(enabledAtStartupAlready ? "Disable Run on startup" : "Run on startup", null, (obj, e) => RegisterInStartup(!enabledAtStartupAlready)));
+
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(nameof(Exit), null, new EventHandler(Exit)));
-            trayIcon.DoubleClick += ShowBalloon;
-            BeginCycle();
+        }
+
+        private void RegisterInStartup(bool enable)
+        {
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            if (enable)
+                registryKey.SetValue("GlucoseTray", Application.ExecutablePath);
+            else
+                registryKey.DeleteValue("GlucoseTray");
+
+            PopulateContextMenu();
         }
 
         private async void BeginCycle()
