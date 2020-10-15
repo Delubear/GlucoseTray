@@ -79,7 +79,7 @@ namespace GlucoseTrayCore
                 {
                     Application.DoEvents();
                     await CreateIcon().ConfigureAwait(false);
-                    await Task.Delay(_options.GetPollingThreshold);
+                    await Task.Delay(_options.PollingThresholdTimeSpan);
                 }
                 catch (Exception e)
                 {

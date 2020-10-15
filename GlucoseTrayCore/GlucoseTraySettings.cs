@@ -18,8 +18,8 @@ namespace GlucoseTrayCore
         public double LowBg { get; set; }
         public double DangerLowBg { get; set; }
         public double CriticalLowBg { get; set; }
-        private int PollingThreshold { get; set; }
-        public TimeSpan GetPollingThreshold => TimeSpan.FromSeconds(PollingThreshold);
+        public int PollingThreshold { get; set; }
+        public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
         public string DatabaseLocation { get; set; }
         public bool EnableDebugMode { get; set; }
         public LogEventLevel LogLevel { get; set; }
