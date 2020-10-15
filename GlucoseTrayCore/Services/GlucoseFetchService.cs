@@ -1,7 +1,6 @@
 ﻿using GlucoseTrayCore.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
+using System.Text.Json;
 
 namespace GlucoseTrayCore.Services
 {
@@ -86,7 +86,7 @@ namespace GlucoseTrayCore.Services
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var content = JsonConvert.DeserializeObject<List<NightScoutResult>>(result).FirstOrDefault();
+                var content = JsonSerializer.Deserialize<List<NightScoutResult>>(result).FirstOrDefault();
                 CalculateValues(fetchResult, content.sgv);
                 fetchResult.DateTimeUTC = DateTime.Parse(content.dateString).ToUniversalTime();
                 fetchResult.Trend = content.direction.GetTrend();
@@ -133,7 +133,7 @@ namespace GlucoseTrayCore.Services
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
-                var result = JsonConvert.DeserializeObject<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
+                var result = JsonSerializer.Deserialize<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;
