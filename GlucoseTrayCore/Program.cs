@@ -22,9 +22,6 @@ namespace GlucoseTrayCore
 
         private static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
             var host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
