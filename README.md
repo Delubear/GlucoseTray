@@ -19,7 +19,7 @@ LowBg displays yellow. <br>
 DangerousLowBg displays red. <br>
 CriticalLowBg displays as "DAN" for DANGER. <br>
 Normal blood glucose displays as white. <br>
-Out-of-date readings are show with a strikethrough effect. <br>
+Out-of-date readings are shown with a strikethrough effect. <br>
 
 <strong>Features:</strong> <br>
 -Color coded glucose numbers set to your ranges. <br>
