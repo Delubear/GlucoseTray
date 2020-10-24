@@ -73,6 +73,8 @@ namespace GlucoseTrayCore
 
         private async void BeginCycle()
         {
+            await CheckForMissingReadings();
+
             while (true)
             {
                 try
@@ -92,6 +94,43 @@ namespace GlucoseTrayCore
                 }
             }
         }
+
+        private async Task CheckForMissingReadings()
+        {
+            if (_options.FetchMethod != FetchMethod.NightscoutApi)
+                return;
+
+            var newestExistingRecord = _context.GlucoseResults.OrderByDescending(a => a.DateTimeUTC).FirstOrDefault();
+
+            if (newestExistingRecord == null)
+            {
+                if (MessageBox.Show("Do you want to import readings from NightScout?\r\n\r\n(Warning this may take some time.)", "GlucoseTrayCore : No Readings found in local database.", MessageBoxButtons.YesNo) == DialogResult.No)
+                    return;
+
+                newestExistingRecord = new GlucoseResult() { DateTimeUTC = DateTime.UtcNow.AddYears(-100) };
+            }
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            var missingResults = await _fetchService.FetchMissingReadings(newestExistingRecord.DateTimeUTC);
+            sw.Stop();
+            int count = missingResults.Count();
+            if (count > 0)
+            {
+                if (count == 1)
+                    _logger.LogWarning($"Found 1 reading recorded at {missingResults[0].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC ");
+                else
+                    _logger.LogWarning($"Found {count} readings between {missingResults[0].DateTimeUTC} and {missingResults[count-1].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC. Retrieving them took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
+
+                sw.Restart();
+                _context.GlucoseResults.AddRange(missingResults);   // None of these records will be in the database, so just add them all now.
+                _context.SaveChanges();
+                sw.Stop();
+                if (sw.Elapsed.TotalSeconds > 5)
+                    _logger.LogWarning($"Saving {missingResults.Count()} records took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
+            }
+        }
+    
 
         private void Exit(object sender, EventArgs e)
         {
