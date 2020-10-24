@@ -1,0 +1,33 @@
+# Action on pull requests : Build, but don't create a release
+
+name: .NET Core Pull Request
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore
+    - name: read JSON property
+      id: version
+      uses: notiz-dev/github-action-json-property@release
+      with:
+        # path to json file
+        path: ./GlucoseTraycore/appsettings.json
+        # which property to read
+        prop_path: appsettings.Version
