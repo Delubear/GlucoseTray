@@ -29,7 +29,7 @@ namespace GlucoseTrayCore
                 {
                     Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Is(Configuration.GetValue<LogEventLevel>(nameof(GlucoseTraySettings.LogLevel)))
-                    .WriteTo.SQLite(Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation)), "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180))
+                    .WriteTo.SQLite(Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation)), "Logs", storeTimestampInUtc: true, retentionPeriod: TimeSpan.FromDays(180), maxDatabaseSize: 0)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning) // Limit EF/MS logging noise
                     .CreateLogger();
                     logging.AddSerilog(Log.Logger);
