@@ -14,7 +14,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 5.0.0
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -37,7 +37,7 @@ jobs:
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
         #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        artifacts: './GlucoseTrayCore/bin/Release/netcoreapp3.1/win-x64/publish/appsettings.json,./GlucoseTrayCore/bin/Release/netcoreapp5.0/win-x64/publish/GlucoseTrayCore.exe'
+        artifacts: './GlucoseTrayCore/bin/Release/net5.0-windows/win-x64/publish/appsettings.json,./GlucoseTrayCore/bin/Release/net5.0-windows/win-x64/publish/GlucoseTrayCore.exe'
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
