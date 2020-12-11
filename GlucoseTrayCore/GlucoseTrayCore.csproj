@@ -12,6 +12,8 @@
     <StartupObject />
     <UseWindowsForms>true</UseWindowsForms>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
