@@ -92,8 +92,11 @@ namespace GlucoseTrayCore.Views
 
         private void button_save_Click(object sender, EventArgs e)
         {
-
             // If everything is valid, save and return an OK result
+
+            // TODO: Convert our settings to JSON and write to file. (mirron the appsettings.json file)
+            var settingsFile = Program.SettingsFile;
+
             Close();
             DialogResult = DialogResult.OK;
         }

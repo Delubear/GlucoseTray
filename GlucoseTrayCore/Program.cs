@@ -20,23 +20,15 @@ namespace GlucoseTrayCore
     internal class Program
     {
         private static IConfigurationSection Configuration { get; set; }
-        private static string SettingsFile { get; set; }
+        public static string SettingsFile { get; set; }
 
         private static void Main(string[] args)
         {
-            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.txt";
-            if (File.Exists(SettingsFile))
-            {
-                LoadSettingsFile();
-            }
-            else
+            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
+            if (!File.Exists(SettingsFile))
             {
                 using var settingsWindow = new Settings();
-                if (settingsWindow.ShowDialog() == DialogResult.OK)
-                {
-                    LoadSettingsFile();
-                }
-                else // Did not want to setup application.
+                if (settingsWindow.ShowDialog() != DialogResult.OK) // Did not want to setup application.
                 {
                     Application.Exit();
                     return;
@@ -44,7 +36,7 @@ namespace GlucoseTrayCore
             }
 
             var host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration((context, builder) => builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
+                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .ConfigureLogging((context, logging) =>
                 {
@@ -87,11 +79,6 @@ namespace GlucoseTrayCore
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
                     .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
-        }
-
-        private static void LoadSettingsFile()
-        {
-            throw new NotImplementedException();
         }
     }
 }
