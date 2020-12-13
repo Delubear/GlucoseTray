@@ -89,5 +89,13 @@ namespace GlucoseTrayCore.Views
                 }
             }
         }
+
+        private void button_save_Click(object sender, EventArgs e)
+        {
+
+            // If everything is valid, save and return an OK result
+            Close();
+            DialogResult = DialogResult.OK;
+        }
     }
 }

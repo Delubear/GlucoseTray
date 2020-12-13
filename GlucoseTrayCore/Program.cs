@@ -1,5 +1,6 @@
 ﻿using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
+using GlucoseTrayCore.Views;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -19,9 +20,29 @@ namespace GlucoseTrayCore
     internal class Program
     {
         private static IConfigurationSection Configuration { get; set; }
+        private static string SettingsFile { get; set; }
 
         private static void Main(string[] args)
         {
+            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.txt";
+            if (File.Exists(SettingsFile))
+            {
+                LoadSettingsFile();
+            }
+            else
+            {
+                using var settingsWindow = new Settings();
+                if (settingsWindow.ShowDialog() == DialogResult.OK)
+                {
+                    LoadSettingsFile();
+                }
+                else // Did not want to setup application.
+                {
+                    Application.Exit();
+                    return;
+                }
+            }
+
             var host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
@@ -66,6 +87,11 @@ namespace GlucoseTrayCore
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
                     .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
+        }
+
+        private static void LoadSettingsFile()
+        {
+            throw new NotImplementedException();
         }
     }
 }
