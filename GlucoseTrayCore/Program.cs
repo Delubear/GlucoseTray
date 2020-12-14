@@ -35,6 +35,8 @@ namespace GlucoseTrayCore
                 }
             }
 
+            // TODO: If settings file invalid, re-force settings view
+
             var host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
