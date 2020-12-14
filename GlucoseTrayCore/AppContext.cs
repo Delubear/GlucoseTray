@@ -11,13 +11,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
+using GlucoseTrayCore.Views;
+using System.Configuration;
 
 namespace GlucoseTrayCore
 {
     public class AppContext : ApplicationContext
     {
         private readonly ILogger<AppContext> _logger;
-        private readonly GlucoseTraySettings _options;
+        private readonly IOptionsMonitor<GlucoseTraySettings> _options;
         private readonly IGlucoseTrayDbContext _context;
         private readonly IGlucoseFetchService _fetchService;
         private readonly NotifyIcon trayIcon;
@@ -26,13 +28,13 @@ namespace GlucoseTrayCore
         private readonly IconService _iconService;
         private readonly TaskSchedulerService _taskScheduler;
 
-        public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptions<GlucoseTraySettings> options, TaskSchedulerService taskScheduler)
+        public AppContext(ILogger<AppContext> logger, IGlucoseTrayDbContext context, IconService iconService, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, TaskSchedulerService taskScheduler)
         {
             _logger = logger;
             _context = context;
             _iconService = iconService;
             _fetchService = fetchService;
-            _options = options.Value;
+            _options = options;
             _taskScheduler = taskScheduler;
 
             trayIcon = new NotifyIcon()
@@ -50,18 +52,19 @@ namespace GlucoseTrayCore
         {
             trayIcon.ContextMenuStrip.Items.Clear(); // Remove all existing items
 
-            if (!string.IsNullOrWhiteSpace(_options.NightscoutUrl)) // Add Nightscout website shortcut
+            if (!string.IsNullOrWhiteSpace(_options.CurrentValue.NightscoutUrl)) // Add Nightscout website shortcut
             {
                 _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
 
                 var process = new Process();
                 process.StartInfo.UseShellExecute = true;
-                process.StartInfo.FileName = _options.NightscoutUrl;
+                process.StartInfo.FileName = _options.CurrentValue.NightscoutUrl;
                 trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
             }
 
             var taskEnabled = _taskScheduler.HasTaskEnabled();
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(taskEnabled ? "Disable Run on startup" : "Run on startup", null, (obj, e) => ToggleTask(!taskEnabled)));
+            trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Change Settings", null, new EventHandler(ChangeSettings)));
             trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(nameof(Exit), null, new EventHandler(Exit)));
         }
 
@@ -81,11 +84,11 @@ namespace GlucoseTrayCore
                 {
                     Application.DoEvents();
                     await CreateIcon().ConfigureAwait(false);
-                    await Task.Delay(_options.PollingThresholdTimeSpan);
+                    await Task.Delay(_options.CurrentValue.PollingThresholdTimeSpan);
                 }
                 catch (Exception e)
                 {
-                    if (_options.EnableDebugMode)
+                    if (_options.CurrentValue.EnableDebugMode)
                         MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     _logger.LogError(e.ToString());
                     trayIcon.Visible = false;
@@ -97,7 +100,7 @@ namespace GlucoseTrayCore
 
         private async Task CheckForMissingReadings()
         {
-            if (_options.FetchMethod != FetchMethod.NightscoutApi)
+            if (_options.CurrentValue.FetchMethod != FetchMethod.NightscoutApi)
                 return;
 
             var newestExistingRecord = _context.GlucoseResults.OrderByDescending(a => a.DateTimeUTC).FirstOrDefault();
@@ -140,6 +143,15 @@ namespace GlucoseTrayCore
             Application.ExitThread();
             Application.Exit();
         }
+        
+        private void ChangeSettings(object sender, EventArgs e)
+        {
+            using var settings = new Settings();
+            if (settings.ShowDialog() == DialogResult.OK)
+            {
+               
+            }
+        }
 
         private async Task CreateIcon()
         {
@@ -151,7 +163,7 @@ namespace GlucoseTrayCore
 
         private void ShowBalloon(object sender, EventArgs e) => trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(GlucoseResult), ToolTipIcon.Info);
 
-        private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.StaleResultsThreshold)}";
+        private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.CurrentValue.StaleResultsThreshold)}";
 
         private void LogResultToDb(GlucoseResult result)
         {

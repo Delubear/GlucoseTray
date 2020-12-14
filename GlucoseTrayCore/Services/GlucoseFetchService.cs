@@ -21,14 +21,14 @@ namespace GlucoseTrayCore.Services
 
     public class GlucoseFetchService : IGlucoseFetchService
     {
-        private readonly GlucoseTraySettings _options;
+        private readonly IOptionsMonitor<GlucoseTraySettings> _options;
         private readonly ILogger<IGlucoseFetchService> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public GlucoseFetchService(IOptions<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory)
+        public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _options = options.Value;
+            _options = options;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -38,9 +38,9 @@ namespace GlucoseTrayCore.Services
 
             try
             {
-                if (_options.FetchMethod == FetchMethod.DexcomShare)
+                if (_options.CurrentValue.FetchMethod == FetchMethod.DexcomShare)
                     await GetFetchResultFromDexcom(fetchResult).ConfigureAwait(false);
-                else if (_options.FetchMethod == FetchMethod.NightscoutApi)
+                else if (_options.CurrentValue.FetchMethod == FetchMethod.NightscoutApi)
                     await GetFetchResultFromNightscout(fetchResult).ConfigureAwait(false);
                 else
                 {
@@ -59,7 +59,7 @@ namespace GlucoseTrayCore.Services
             return fetchResult;
         }
 
-        private bool IsCriticalLow(GlucoseResult result) => (_options.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CriticalLowBg) || (_options.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CriticalLowBg);
+        private bool IsCriticalLow(GlucoseResult result) => (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg) || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
 
         private void CalculateValues(GlucoseResult result, double value)
         {
@@ -79,9 +79,9 @@ namespace GlucoseTrayCore.Services
 
         public async Task<List<GlucoseResult>> FetchMissingReadings(DateTime lastResult)
         {
-            if (_options.FetchMethod == FetchMethod.DexcomShare)
+            if (_options.CurrentValue.FetchMethod == FetchMethod.DexcomShare)
                 _logger.LogWarning("Fetch missing records is only implemented for NightScout");
-            else if (_options.FetchMethod == FetchMethod.NightscoutApi)
+            else if (_options.CurrentValue.FetchMethod == FetchMethod.NightscoutApi)
                 return await FetchMissingReadingsFromNightscout(lastResult).ConfigureAwait(false);
 
             return new List<GlucoseResult>();
@@ -94,7 +94,7 @@ namespace GlucoseTrayCore.Services
 
             int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
 
-            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.AccessToken) ? $"&token={_options.AccessToken}" : "")}"));
+            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}"));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             var results = new List<GlucoseResult>();
@@ -134,7 +134,7 @@ namespace GlucoseTrayCore.Services
 
         private async Task<GlucoseResult> GetFetchResultFromNightscout(GlucoseResult fetchResult)
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.AccessToken) ? $"&token={_options.AccessToken}" : "")));
+            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             var client = _httpClientFactory.CreateClient();
@@ -167,7 +167,7 @@ namespace GlucoseTrayCore.Services
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)
         {
-            var host = _options.DexcomServer switch
+            var host = _options.CurrentValue.DexcomServer switch
             {
                 DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
                 DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",
@@ -178,9 +178,9 @@ namespace GlucoseTrayCore.Services
             // Get Session Id
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
-                Content = new StringContent("{\"accountName\":\"" + _options.DexcomUsername + "\"," +
+                Content = new StringContent("{\"accountName\":\"" + _options.CurrentValue.DexcomUsername + "\"," +
                                                  "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
-                                                 "\"password\":\"" + _options.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
+                                                 "\"password\":\"" + _options.CurrentValue.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
             };
 
             var client = _httpClientFactory.CreateClient();

@@ -19,23 +19,21 @@ namespace GlucoseTrayCore
 {
     internal class Program
     {
-        private static IConfigurationSection Configuration { get; set; }
+        private static IConfiguration Configuration { get; set; }
         public static string SettingsFile { get; set; }
 
         private static void Main(string[] args)
         {
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
-            if (!File.Exists(SettingsFile))
+            using var settingsWindow = new Settings();
+            if (!File.Exists(SettingsFile) || !settingsWindow.ValidateSettings())
             {
-                using var settingsWindow = new Settings();
                 if (settingsWindow.ShowDialog() != DialogResult.OK) // Did not want to setup application.
                 {
                     Application.Exit();
                     return;
                 }
             }
-
-            // TODO: If settings file invalid, re-force settings view
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
@@ -73,7 +71,7 @@ namespace GlucoseTrayCore
 
         private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            Configuration = configuration.GetSection("appsettings");
+            Configuration = configuration;
             services.Configure<GlucoseTraySettings>(Configuration)
                     .AddHttpClient()
                     .AddScoped<AppContext, AppContext>()

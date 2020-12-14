@@ -16,13 +16,13 @@ namespace GlucoseTrayCore.Views
 {
     public partial class Settings : Form
     {
-        private bool? SelectedGlucoseTypeIsMG;
+        private GlucoseUnitType? SelectedGlucoseType;
 
         public static readonly Dictionary<string, LogEventLevel> LogLevels = new Dictionary<string, LogEventLevel>
         {
             { "Verbose", LogEventLevel.Verbose },
             { "Debug", LogEventLevel.Debug },
-            { "Informational", LogEventLevel.Information },
+            { "Information", LogEventLevel.Information },
             { "Warning", LogEventLevel.Warning },
             { "Error", LogEventLevel.Warning },
             { "Fatal", LogEventLevel.Fatal },
@@ -32,6 +32,61 @@ namespace GlucoseTrayCore.Views
         {
             InitializeComponent();
             comboBox_log_level.DataSource = LogLevels.Select(x => x.Key).ToList();
+
+            if (File.Exists(Program.SettingsFile))
+            {
+                try
+                {
+                    var json = File.ReadAllText(Program.SettingsFile);
+                    var model = JsonSerializer.Deserialize<GlucoseTraySettings>(json);
+
+                    if (model.FetchMethod == FetchMethod.DexcomShare)
+                        radio_dexcom.Checked = true;
+                    else
+                        radio_nightscout.Checked = true;
+
+                    if (model.GlucoseUnit == GlucoseUnitType.MG)
+                    {
+                        radio_glucose_unit_mg.Checked = true;
+                        UpdateGlucoseNumericValues(GlucoseUnitType.MG);
+                    }
+                    else
+                    {
+                        radio_glucose_unit_mmol.Checked = true;
+                        UpdateGlucoseNumericValues(GlucoseUnitType.MMOL);
+                    }
+
+                    textBox_dexcom_username.Text = model.DexcomUsername;
+                    maskedText_dexcom_password.Text = model.DexcomPassword;
+
+                    if (model.DexcomServer == DexcomServerLocation.DexcomShare1)
+                        radio_dexcom_server_us_share1.Checked = true;
+                    else if (model.DexcomServer == DexcomServerLocation.DexcomShare2)
+                        radio_dexcom_server_us_share2.Checked = true;
+                    else
+                        radio_dexcom_server_international.Checked = true;
+
+                    textBox_nightscout_token.Text = model.AccessToken;
+                    textBox_nightscout_url.Text = model.NightscoutUrl;
+
+                    numeric_glucose_critical.Value = (decimal)model.CriticalLowBg;
+                    numeric_glucose_high.Value = (decimal)model.HighBg;
+                    numeric_glucose_low.Value = (decimal)model.LowBg;
+                    numeric_glucose_warning_high.Value = (decimal)model.DangerHighBg;
+                    numeric_glucose_warning_low.Value = (decimal)model.WarningLowBg;
+
+                    numeric_polling_threshold.Value = model.PollingThreshold;
+                    numeric_stale_results.Value = model.StaleResultsThreshold;
+
+                    comboBox_log_level.DisplayMember = model.LogLevel.ToString();
+                    checkBox_debug_mode.Checked = model.EnableDebugMode;
+                    textBox_db_location_result.Text = model.DatabaseLocation;
+                }
+                catch (Exception e) // Catch serialization errors due to a bad file
+                {
+                    MessageBox.Show("Unable to load existing settings due to a bad file.  " + e.Message + e.InnerException?.Message);
+                }
+            }
         }
 
         private void radio_dexcom_CheckedChanged(object sender, EventArgs e)
@@ -48,25 +103,17 @@ namespace GlucoseTrayCore.Views
 
         private void radio_glucose_unit_mg_CheckedChanged(object sender, EventArgs e)
         {
-            CalculateGlucoseValues(true);
+            UpdateGlucoseNumericValues(GlucoseUnitType.MG);
             glucose_values_grid.Enabled = true;
         }
 
         private void radio_glucose_unit_mmol_CheckedChanged(object sender, EventArgs e)
         {
-            CalculateGlucoseValues(false);
+            UpdateGlucoseNumericValues(GlucoseUnitType.MMOL);
             glucose_values_grid.Enabled = true;
         }
 
-        private void CalculateGlucoseValues(bool setForMG)
-        {
-            if (SelectedGlucoseTypeIsMG == !setForMG)
-                UpdateGlucoseNumericValues(setForMG);
-
-            SelectedGlucoseTypeIsMG = setForMG;
-        }
-
-        private void UpdateGlucoseNumericValues(bool setToMG)
+        private void UpdateGlucoseNumericValues(GlucoseUnitType setToUnitType)
         {
             var controls = new [] {
                 numeric_glucose_high,
@@ -78,26 +125,27 @@ namespace GlucoseTrayCore.Views
 
             foreach (var control in controls)
             {
-                if (setToMG)
+                if (setToUnitType == GlucoseUnitType.MG)
                 {
-                    control.Value *= 18;
+                    if(SelectedGlucoseType == GlucoseUnitType.MMOL)
+                        control.Value *= 18;
                     control.Increment = 1;
                     control.DecimalPlaces = 0;
+                    SelectedGlucoseType = GlucoseUnitType.MG;
                 }
                 else
                 {
                     control.DecimalPlaces = 1;
                     control.Increment = 0.1m;
-                    control.Value /= 18;
+                    if (SelectedGlucoseType == GlucoseUnitType.MG)
+                        control.Value /= 18;
+                    SelectedGlucoseType = GlucoseUnitType.MMOL;
                 }
             }
         }
 
         private void button_save_Click(object sender, EventArgs e)
         {
-            // If everything is valid, save and return an OK result
-            // TODO: Validation
-
             var settingsModel = new GlucoseTraySettings
             {
                 FetchMethod = radio_dexcom.Checked ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi,
@@ -108,8 +156,8 @@ namespace GlucoseTrayCore.Views
                 DexcomServer = radio_dexcom_server_us_share1.Checked ? DexcomServerLocation.DexcomShare1 : radio_dexcom_server_us_share2.Checked ? DexcomServerLocation.DexcomShare2 : DexcomServerLocation.DexcomInternational,
                 CriticalLowBg = (double) numeric_glucose_critical.Value,
                 DangerHighBg = (double) numeric_glucose_warning_high.Value,
-                DangerLowBg = (double) numeric_glucose_low.Value,
-                LowBg = (double) numeric_glucose_warning_low.Value,
+                LowBg = (double) numeric_glucose_low.Value,
+                WarningLowBg = (double) numeric_glucose_warning_low.Value,
                 HighBg = (double) numeric_glucose_high.Value,
                 GlucoseUnit = radio_glucose_unit_mg.Checked ? GlucoseUnitType.MG : GlucoseUnitType.MMOL,
                 DatabaseLocation = textBox_db_location_result.Text,
@@ -119,39 +167,59 @@ namespace GlucoseTrayCore.Views
                 StaleResultsThreshold = (int) numeric_stale_results.Value
             };
 
+            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked))
+            {
+                MessageBox.Show("Settings are not valid.  Please fix before continuing.");
+                return;
+            }
+
             using (var sw = File.CreateText(Program.SettingsFile))
             {
-                var model = new { appsettings = settingsModel };
-                var json = JsonSerializer.Serialize(model);
+                //var model = new { appsettings = settingsModel };
+                var json = JsonSerializer.Serialize(settingsModel);
                 sw.Write(json);
             }
 
             Close();
             DialogResult = DialogResult.OK;
         }
+
+        /// <summary>
+        /// If model is null, will validate from stored settings file.
+        /// </summary>
+        /// <param name="model"></param>
+        public bool ValidateSettings(GlucoseTraySettings model = null)
+        {
+            var passed = true;
+
+            if (model is null)
+            {
+                try
+                {
+                    var json = File.ReadAllText(Program.SettingsFile);
+                    model = JsonSerializer.Deserialize<GlucoseTraySettings>(json);
+                }
+                catch // Catch serialization errors due to a bad file
+                {
+                    passed = false;
+                }
+            }
+
+            if (model.FetchMethod == FetchMethod.DexcomShare)
+            {
+                if (string.IsNullOrWhiteSpace(model.DexcomUsername) || string.IsNullOrWhiteSpace(model.DexcomPassword))
+                    passed = false;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
+                    passed = false;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
+                passed = false;
+
+            return passed;
+        }
     }
 }
-
-
-/*
- * (nameof(settingsModel.FetchMethod)) = "",
-                        DexcomUsername = "",
-                        DexcomPassword = "",
-                        DexcomServer = "",
-                        AccessToken = "",
-                        NightscoutUrl = "",
-                        GlucoseUnit = "",
-                        HighBg = "",
-                        DangerHighBg = "",
-                        LowBg = "",
-                        DangerLowBg = "",
-                        CriticalLowBg = "",
-                        PollingThreshold = "",
-                        DatabaseLocation = "",
-                        EnableDebugMode = "",
-                        LogLevel = "",
-                        StaleResultsThreshold = "",
- * 
- * 
- * 
- */
