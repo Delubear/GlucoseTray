@@ -167,7 +167,7 @@ namespace GlucoseTrayCore.Views
                 StaleResultsThreshold = (int) numeric_stale_results.Value
             };
 
-            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked))
+            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked) || (!radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
             {
                 MessageBox.Show("Settings are not valid.  Please fix before continuing.");
                 return;
