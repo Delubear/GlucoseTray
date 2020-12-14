@@ -16,7 +16,7 @@ namespace GlucoseTrayCore.Views
 {
     public partial class Settings : Form
     {
-        private GlucoseUnitType? SelectedGlucoseType;
+        private GlucoseUnitType? SelectedGlucoseType = GlucoseUnitType.MG;
 
         public static readonly Dictionary<string, LogEventLevel> LogLevels = new Dictionary<string, LogEventLevel>
         {
@@ -131,7 +131,6 @@ namespace GlucoseTrayCore.Views
                         control.Value *= 18;
                     control.Increment = 1;
                     control.DecimalPlaces = 0;
-                    SelectedGlucoseType = GlucoseUnitType.MG;
                 }
                 else
                 {
@@ -139,9 +138,12 @@ namespace GlucoseTrayCore.Views
                     control.Increment = 0.1m;
                     if (SelectedGlucoseType == GlucoseUnitType.MG)
                         control.Value /= 18;
-                    SelectedGlucoseType = GlucoseUnitType.MMOL;
                 }
             }
+            if (setToUnitType == GlucoseUnitType.MG)
+                SelectedGlucoseType = GlucoseUnitType.MG;
+            else
+                SelectedGlucoseType = GlucoseUnitType.MMOL;
         }
 
         private void button_save_Click(object sender, EventArgs e)
@@ -167,7 +169,7 @@ namespace GlucoseTrayCore.Views
                 StaleResultsThreshold = (int) numeric_stale_results.Value
             };
 
-            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked) || (!radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
+            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked) || (radio_dexcom.Checked && !radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
             {
                 MessageBox.Show("Settings are not valid.  Please fix before continuing.");
                 return;
@@ -176,7 +178,11 @@ namespace GlucoseTrayCore.Views
             using (var sw = File.CreateText(Program.SettingsFile))
             {
                 //var model = new { appsettings = settingsModel };
-                var json = JsonSerializer.Serialize(settingsModel);
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                };
+                var json = JsonSerializer.Serialize(settingsModel, options);
                 sw.Write(json);
             }
 
