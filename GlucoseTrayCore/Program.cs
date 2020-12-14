@@ -1,5 +1,6 @@
 ﻿using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
+using GlucoseTrayCore.Views;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -18,12 +19,24 @@ namespace GlucoseTrayCore
 {
     internal class Program
     {
-        private static IConfigurationSection Configuration { get; set; }
+        private static IConfiguration Configuration { get; set; }
+        public static string SettingsFile { get; set; }
 
         private static void Main(string[] args)
         {
+            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
+            using var settingsWindow = new Settings();
+            if (!File.Exists(SettingsFile) || !settingsWindow.ValidateSettings())
+            {
+                if (settingsWindow.ShowDialog() != DialogResult.OK) // Did not want to setup application.
+                {
+                    Application.Exit();
+                    return;
+                }
+            }
+
             var host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration((context, builder) => builder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
+                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .ConfigureLogging((context, logging) =>
                 {
@@ -58,7 +71,7 @@ namespace GlucoseTrayCore
 
         private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            Configuration = configuration.GetSection("appsettings");
+            Configuration = configuration;
             services.Configure<GlucoseTraySettings>(Configuration)
                     .AddHttpClient()
                     .AddScoped<AppContext, AppContext>()
