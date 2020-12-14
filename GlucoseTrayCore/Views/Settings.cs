@@ -2,21 +2,17 @@
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore.Views
 {
     public partial class Settings : Form
     {
-        private GlucoseUnitType? SelectedGlucoseType = GlucoseUnitType.MG;
+        private GlucoseUnitType SelectedGlucoseType = GlucoseUnitType.MG;
 
         public static readonly Dictionary<string, LogEventLevel> LogLevels = new Dictionary<string, LogEventLevel>
         {
@@ -140,10 +136,8 @@ namespace GlucoseTrayCore.Views
                         control.Value /= 18;
                 }
             }
-            if (setToUnitType == GlucoseUnitType.MG)
-                SelectedGlucoseType = GlucoseUnitType.MG;
-            else
-                SelectedGlucoseType = GlucoseUnitType.MMOL;
+
+            SelectedGlucoseType = setToUnitType == GlucoseUnitType.MG ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
         }
 
         private void button_save_Click(object sender, EventArgs e)
@@ -177,11 +171,7 @@ namespace GlucoseTrayCore.Views
 
             using (var sw = File.CreateText(Program.SettingsFile))
             {
-                //var model = new { appsettings = settingsModel };
-                var options = new JsonSerializerOptions
-                {
-                    WriteIndented = true,
-                };
+                var options = new JsonSerializerOptions { WriteIndented = true };
                 var json = JsonSerializer.Serialize(settingsModel, options);
                 sw.Write(json);
             }
@@ -216,10 +206,9 @@ namespace GlucoseTrayCore.Views
                 if (string.IsNullOrWhiteSpace(model.DexcomUsername) || string.IsNullOrWhiteSpace(model.DexcomPassword))
                     passed = false;
             }
-            else
+            else if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
             {
-                if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
-                    passed = false;
+                passed = false;
             }
 
             if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
