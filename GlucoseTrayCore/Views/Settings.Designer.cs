@@ -324,7 +324,7 @@ namespace GlucoseTrayCore.Views
             this.radio_glucose_unit_mmol.Size = new System.Drawing.Size(110, 33);
             this.radio_glucose_unit_mmol.TabIndex = 8;
             this.radio_glucose_unit_mmol.TabStop = true;
-            this.radio_glucose_unit_mmol.Text = "MMOG/L";
+            this.radio_glucose_unit_mmol.Text = "MMOL/L";
             this.radio_glucose_unit_mmol.UseVisualStyleBackColor = true;
             this.radio_glucose_unit_mmol.CheckedChanged += new System.EventHandler(this.radio_glucose_unit_mmol_CheckedChanged);
             // 

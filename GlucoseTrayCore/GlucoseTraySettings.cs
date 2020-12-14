@@ -1,6 +1,7 @@
 ﻿using GlucoseTrayCore.Enums;
 using Serilog.Events;
 using System;
+using System.Text.Json.Serialization;
 
 namespace GlucoseTrayCore
 {
@@ -19,6 +20,7 @@ namespace GlucoseTrayCore
         public double LowBg { get; set; }
         public double CriticalLowBg { get; set; }
         public int PollingThreshold { get; set; }
+        [JsonIgnore]
         public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
         public string DatabaseLocation { get; set; }
         public bool EnableDebugMode { get; set; }
