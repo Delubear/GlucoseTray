@@ -222,7 +222,7 @@ namespace GlucoseTrayCore.Views
             this.radio_dexcom_server_us_share1.Location = new System.Drawing.Point(184, 75);
             this.radio_dexcom_server_us_share1.Name = "radio_dexcom_server_us_share1";
             this.radio_dexcom_server_us_share1.Size = new System.Drawing.Size(123, 27);
-            this.radio_dexcom_server_us_share1.TabIndex = 5;
+            this.radio_dexcom_server_us_share1.TabIndex = 4;
             this.radio_dexcom_server_us_share1.TabStop = true;
             this.radio_dexcom_server_us_share1.Text = "US Share 1";
             this.radio_dexcom_server_us_share1.UseVisualStyleBackColor = true;
@@ -244,7 +244,7 @@ namespace GlucoseTrayCore.Views
             this.maskedText_dexcom_password.Location = new System.Drawing.Point(184, 31);
             this.maskedText_dexcom_password.Name = "maskedText_dexcom_password";
             this.maskedText_dexcom_password.Size = new System.Drawing.Size(176, 31);
-            this.maskedText_dexcom_password.TabIndex = 7;
+            this.maskedText_dexcom_password.TabIndex = 3;
             this.maskedText_dexcom_password.UseSystemPasswordChar = true;
             // 
             // nightscout_grid
@@ -322,7 +322,7 @@ namespace GlucoseTrayCore.Views
             this.radio_glucose_unit_mmol.Location = new System.Drawing.Point(184, 42);
             this.radio_glucose_unit_mmol.Name = "radio_glucose_unit_mmol";
             this.radio_glucose_unit_mmol.Size = new System.Drawing.Size(110, 33);
-            this.radio_glucose_unit_mmol.TabIndex = 1;
+            this.radio_glucose_unit_mmol.TabIndex = 8;
             this.radio_glucose_unit_mmol.TabStop = true;
             this.radio_glucose_unit_mmol.Text = "MMOG/L";
             this.radio_glucose_unit_mmol.UseVisualStyleBackColor = true;
@@ -345,7 +345,7 @@ namespace GlucoseTrayCore.Views
             this.radio_glucose_unit_mg.Location = new System.Drawing.Point(53, 42);
             this.radio_glucose_unit_mg.Name = "radio_glucose_unit_mg";
             this.radio_glucose_unit_mg.Size = new System.Drawing.Size(93, 33);
-            this.radio_glucose_unit_mg.TabIndex = 2;
+            this.radio_glucose_unit_mg.TabIndex = 7;
             this.radio_glucose_unit_mg.TabStop = true;
             this.radio_glucose_unit_mg.Text = "MG/DL";
             this.radio_glucose_unit_mg.UseVisualStyleBackColor = true;
@@ -445,7 +445,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_glucose_high.Name = "numeric_glucose_high";
             this.numeric_glucose_high.Size = new System.Drawing.Size(89, 31);
-            this.numeric_glucose_high.TabIndex = 6;
+            this.numeric_glucose_high.TabIndex = 9;
             this.numeric_glucose_high.Value = new decimal(new int[] {
             300,
             0,
@@ -462,7 +462,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_glucose_warning_high.Name = "numeric_glucose_warning_high";
             this.numeric_glucose_warning_high.Size = new System.Drawing.Size(89, 31);
-            this.numeric_glucose_warning_high.TabIndex = 7;
+            this.numeric_glucose_warning_high.TabIndex = 10;
             this.numeric_glucose_warning_high.Value = new decimal(new int[] {
             250,
             0,
@@ -479,7 +479,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_glucose_warning_low.Name = "numeric_glucose_warning_low";
             this.numeric_glucose_warning_low.Size = new System.Drawing.Size(89, 31);
-            this.numeric_glucose_warning_low.TabIndex = 8;
+            this.numeric_glucose_warning_low.TabIndex = 11;
             this.numeric_glucose_warning_low.Value = new decimal(new int[] {
             80,
             0,
@@ -496,7 +496,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_glucose_low.Name = "numeric_glucose_low";
             this.numeric_glucose_low.Size = new System.Drawing.Size(89, 31);
-            this.numeric_glucose_low.TabIndex = 9;
+            this.numeric_glucose_low.TabIndex = 12;
             this.numeric_glucose_low.Value = new decimal(new int[] {
             70,
             0,
@@ -513,7 +513,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_glucose_critical.Name = "numeric_glucose_critical";
             this.numeric_glucose_critical.Size = new System.Drawing.Size(89, 31);
-            this.numeric_glucose_critical.TabIndex = 10;
+            this.numeric_glucose_critical.TabIndex = 13;
             this.numeric_glucose_critical.Value = new decimal(new int[] {
             55,
             0,
@@ -523,9 +523,9 @@ namespace GlucoseTrayCore.Views
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 51.23457F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48.76543F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 165F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.5443F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.4557F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 167F));
             this.tableLayoutPanel1.Controls.Add(this.numeric_polling_threshold, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_polling_threshold, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_stale_results, 0, 1);
@@ -544,21 +544,21 @@ namespace GlucoseTrayCore.Views
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(467, 199);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(482, 199);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // numeric_polling_threshold
             // 
             this.numeric_polling_threshold.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numeric_polling_threshold.Location = new System.Drawing.Point(304, 3);
+            this.numeric_polling_threshold.Location = new System.Drawing.Point(317, 3);
             this.numeric_polling_threshold.Maximum = new decimal(new int[] {
             99999,
             0,
             0,
             0});
             this.numeric_polling_threshold.Name = "numeric_polling_threshold";
-            this.numeric_polling_threshold.Size = new System.Drawing.Size(160, 31);
-            this.numeric_polling_threshold.TabIndex = 9;
+            this.numeric_polling_threshold.Size = new System.Drawing.Size(162, 31);
+            this.numeric_polling_threshold.TabIndex = 14;
             this.numeric_polling_threshold.Value = new decimal(new int[] {
             15,
             0,
@@ -581,7 +581,7 @@ namespace GlucoseTrayCore.Views
             this.tableLayoutPanel1.SetColumnSpan(this.label_stale_results, 2);
             this.label_stale_results.Location = new System.Drawing.Point(3, 40);
             this.label_stale_results.Name = "label_stale_results";
-            this.label_stale_results.Size = new System.Drawing.Size(235, 40);
+            this.label_stale_results.Size = new System.Drawing.Size(308, 25);
             this.label_stale_results.TabIndex = 2;
             this.label_stale_results.Text = "Consider Results State After (minutes)";
             // 
@@ -598,10 +598,10 @@ namespace GlucoseTrayCore.Views
             // comboBox_log_level
             // 
             this.comboBox_log_level.FormattingEnabled = true;
-            this.comboBox_log_level.Location = new System.Drawing.Point(304, 83);
+            this.comboBox_log_level.Location = new System.Drawing.Point(317, 83);
             this.comboBox_log_level.Name = "comboBox_log_level";
             this.comboBox_log_level.Size = new System.Drawing.Size(137, 33);
-            this.comboBox_log_level.TabIndex = 5;
+            this.comboBox_log_level.TabIndex = 16;
             // 
             // label_debug_mode
             // 
@@ -616,10 +616,10 @@ namespace GlucoseTrayCore.Views
             // 
             this.checkBox_debug_mode.AutoSize = true;
             this.checkBox_debug_mode.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBox_debug_mode.Location = new System.Drawing.Point(157, 123);
+            this.checkBox_debug_mode.Location = new System.Drawing.Point(187, 123);
             this.checkBox_debug_mode.Name = "checkBox_debug_mode";
-            this.checkBox_debug_mode.Size = new System.Drawing.Size(141, 21);
-            this.checkBox_debug_mode.TabIndex = 7;
+            this.checkBox_debug_mode.Size = new System.Drawing.Size(124, 21);
+            this.checkBox_debug_mode.TabIndex = 17;
             this.checkBox_debug_mode.UseVisualStyleBackColor = true;
             // 
             // label_db_location
@@ -627,13 +627,13 @@ namespace GlucoseTrayCore.Views
             this.label_db_location.AutoSize = true;
             this.label_db_location.Location = new System.Drawing.Point(3, 160);
             this.label_db_location.Name = "label_db_location";
-            this.label_db_location.Size = new System.Drawing.Size(91, 40);
+            this.label_db_location.Size = new System.Drawing.Size(158, 25);
             this.label_db_location.TabIndex = 8;
             this.label_db_location.Text = "Database Location";
             // 
             // numeric_stale_results
             // 
-            this.numeric_stale_results.Location = new System.Drawing.Point(304, 43);
+            this.numeric_stale_results.Location = new System.Drawing.Point(317, 43);
             this.numeric_stale_results.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -641,7 +641,7 @@ namespace GlucoseTrayCore.Views
             0});
             this.numeric_stale_results.Name = "numeric_stale_results";
             this.numeric_stale_results.Size = new System.Drawing.Size(137, 31);
-            this.numeric_stale_results.TabIndex = 3;
+            this.numeric_stale_results.TabIndex = 15;
             this.numeric_stale_results.Value = new decimal(new int[] {
             15,
             0,
@@ -652,10 +652,10 @@ namespace GlucoseTrayCore.Views
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textBox_db_location_result, 2);
             this.textBox_db_location_result.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_db_location_result.Location = new System.Drawing.Point(157, 163);
+            this.textBox_db_location_result.Location = new System.Drawing.Point(187, 163);
             this.textBox_db_location_result.Name = "textBox_db_location_result";
-            this.textBox_db_location_result.Size = new System.Drawing.Size(307, 31);
-            this.textBox_db_location_result.TabIndex = 10;
+            this.textBox_db_location_result.Size = new System.Drawing.Size(292, 31);
+            this.textBox_db_location_result.TabIndex = 18;
             this.textBox_db_location_result.Text = "C:\\temp\\glucosetray.db";
             // 
             // button_save

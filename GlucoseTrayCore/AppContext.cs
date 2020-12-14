@@ -148,9 +148,7 @@ namespace GlucoseTrayCore
         {
             using var settings = new Settings();
             if (settings.ShowDialog() == DialogResult.OK)
-            {
-               
-            }
+                MessageBox.Show("Settings saved");
         }
 
         private async Task CreateIcon()
