@@ -70,9 +70,9 @@ namespace GlucoseTrayCore.Views
                     textBox_nightscout_url.Text = model.NightscoutUrl;
 
                     numeric_glucose_critical.Value = (decimal)model.CriticalLowBg;
-                    numeric_glucose_high.Value = (decimal)model.HighBg;
+                    numeric_glucose_high.Value = (decimal)model.WarningHighBg;
                     numeric_glucose_low.Value = (decimal)model.LowBg;
-                    numeric_glucose_warning_high.Value = (decimal)model.DangerHighBg;
+                    numeric_glucose_warning_high.Value = (decimal)model.HighBg;
                     numeric_glucose_warning_low.Value = (decimal)model.WarningLowBg;
 
                     numeric_polling_threshold.Value = model.PollingThreshold;
@@ -155,10 +155,10 @@ namespace GlucoseTrayCore.Views
                 DexcomPassword = maskedText_dexcom_password.Text, // TODO: Hash? How will that affect deserialization?
                 DexcomServer = radio_dexcom_server_us_share1.Checked ? DexcomServerLocation.DexcomShare1 : radio_dexcom_server_us_share2.Checked ? DexcomServerLocation.DexcomShare2 : DexcomServerLocation.DexcomInternational,
                 CriticalLowBg = (double) numeric_glucose_critical.Value,
-                DangerHighBg = (double) numeric_glucose_warning_high.Value,
+                HighBg = (double) numeric_glucose_warning_high.Value,
                 LowBg = (double) numeric_glucose_low.Value,
                 WarningLowBg = (double) numeric_glucose_warning_low.Value,
-                HighBg = (double) numeric_glucose_high.Value,
+                WarningHighBg = (double) numeric_glucose_high.Value,
                 GlucoseUnit = radio_glucose_unit_mg.Checked ? GlucoseUnitType.MG : GlucoseUnitType.MMOL,
                 DatabaseLocation = textBox_db_location_result.Text,
                 EnableDebugMode = checkBox_debug_mode.Checked,

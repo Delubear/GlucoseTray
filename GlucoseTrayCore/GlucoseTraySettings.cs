@@ -13,8 +13,8 @@ namespace GlucoseTrayCore
         public string DexcomPassword { get; set; }
         public string AccessToken { get; set; }
         public GlucoseUnitType GlucoseUnit { get; set; }
+        public double WarningHighBg { get; set; }
         public double HighBg { get; set; }
-        public double DangerHighBg { get; set; }
         public double WarningLowBg { get; set; }
         public double LowBg { get; set; }
         public double CriticalLowBg { get; set; }

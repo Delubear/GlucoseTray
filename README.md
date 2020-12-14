@@ -11,13 +11,14 @@ Always check with your DexCom reader before making any treatment decisions.
 
 
 <strong>Step-by-step Instructions:</strong> <br>
-Open appsettings.json in your text editor and set your desired values there.  Most important settings are to configure if you are using Nightscout or Dexcom as data source and to enter your site url (NightScout) or credentials (Dexcom).
+Download and run the GlucoseTrayCore.exe
+On first run, you will be prompted to define your settings which will include telling the program where to load your data from.
 
-HighBg displays yellow. <br>
-DangerousHighBg displays red. <br>
-LowBg displays yellow. <br>
-DangerousLowBg displays red. <br>
-CriticalLowBg displays as "DAN" for DANGER. <br>
+High Glucose displays red. <br>
+High Warning Glucose displays yellow. <br>
+Warning Low Glucose displays yellow. <br>
+Low Glucose displays red. <br>
+Critically Low Glucose displays as "DAN" for DANGER and is red. <br>
 Normal blood glucose displays as white. <br>
 Out-of-date readings are shown with a strikethrough effect. <br>
 
@@ -28,6 +29,3 @@ Out-of-date readings are shown with a strikethrough effect. <br>
 -Option to start application on system startup. <br>
 
 ![alt text](https://raw.githubusercontent.com/Delubear/GlucoseTray/master/2019-05-03_16-18-24.png)
-
-
-If missing configuration file, get a new copy at https://github.com/Delubear/GlucoseTray

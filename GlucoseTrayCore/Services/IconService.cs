@@ -33,9 +33,9 @@ namespace GlucoseTrayCore.Services
 
         internal Brush SetColor(double val) => val switch
         {
-            double n when n < _options.CurrentValue.HighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
-            double n when n >= _options.CurrentValue.HighBg && n < _options.CurrentValue.DangerHighBg => new SolidBrush(Color.Yellow),
-            double n when n >= _options.CurrentValue.DangerHighBg => new SolidBrush(Color.Red),
+            double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
+            double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.Yellow),
+            double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
             double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.Yellow),
             double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
             double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
