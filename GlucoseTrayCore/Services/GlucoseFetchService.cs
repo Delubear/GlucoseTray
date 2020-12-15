@@ -94,7 +94,8 @@ namespace GlucoseTrayCore.Services
 
             int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
 
-            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}"));
+            var token = string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(_options.CurrentValue.AccessToken, "i_can_probably_be_improved");
+            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "")}"));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             var results = new List<GlucoseResult>();
@@ -178,9 +179,9 @@ namespace GlucoseTrayCore.Services
             // Get Session Id
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
-                Content = new StringContent("{\"accountName\":\"" + _options.CurrentValue.DexcomUsername + "\"," +
+                Content = new StringContent("{\"accountName\":\"" + StringEncryptionService.DecryptString(_options.CurrentValue.DexcomUsername, "i_can_probably_be_improved") + "\"," +
                                                  "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
-                                                 "\"password\":\"" + _options.CurrentValue.DexcomPassword + "\"}", Encoding.UTF8, "application/json")
+                                                 "\"password\":\"" + StringEncryptionService.DecryptString(_options.CurrentValue.DexcomPassword, "i_can_probably_be_improved") + "\"}", Encoding.UTF8, "application/json")
             };
 
             var client = _httpClientFactory.CreateClient();

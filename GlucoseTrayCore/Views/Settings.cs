@@ -1,4 +1,5 @@
 ﻿using GlucoseTrayCore.Enums;
+using GlucoseTrayCore.Services;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,12 @@ namespace GlucoseTrayCore.Views
                     var json = File.ReadAllText(Program.SettingsFile);
                     var model = JsonSerializer.Deserialize<GlucoseTraySettings>(json);
 
+                    if (!ValidateSettings(model))
+                    {
+                        MessageBox.Show("Unable to load existing settings due to a bad file.");
+                        return;
+                    }
+
                     if (model.FetchMethod == FetchMethod.DexcomShare)
                         radio_dexcom.Checked = true;
                     else
@@ -52,8 +59,8 @@ namespace GlucoseTrayCore.Views
                         UpdateGlucoseNumericValues(GlucoseUnitType.MMOL);
                     }
 
-                    textBox_dexcom_username.Text = model.DexcomUsername;
-                    maskedText_dexcom_password.Text = model.DexcomPassword;
+                    textBox_dexcom_username.Text = string.IsNullOrWhiteSpace(model.DexcomUsername) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
+                    maskedText_dexcom_password.Text = string.IsNullOrWhiteSpace(model.DexcomPassword) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
 
                     if (model.DexcomServer == DexcomServerLocation.DexcomShare1)
                         radio_dexcom_server_us_share1.Checked = true;
@@ -62,7 +69,7 @@ namespace GlucoseTrayCore.Views
                     else
                         radio_dexcom_server_international.Checked = true;
 
-                    textBox_nightscout_token.Text = model.AccessToken;
+                    textBox_nightscout_token.Text = string.IsNullOrWhiteSpace(model.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(model.AccessToken, "i_can_probably_be_improved");
                     textBox_nightscout_url.Text = model.NightscoutUrl;
 
                     numeric_glucose_critical.Value = (decimal)model.CriticalLowBg;
@@ -145,10 +152,10 @@ namespace GlucoseTrayCore.Views
             var settingsModel = new GlucoseTraySettings
             {
                 FetchMethod = radio_dexcom.Checked ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi,
-                AccessToken = textBox_nightscout_token.Text,
+                AccessToken = textBox_nightscout_token.Text.Length > 0 ? StringEncryptionService.EncryptString(textBox_nightscout_token.Text, "i_can_probably_be_improved") : string.Empty,
                 NightscoutUrl = textBox_nightscout_url.Text,
-                DexcomUsername = textBox_dexcom_username.Text,
-                DexcomPassword = maskedText_dexcom_password.Text, // TODO: Hash? How will that affect deserialization?
+                DexcomUsername = textBox_dexcom_username.Text.Length > 0 ? StringEncryptionService.EncryptString(textBox_dexcom_username.Text, "i_can_probably_be_improved") : string.Empty,
+                DexcomPassword = maskedText_dexcom_password.Text.Length > 0 ? StringEncryptionService.EncryptString(maskedText_dexcom_password.Text, "i_can_probably_be_improved") : string.Empty,
                 DexcomServer = radio_dexcom_server_us_share1.Checked ? DexcomServerLocation.DexcomShare1 : radio_dexcom_server_us_share2.Checked ? DexcomServerLocation.DexcomShare2 : DexcomServerLocation.DexcomInternational,
                 CriticalLowBg = (double) numeric_glucose_critical.Value,
                 HighBg = (double) numeric_glucose_warning_high.Value,
