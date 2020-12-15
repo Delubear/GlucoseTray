@@ -59,7 +59,7 @@ namespace GlucoseTrayCore.Views
                         UpdateGlucoseNumericValues(GlucoseUnitType.MMOL);
                     }
 
-                    textBox_dexcom_username.Text = string.IsNullOrWhiteSpace(model.DexcomUsername) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
+                    textBox_dexcom_username.Text = string.IsNullOrWhiteSpace(model.DexcomUsername) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomUsername, "i_can_probably_be_improved");
                     maskedText_dexcom_password.Text = string.IsNullOrWhiteSpace(model.DexcomPassword) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
 
                     if (model.DexcomServer == DexcomServerLocation.DexcomShare1)
