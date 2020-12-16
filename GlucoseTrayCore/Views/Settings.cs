@@ -34,10 +34,9 @@ namespace GlucoseTrayCore.Views
             {
                 try
                 {
-                    var json = File.ReadAllText(Program.SettingsFile);
-                    var model = JsonSerializer.Deserialize<GlucoseTraySettings>(json);
+                    var model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
 
-                    if (!ValidateSettings(model))
+                    if (model is null || !ValidateSettings(model))
                     {
                         MessageBox.Show("Unable to load existing settings due to a bad file.");
                         return;
@@ -170,18 +169,15 @@ namespace GlucoseTrayCore.Views
                 StaleResultsThreshold = (int) numeric_stale_results.Value
             };
 
-            if (!ValidateSettings(settingsModel) || (!radio_dexcom.Checked && !radio_nightscout.Checked) || (radio_dexcom.Checked && !radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
+            if (!ValidateSettings(settingsModel) 
+                || (!radio_dexcom.Checked && !radio_nightscout.Checked) 
+                || (radio_dexcom.Checked && !radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
             {
                 MessageBox.Show("Settings are not valid.  Please fix before continuing.");
                 return;
             }
 
-            using (var sw = File.CreateText(Program.SettingsFile))
-            {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                var json = JsonSerializer.Serialize(settingsModel, options);
-                sw.Write(json);
-            }
+            FileService<GlucoseTraySettings>.WriteModelToJsonFile(settingsModel, Program.SettingsFile);
 
             Close();
             DialogResult = DialogResult.OK;
@@ -197,15 +193,9 @@ namespace GlucoseTrayCore.Views
 
             if (model is null)
             {
-                try
-                {
-                    var json = File.ReadAllText(Program.SettingsFile);
-                    model = JsonSerializer.Deserialize<GlucoseTraySettings>(json);
-                }
-                catch // Catch serialization errors due to a bad file
-                {
+                model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+                if (model is null)
                     passed = false;
-                }
             }
 
             if (model.FetchMethod == FetchMethod.DexcomShare)
