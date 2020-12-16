@@ -1,4 +1,6 @@
-﻿using GlucoseTrayCore.Data;
+﻿using CefSharp;
+using CefSharp.WinForms;
+using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
 using GlucoseTrayCore.Views;
 using Microsoft.Data.Sqlite;
@@ -24,6 +26,9 @@ namespace GlucoseTrayCore
 
         private static void Main(string[] args)
         {
+            Cef.EnableHighDPISupport();
+            Cef.Initialize(new CefSettings());
+            FileService.UnpackHtmlResources();
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
             using var settingsWindow = new Settings();
             if (!File.Exists(SettingsFile) || settingsWindow.ValidateSettings().Count != 0)

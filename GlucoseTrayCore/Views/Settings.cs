@@ -1,4 +1,5 @@
-﻿using GlucoseTrayCore.Enums;
+﻿using CefSharp.WinForms;
+using GlucoseTrayCore.Enums;
 using GlucoseTrayCore.Services;
 using Serilog.Events;
 using System;
@@ -6,13 +7,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore.Views
 {
     public partial class Settings : Form
     {
+        private readonly string ResourcePath = Application.UserAppDataPath + @"\" +"GlucoseTrayCore.Views.html.settings.html";
+        private ChromiumWebBrowser chromeBrowser;
         private GlucoseUnitType SelectedGlucoseType = GlucoseUnitType.MG;
 
         public static readonly Dictionary<string, LogEventLevel> LogLevels = new Dictionary<string, LogEventLevel>
@@ -25,9 +27,17 @@ namespace GlucoseTrayCore.Views
             { "Fatal", LogEventLevel.Fatal },
         };
 
+        public void InitializeChromium()
+        {
+            chromeBrowser = new ChromiumWebBrowser(ResourcePath);
+            Controls.Add(chromeBrowser);
+            chromeBrowser.Dock = DockStyle.Fill;
+        }
+
         public Settings()
         {
             InitializeComponent();
+            InitializeChromium();
             comboBox_log_level.DataSource = LogLevels.Select(x => x.Key).ToList();
 
             if (File.Exists(Program.SettingsFile))

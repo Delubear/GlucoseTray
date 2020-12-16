@@ -1,5 +1,8 @@
 ﻿using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.Json;
+using System.Windows.Forms;
 
 namespace GlucoseTrayCore.Services
 {
@@ -26,6 +29,24 @@ namespace GlucoseTrayCore.Services
             }
 
             return model;
+        }
+    }
+
+    public static class FileService
+    {
+        /// <summary>
+        /// TODO: Possible optimizations available or do we want to unpack everytime?
+        /// </summary>
+        public static void UnpackHtmlResources()
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            var htmlResourceNames = assembly.GetManifestResourceNames().Where(x => x.EndsWith(".html", System.StringComparison.OrdinalIgnoreCase));
+            foreach(var resource in htmlResourceNames)
+            {
+                using var sr = new StreamReader(assembly.GetManifestResourceStream(resource));
+                using var reader = File.CreateText(Application.UserAppDataPath + @"\" + resource);
+                reader.Write(sr.ReadToEnd());
+            }
         }
     }
 }

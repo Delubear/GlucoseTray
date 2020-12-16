@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
 using GlucoseTrayCore.Views;
-using System.Configuration;
+using CefSharp;
 
 namespace GlucoseTrayCore
 {
@@ -140,6 +140,7 @@ namespace GlucoseTrayCore
             _logger.LogInformation("Exiting application.");
             trayIcon.Visible = false;
             trayIcon?.Dispose();
+            Cef.Shutdown();
             Application.ExitThread();
             Application.Exit();
         }

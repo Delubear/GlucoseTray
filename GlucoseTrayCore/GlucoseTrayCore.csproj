@@ -14,9 +14,20 @@
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\html\settings.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Views\html\settings.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CefSharp.WinForms" Version="86.0.241" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
@@ -32,6 +43,22 @@
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\html\settings.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="CefSharp">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.Core">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="CefSharp.WinForms">
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>
