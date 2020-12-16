@@ -123,7 +123,7 @@ namespace GlucoseTrayCore
                 if (count == 1)
                     _logger.LogWarning($"Found 1 reading recorded at {missingResults[0].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC ");
                 else
-                    _logger.LogWarning($"Found {count} readings between {missingResults[0].DateTimeUTC} and {missingResults[count-1].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC. Retrieving them took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
+                    _logger.LogWarning($"Found {count} readings between {missingResults[0].DateTimeUTC} and {missingResults[count - 1].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC. Retrieving them took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
 
                 sw.Restart();
                 _context.GlucoseResults.AddRange(missingResults);   // None of these records will be in the database, so just add them all now.
@@ -133,7 +133,7 @@ namespace GlucoseTrayCore
                     _logger.LogWarning($"Saving {missingResults.Count()} records took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
             }
         }
-    
+
 
         private void Exit(object sender, EventArgs e)
         {
@@ -143,12 +143,20 @@ namespace GlucoseTrayCore
             Application.ExitThread();
             Application.Exit();
         }
-        
+
         private void ChangeSettings(object sender, EventArgs e)
         {
-            using var settings = new Settings();
-            if (settings.ShowDialog() == DialogResult.OK)
-                MessageBox.Show("Settings saved");
+            var existingSettingsForm = Application.OpenForms.OfType<Settings>().FirstOrDefault();
+            if (existingSettingsForm != null)
+            {
+                Application.OpenForms.OfType<Settings>().First().BringToFront();
+            }
+            else
+            {
+                using var settings = new Settings();
+                if (settings.ShowDialog() == DialogResult.OK)
+                    MessageBox.Show("Settings saved");
+            }
         }
 
         private async Task CreateIcon()
