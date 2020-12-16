@@ -93,7 +93,7 @@ namespace GlucoseTrayCore
         {
             using RegistryKey key = Registry.LocalMachine.CreateSubKey(RegKeyLocation);
             var exeName = Path.GetFileName(Application.ExecutablePath);
-            key.SetValue(exeName, 9000);
+            key.SetValue(exeName, 0x0002af8); // IE11
         }
     }
 }

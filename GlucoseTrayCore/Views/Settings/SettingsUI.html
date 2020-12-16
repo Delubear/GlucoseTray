@@ -7,6 +7,12 @@
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .glucose-value-label {
+            min-width: 175px !important;
+            width: 175px !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container-fluid">
@@ -26,9 +32,22 @@
                             <label class="form-check-label" for="radio_glucose_datasource_nightscout">&nbsp;Nightscout</label>
                         </div>
                     </div>
+                    <div class="col-12 mt-4">
+                        <label>Glucose Unit</label>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check-inline">
+                            <input id="radio_glucose_unit_mg" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mg')" class="form-check-input" checked />
+                            <label class="form-check-label" for="radio_glucose_unit_mg">&nbsp;Dexcom</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input id="radio_glucose_unit_mmol" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mmol')" class="form-check-input" />
+                            <label class="form-check-label" for="radio_glucose_unit_mmol">&nbsp;Nightscout</label>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id="div_dexcom_settings" class="col-8 d-none">
+            <div id="div_dexcom_settings" class="col-8" style="display: none;">
                 <div class="row">
                     <div class="col-6">
                         <div class="col-12"><label class="form-label" for="text_dexcom_username">Dexcom Username</label></div>
@@ -39,7 +58,7 @@
                         <div class="col-12"><input class="form-control" id="text_dexcom_password" type="password" /></div>
                     </div>
                     <div class="col-12">
-                        <div class="row col-12">
+                        <div class="row col-12 mt-4">
                             <div class="col-4">
                                 <label class="form-label">
                                     Dexcom Server
@@ -64,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div id="div_nightscout_settings" class="col-8 d-none">
+            <div id="div_nightscout_settings" class="col-8" style="display: none;">
                 <div class="row">
                     <div class="col-6">
                         <div class="col-12"><label class="form-label" for="text_nightscout_url">Nightscout Url</label></div>
@@ -77,41 +96,102 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <label>Glucose Unit</label>
-            </div>
-            <div class="col-12">
-                <div class="form-check-inline">
-                    <input id="radio_glucose_unit_mg" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mg')" class="form-check-input" />
-                    <label class="form-check-label" for="radio_glucose_unit_mg">&nbsp;Dexcom</label>
-                </div>
-                <div class="form-check-inline">
-                    <input id="radio_glucose_unit_mmol" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mmol')" class="form-check-input" />
-                    <label class="form-check-label" for="radio_glucose_unit_mmol">&nbsp;Nightscout</label>
+        <div class="row mt-4">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12">
+                        <label>Glucose Thresholds</label>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="glucose_high" class="input-group-text glucose-value-label">High</label>
+                            </div>
+                            <input id="glucose_high" type="number" step="1" class="form-control" value="250" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="glucose_warning_high" class="input-group-text glucose-value-label">Warning High</label>
+                            </div>
+                            <input id="glucose_warning_high" type="number" step="1" class="form-control" value="200" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="glucose_warning_low" class="input-group-text glucose-value-label">Warning Low</label>
+                            </div>
+                            <input id="glucose_warning_low" type="number" step="1" class="form-control" value="80" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="glucose_low" class="input-group-text glucose-value-label">Low</label>
+                            </div>
+                            <input id="glucose_low" type="number" step="1" class="form-control" value="70" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <label for="glucose_critically_low" class="input-group-text glucose-value-label">Critically Low</label>
+                            </div>
+                            <input id="glucose_critically_low" type="number" step="1" class="form-control" value="55" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
+
+        var currentGlucoseUnit = 'mg';
+
+        var unitValueControlIds = [ 'glucose_critically_low', 'glucose_low', 'glucose_warning_low', 'glucose_warning_high', 'glucose_high'];
+
         function setDatasource(source)
         {
             if (source === 'dexcom')
             {
-                document.getElementById('div_dexcom_settings').classList.remove('d-none');
-                document.getElementById('div_nightscout_settings').classList.add('d-none');
+                document.getElementById('div_dexcom_settings').style.display = 'block';
+                document.getElementById('div_nightscout_settings').style.display = 'none';
             }
             else
             {
-                document.getElementById('div_nightscout_settings').classList.remove('d-none');
-                document.getElementById('div_dexcom_settings').classList.add('d-none');
+                document.getElementById('div_nightscout_settings').style.display = 'block';
+                document.getElementById('div_dexcom_settings').style.display = 'none';
             }
         }
 
         function setGlucoseUnit(unit)
         {
-
+            if (unit === 'mg')
+            {
+                if (currentGlucoseUnit === 'mmol')
+                {
+                    unitValueControlIds.forEach(function(name, inddex, array)
+                    {
+                        let element = document.getElementById(name);
+                        element.value *= 18;
+                    });
+                }
+                currentGlucoseUnit = 'mg';
+            } else
+            {
+                if (currentGlucoseUnit === 'mg')
+                {
+                    unitValueControlIds.forEach(function (name, inddex, array)
+                    {
+                        let element = document.getElementById(name);
+                        element.value /= 18;
+                    });
+                }
+                currentGlucoseUnit = 'mmol';
+            }
         }
     </script>
 </body>

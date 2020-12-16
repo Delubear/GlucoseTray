@@ -14,7 +14,7 @@ namespace GlucoseTrayCore.Views.Settings
 
         public SettingsJavaScriptInteractionModel(SettingsWindow window) => _window = window;
 
-        public void SaveData(string message)
+        public void SaveData(object message)
         {
 
         }

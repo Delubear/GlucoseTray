@@ -52,6 +52,7 @@ namespace GlucoseTrayCore.Views.Settings
             var html = FileService.LoadHtmlFromResource(ResourcePath);
             webBrowser.ObjectForScripting = new SettingsJavaScriptInteractionModel(this);
             webBrowser.NavigateToString(html);
+            var m = webBrowser.Document;
         }
 
         /// <summary>
