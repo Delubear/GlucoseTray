@@ -221,6 +221,9 @@ namespace GlucoseTrayCore.Views
             if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
                 passed = false;
 
+            if (!(model.HighBg > model.WarningHighBg && model.WarningHighBg > model.WarningLowBg && model.WarningLowBg > model.LowBg && model.LowBg > model.CriticalLowBg))
+                passed = false;
+
             return passed;
         }
     }
