@@ -36,7 +36,7 @@ namespace GlucoseTrayCore.Views
                 {
                     var model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
 
-                    if (model is null || !ValidateSettings(model))
+                    if (model is null)
                     {
                         MessageBox.Show("Unable to load existing settings due to a bad file.");
                         return;
@@ -80,9 +80,10 @@ namespace GlucoseTrayCore.Views
                     numeric_polling_threshold.Value = model.PollingThreshold;
                     numeric_stale_results.Value = model.StaleResultsThreshold;
 
-                    comboBox_log_level.DisplayMember = model.LogLevel.ToString();
+                    comboBox_log_level.SelectedItem = model.LogLevel.ToString();
                     checkBox_debug_mode.Checked = model.EnableDebugMode;
                     textBox_db_location_result.Text = model.DatabaseLocation;
+
                 }
                 catch (Exception e) // Catch serialization errors due to a bad file
                 {
@@ -169,13 +170,22 @@ namespace GlucoseTrayCore.Views
                 StaleResultsThreshold = (int) numeric_stale_results.Value
             };
 
-            if (!ValidateSettings(settingsModel) 
-                || (!radio_dexcom.Checked && !radio_nightscout.Checked) 
-                || (radio_dexcom.Checked && !radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
+            var errors = ValidateSettings(settingsModel);
+
+            if (!radio_dexcom.Checked && !radio_nightscout.Checked)
+                errors.Add("Glucose Datasource is missing : You must select either Dexcom or Nightscout");
+
+            if (radio_dexcom.Checked && (!radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
+                errors.Add("Dexcom Server is missing");
+
+            if (!radio_glucose_unit_mg.Checked && !radio_glucose_unit_mmol.Checked)
+                errors.Add("Glucose Unit is missing : You must select either MG/DL or MMOL/L");
+
+            if (errors.Any())
             {
-                MessageBox.Show("Settings are not valid.  Please fix before continuing.");
+                MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + String.Join("\r\n", errors));
                 return;
-            }
+            }            
 
             FileService<GlucoseTraySettings>.WriteModelToJsonFile(settingsModel, Program.SettingsFile);
 
@@ -187,34 +197,36 @@ namespace GlucoseTrayCore.Views
         /// If model is null, will validate from stored settings file.
         /// </summary>
         /// <param name="model"></param>
-        public bool ValidateSettings(GlucoseTraySettings model = null)
+        public List<string> ValidateSettings(GlucoseTraySettings model = null)
         {
-            var passed = true;
+            var errors = new List<string>();
 
             if (model is null)
             {
                 model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
                 if (model is null)
-                    passed = false;
+                    errors.Add("File is Invalid");
             }
 
             if (model.FetchMethod == FetchMethod.DexcomShare)
             {
-                if (string.IsNullOrWhiteSpace(model.DexcomUsername) || string.IsNullOrWhiteSpace(model.DexcomPassword))
-                    passed = false;
+                if (string.IsNullOrWhiteSpace(model.DexcomUsername))
+                    errors.Add("DexcomUsername is missing");
+                if (string.IsNullOrWhiteSpace(model.DexcomPassword))
+                    errors.Add("DexcomPassword is missing");
             }
             else if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
             {
-                passed = false;
+                errors.Add("NightscoutUrl is missing");
             }
 
             if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
-                passed = false;
+                errors.Add("DatabaseLocation is missing");
 
             if (!(model.HighBg > model.WarningHighBg && model.WarningHighBg > model.WarningLowBg && model.WarningLowBg > model.LowBg && model.LowBg > model.CriticalLowBg))
-                passed = false;
+                errors.Add("Thresholds overlap ");
 
-            return passed;
+            return errors;
         }
     }
 }
