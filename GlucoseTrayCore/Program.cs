@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Win32;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -26,7 +27,7 @@ namespace GlucoseTrayCore
         [STAThread]
         private static void Main(string[] args)
         {
-            //CheckForWebView2AndInstallIfNeeded();
+            ValidateOrAddRegistryKey();
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
             var settingsWindow = new SettingsWindow();
             if (!File.Exists(SettingsFile) || settingsWindow.ValidateSettings().Count != 0)
@@ -82,6 +83,17 @@ namespace GlucoseTrayCore
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
                     .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
+        }
+
+        /// <summary>
+        /// Need to set this key so our WPF views will render properly.
+        /// </summary>
+        private readonly static string RegKeyLocation = @"SOFTWARE\Microsoft\Internet Explorer\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+        private static void ValidateOrAddRegistryKey()
+        {
+            using RegistryKey key = Registry.LocalMachine.CreateSubKey(RegKeyLocation);
+            var exeName = Path.GetFileName(Application.ExecutablePath);
+            key.SetValue(exeName, 9000);
         }
     }
 }

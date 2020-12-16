@@ -6,25 +6,112 @@
     <title></title>
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-12">
+                        <label>Glucose Datasource</label>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check-inline">
+                            <input id="radio_glucose_datasource_dexcom" name="glucose_datasource" type="radio" onclick="setDatasource('dexcom')" class="form-check-input" />
+                            <label class="form-check-label" for="radio_glucose_datasource_dexcom">&nbsp;Dexcom</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input id="radio_glucose_datasource_nightscout" name="glucose_datasource" type="radio" onclick="setDatasource('nightscout')" class="form-check-input" />
+                            <label class="form-check-label" for="radio_glucose_datasource_nightscout">&nbsp;Nightscout</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="div_dexcom_settings" class="col-8 d-none">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="col-12"><label class="form-label" for="text_dexcom_username">Dexcom Username</label></div>
+                        <div class="col-12"><input class="form-control" id="text_dexcom_username" type="text" /></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="col-12"><label class="form-label" for="text_dexcom_password">Dexcom Password</label></div>
+                        <div class="col-12"><input class="form-control" id="text_dexcom_password" type="password" /></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row col-12">
+                            <div class="col-4">
+                                <label class="form-label">
+                                    Dexcom Server
+                                </label>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-check">
+                                    <input id="radio_dexcom_server_us1" name="glucose_dexcom_server" type="radio" class="form-check-input" />
+                                    <label class="form-check-label" for="radio_dexcom_server_us1">&nbsp;US Share 1</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="radio_dexcom_server_us2" name="glucose_dexcom_server" type="radio" class="form-check-input" />
+                                    <label class="form-check-label" for="radio_dexcom_server_us2">&nbsp;US Share 2</label>
+                                </div>
+                                <div class="form-check">
+                                    <input id="radio_dexcom_server_int" name="glucose_dexcom_server" type="radio" class="form-check-input" />
+                                    <label class="form-check-label" for="radio_dexcom_server_int">&nbsp;International</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div id="div_nightscout_settings" class="col-8 d-none">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="col-12"><label class="form-label" for="text_nightscout_url">Nightscout Url</label></div>
+                        <div class="col-12"><input class="form-control" id="text_nightscout_url" type="text" /></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="col-12"><label class="form-label" for="text_nightscout_access_token">Nightscout Access Token</label></div>
+                        <div class="col-12"><input class="form-control" id="text_nightscout_access_token" type="text" /></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-12">
-                <label>Glucose Datasource</label>
+                <label>Glucose Unit</label>
             </div>
             <div class="col-12">
-                <input name="glucose_datasource" type="radio" onchange="test()" /> Dexcom
-                <input name="glucose_datasource" type="radio" onchange="test()" /> Nightscout
+                <div class="form-check-inline">
+                    <input id="radio_glucose_unit_mg" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mg')" class="form-check-input" />
+                    <label class="form-check-label" for="radio_glucose_unit_mg">&nbsp;Dexcom</label>
+                </div>
+                <div class="form-check-inline">
+                    <input id="radio_glucose_unit_mmol" name="glucose_unit" type="radio" onclick="setGlucoseUnit('mmol')" class="form-check-input" />
+                    <label class="form-check-label" for="radio_glucose_unit_mmol">&nbsp;Nightscout</label>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function test()
+        function setDatasource(source)
         {
-            window.external.SaveData('test');
+            if (source === 'dexcom')
+            {
+                document.getElementById('div_dexcom_settings').classList.remove('d-none');
+                document.getElementById('div_nightscout_settings').classList.add('d-none');
+            }
+            else
+            {
+                document.getElementById('div_nightscout_settings').classList.remove('d-none');
+                document.getElementById('div_dexcom_settings').classList.add('d-none');
+            }
+        }
+
+        function setGlucoseUnit(unit)
+        {
+
         }
     </script>
 </body>

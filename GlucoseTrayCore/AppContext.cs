@@ -146,7 +146,7 @@ namespace GlucoseTrayCore
         private void ChangeSettings(object sender, EventArgs e)
         {
             // TODO: Investiage if we can open more than one window in wpf and if so, prevent it
-            var existingSettingsForm = System.Windows.Application.Current.Windows.OfType<SettingsWindow>().FirstOrDefault();
+            var existingSettingsForm = System.Windows.Application.Current?.Windows?.OfType<SettingsWindow>()?.FirstOrDefault();
             if (existingSettingsForm != null)
             {
                 System.Windows.Application.Current.Windows.OfType<SettingsWindow>().First().BringIntoView();

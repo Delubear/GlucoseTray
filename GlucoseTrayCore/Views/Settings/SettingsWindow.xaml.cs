@@ -37,7 +37,10 @@ namespace GlucoseTrayCore.Views.Settings
                     if (model is null)
                     {
                         MessageBox.Show("Unable to load existing settings due to a bad file.");
-                        return;
+                    }
+                    else
+                    {
+
                     }
                 }
                 catch (Exception e) // Catch serialization errors due to a bad file
