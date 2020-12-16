@@ -1,5 +1,4 @@
-﻿using CefSharp.WinForms;
-using GlucoseTrayCore.Enums;
+﻿using GlucoseTrayCore.Enums;
 using GlucoseTrayCore.Services;
 using Serilog.Events;
 using System;
@@ -11,10 +10,9 @@ using System.Windows.Forms;
 
 namespace GlucoseTrayCore.Views
 {
-    public partial class Settings : Form
+    public partial class SettingsForm : Form
     {
         private readonly string ResourcePath = Application.UserAppDataPath + @"\" +"GlucoseTrayCore.Views.html.settings.html";
-        private ChromiumWebBrowser chromeBrowser;
         private GlucoseUnitType SelectedGlucoseType = GlucoseUnitType.MG;
 
         public static readonly Dictionary<string, LogEventLevel> LogLevels = new Dictionary<string, LogEventLevel>
@@ -27,17 +25,10 @@ namespace GlucoseTrayCore.Views
             { "Fatal", LogEventLevel.Fatal },
         };
 
-        public void InitializeChromium()
-        {
-            chromeBrowser = new ChromiumWebBrowser(ResourcePath);
-            Controls.Add(chromeBrowser);
-            chromeBrowser.Dock = DockStyle.Fill;
-        }
 
-        public Settings()
+        public SettingsForm()
         {
             InitializeComponent();
-            InitializeChromium();
             comboBox_log_level.DataSource = LogLevels.Select(x => x.Key).ToList();
 
             if (File.Exists(Program.SettingsFile))
@@ -210,32 +201,6 @@ namespace GlucoseTrayCore.Views
         public List<string> ValidateSettings(GlucoseTraySettings model = null)
         {
             var errors = new List<string>();
-
-            if (model is null)
-            {
-                model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
-                if (model is null)
-                    errors.Add("File is Invalid");
-            }
-
-            if (model.FetchMethod == FetchMethod.DexcomShare)
-            {
-                if (string.IsNullOrWhiteSpace(model.DexcomUsername))
-                    errors.Add("DexcomUsername is missing");
-                if (string.IsNullOrWhiteSpace(model.DexcomPassword))
-                    errors.Add("DexcomPassword is missing");
-            }
-            else if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
-            {
-                errors.Add("NightscoutUrl is missing");
-            }
-
-            if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
-                errors.Add("DatabaseLocation is missing");
-
-            if (!(model.HighBg > model.WarningHighBg && model.WarningHighBg > model.WarningLowBg && model.WarningLowBg > model.LowBg && model.LowBg > model.CriticalLowBg))
-                errors.Add("Thresholds overlap ");
-
             return errors;
         }
     }

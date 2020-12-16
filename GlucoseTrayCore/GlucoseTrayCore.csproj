@@ -11,23 +11,19 @@
     <ApplicationIcon />
     <StartupObject />
     <UseWindowsForms>true</UseWindowsForms>
+    <UseWpf>true</UseWpf>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <Platforms>AnyCPU;x86;x64</Platforms>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
+  <!-- All new views using HTML need to be added like this. -->
   <ItemGroup>
-    <None Remove="Views\html\settings.html" />
+    <EmbeddedResource Include="Views\Settings\SettingsUI.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Views\html\settings.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="CefSharp.WinForms" Version="86.0.241" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
@@ -46,19 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Views\html\settings.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Update="CefSharp">
-      <Private>true</Private>
-    </Reference>
-    <Reference Update="CefSharp.Core">
-      <Private>true</Private>
-    </Reference>
-    <Reference Update="CefSharp.WinForms">
-      <Private>true</Private>
-    </Reference>
+    <Resource Include="Views\Settings\SettingsUI.html" />
   </ItemGroup>
 
 </Project>

@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
-using GlucoseTrayCore.Views;
-using CefSharp;
+using GlucoseTrayCore.Views.Settings;
 
 namespace GlucoseTrayCore
 {
@@ -140,22 +139,23 @@ namespace GlucoseTrayCore
             _logger.LogInformation("Exiting application.");
             trayIcon.Visible = false;
             trayIcon?.Dispose();
-            Cef.Shutdown();
             Application.ExitThread();
             Application.Exit();
         }
 
         private void ChangeSettings(object sender, EventArgs e)
         {
-            var existingSettingsForm = Application.OpenForms.OfType<Settings>().FirstOrDefault();
+            // TODO: Investiage if we can open more than one window in wpf and if so, prevent it
+            var existingSettingsForm = System.Windows.Application.Current.Windows.OfType<SettingsWindow>().FirstOrDefault();
             if (existingSettingsForm != null)
             {
-                Application.OpenForms.OfType<Settings>().First().BringToFront();
+                System.Windows.Application.Current.Windows.OfType<SettingsWindow>().First().BringIntoView();
+                System.Windows.Application.Current.Windows.OfType<SettingsWindow>().First().Focus();
             }
             else
             {
-                using var settings = new Settings();
-                if (settings.ShowDialog() == DialogResult.OK)
+                var settingsWindow = new SettingsWindow();
+                if (settingsWindow.ShowDialog() == true)
                     MessageBox.Show("Settings saved");
             }
         }

@@ -34,19 +34,10 @@ namespace GlucoseTrayCore.Services
 
     public static class FileService
     {
-        /// <summary>
-        /// TODO: Possible optimizations available or do we want to unpack everytime?
-        /// </summary>
-        public static void UnpackHtmlResources()
+        public static string LoadHtmlFromResource(string resourceName)
         {
-            var assembly = Assembly.GetEntryAssembly();
-            var htmlResourceNames = assembly.GetManifestResourceNames().Where(x => x.EndsWith(".html", System.StringComparison.OrdinalIgnoreCase));
-            foreach(var resource in htmlResourceNames)
-            {
-                using var sr = new StreamReader(assembly.GetManifestResourceStream(resource));
-                using var reader = File.CreateText(Application.UserAppDataPath + @"\" + resource);
-                reader.Write(sr.ReadToEnd());
-            }
+            using var sr = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream(resourceName));
+            return sr.ReadToEnd();
         }
     }
 }

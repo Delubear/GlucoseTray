@@ -1,7 +1,7 @@
 ﻿
 namespace GlucoseTrayCore.Views
 {
-    partial class Settings
+    partial class SettingsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -319,9 +319,9 @@ namespace GlucoseTrayCore.Views
             // 
             this.radio_glucose_unit_mmol.AutoSize = true;
             this.radio_glucose_unit_mmol.Dock = System.Windows.Forms.DockStyle.Right;
-            this.radio_glucose_unit_mmol.Location = new System.Drawing.Point(184, 42);
+            this.radio_glucose_unit_mmol.Location = new System.Drawing.Point(188, 42);
             this.radio_glucose_unit_mmol.Name = "radio_glucose_unit_mmol";
-            this.radio_glucose_unit_mmol.Size = new System.Drawing.Size(110, 33);
+            this.radio_glucose_unit_mmol.Size = new System.Drawing.Size(106, 33);
             this.radio_glucose_unit_mmol.TabIndex = 8;
             this.radio_glucose_unit_mmol.TabStop = true;
             this.radio_glucose_unit_mmol.Text = "MMOL/L";
@@ -525,7 +525,7 @@ namespace GlucoseTrayCore.Views
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.5443F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.4557F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 168F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 172F));
             this.tableLayoutPanel1.Controls.Add(this.numeric_polling_threshold, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_polling_threshold, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_stale_results, 0, 1);
@@ -550,14 +550,14 @@ namespace GlucoseTrayCore.Views
             // numeric_polling_threshold
             // 
             this.numeric_polling_threshold.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numeric_polling_threshold.Location = new System.Drawing.Point(316, 3);
+            this.numeric_polling_threshold.Location = new System.Drawing.Point(312, 3);
             this.numeric_polling_threshold.Maximum = new decimal(new int[] {
             99999,
             0,
             0,
             0});
             this.numeric_polling_threshold.Name = "numeric_polling_threshold";
-            this.numeric_polling_threshold.Size = new System.Drawing.Size(163, 31);
+            this.numeric_polling_threshold.Size = new System.Drawing.Size(167, 31);
             this.numeric_polling_threshold.TabIndex = 14;
             this.numeric_polling_threshold.Value = new decimal(new int[] {
             15,
@@ -598,7 +598,7 @@ namespace GlucoseTrayCore.Views
             // comboBox_log_level
             // 
             this.comboBox_log_level.FormattingEnabled = true;
-            this.comboBox_log_level.Location = new System.Drawing.Point(316, 83);
+            this.comboBox_log_level.Location = new System.Drawing.Point(312, 83);
             this.comboBox_log_level.Name = "comboBox_log_level";
             this.comboBox_log_level.Size = new System.Drawing.Size(137, 33);
             this.comboBox_log_level.TabIndex = 16;
@@ -616,9 +616,9 @@ namespace GlucoseTrayCore.Views
             // 
             this.checkBox_debug_mode.AutoSize = true;
             this.checkBox_debug_mode.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBox_debug_mode.Location = new System.Drawing.Point(186, 123);
+            this.checkBox_debug_mode.Location = new System.Drawing.Point(184, 123);
             this.checkBox_debug_mode.Name = "checkBox_debug_mode";
-            this.checkBox_debug_mode.Size = new System.Drawing.Size(124, 21);
+            this.checkBox_debug_mode.Size = new System.Drawing.Size(122, 21);
             this.checkBox_debug_mode.TabIndex = 17;
             this.checkBox_debug_mode.UseVisualStyleBackColor = true;
             // 
@@ -633,7 +633,7 @@ namespace GlucoseTrayCore.Views
             // 
             // numeric_stale_results
             // 
-            this.numeric_stale_results.Location = new System.Drawing.Point(316, 43);
+            this.numeric_stale_results.Location = new System.Drawing.Point(312, 43);
             this.numeric_stale_results.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -652,9 +652,9 @@ namespace GlucoseTrayCore.Views
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textBox_db_location_result, 2);
             this.textBox_db_location_result.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_db_location_result.Location = new System.Drawing.Point(186, 163);
+            this.textBox_db_location_result.Location = new System.Drawing.Point(184, 163);
             this.textBox_db_location_result.Name = "textBox_db_location_result";
-            this.textBox_db_location_result.Size = new System.Drawing.Size(293, 31);
+            this.textBox_db_location_result.Size = new System.Drawing.Size(295, 31);
             this.textBox_db_location_result.TabIndex = 18;
             this.textBox_db_location_result.Text = "C:\\temp\\glucosetray.db";
             // 
@@ -668,7 +668,7 @@ namespace GlucoseTrayCore.Views
             this.button_save.UseVisualStyleBackColor = true;
             this.button_save.Click += new System.EventHandler(this.button_save_Click);
             // 
-            // Settings
+            // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -680,7 +680,7 @@ namespace GlucoseTrayCore.Views
             this.Controls.Add(this.glucose_unit_grid);
             this.Controls.Add(this.nightscout_grid);
             this.Controls.Add(this.datasource_grid);
-            this.Name = "Settings";
+            this.Name = "SettingsForm";
             this.Text = "Settings";
             this.datasource_grid.ResumeLayout(false);
             this.datasource_grid.PerformLayout();

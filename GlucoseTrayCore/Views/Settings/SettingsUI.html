@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <label>Glucose Datasource</label>
+            </div>
+            <div class="col-12">
+                <input name="glucose_datasource" type="radio" onchange="test()" /> Dexcom
+                <input name="glucose_datasource" type="radio" onchange="test()" /> Nightscout
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function test()
+        {
+            window.external.SaveData('test');
+        }
+    </script>
+</body>
+</html>
