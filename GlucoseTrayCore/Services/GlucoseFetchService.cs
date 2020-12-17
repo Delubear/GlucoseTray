@@ -15,8 +15,7 @@ namespace GlucoseTrayCore.Services
 {
     public interface IGlucoseFetchService
     {
-        Task<GlucoseResult> GetLatestReading();
-        Task<List<GlucoseResult>> FetchMissingReadings(DateTime lastResult);
+        Task<List<GlucoseResult>> GetLatestReadings(DateTime? timeOflastGoodResult);
     }
 
     public class GlucoseFetchService : IGlucoseFetchService
@@ -32,31 +31,34 @@ namespace GlucoseTrayCore.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<GlucoseResult> GetLatestReading()
+        public async Task<List<GlucoseResult>> GetLatestReadings(DateTime? timeOflastGoodResult)
         {
             var fetchResult = new GlucoseResult();
 
+            var results = new List<GlucoseResult>();
             try
             {
                 if (_options.CurrentValue.FetchMethod == FetchMethod.DexcomShare)
+                {
                     await GetFetchResultFromDexcom(fetchResult).ConfigureAwait(false);
+                    results.Add(fetchResult);
+                }
                 else if (_options.CurrentValue.FetchMethod == FetchMethod.NightscoutApi)
-                    await GetFetchResultFromNightscout(fetchResult).ConfigureAwait(false);
+                {
+                    results = await GetResultsFromNightscout(timeOflastGoodResult).ConfigureAwait(false);
+                }
                 else
                 {
                     _logger.LogError("Invalid fetch method specified.");
                     throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
                 }
-
-                fetchResult.IsCriticalLow = IsCriticalLow(fetchResult);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Failed to get data. {0}", ex);
-                fetchResult = GetDefaultFetchResult();
             }
 
-            return fetchResult;
+            return results;
         }
 
         private bool IsCriticalLow(GlucoseResult result) => (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg) || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
@@ -75,27 +77,28 @@ namespace GlucoseTrayCore.Services
                 result.MgValue = Convert.ToInt32(value);
                 result.MmolValue = value /= 18;
             }
+            result.IsCriticalLow = IsCriticalLow(result);
         }
 
-        public async Task<List<GlucoseResult>> FetchMissingReadings(DateTime lastResult)
+        private async Task<List<GlucoseResult>> GetResultsFromNightscout(DateTime? timeOflastGoodResult)
         {
-            if (_options.CurrentValue.FetchMethod == FetchMethod.DexcomShare)
-                _logger.LogWarning("Fetch missing records is only implemented for NightScout");
-            else if (_options.CurrentValue.FetchMethod == FetchMethod.NightscoutApi)
-                return await FetchMissingReadingsFromNightscout(lastResult).ConfigureAwait(false);
-
-            return new List<GlucoseResult>();
-        }
-
-        private async Task<List<GlucoseResult>> FetchMissingReadingsFromNightscout(DateTime lastResult)
-        {
-            var fromDate = lastResult.AddSeconds(1).ToString("s") + "Z";
-            var toDate   = DateTime.UtcNow.ToString("s") + "Z";
-
-            int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
+            string url;
 
             var token = string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(_options.CurrentValue.AccessToken, "i_can_probably_be_improved");
-            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "")}"));
+
+            if (timeOflastGoodResult.HasValue)
+            {
+                int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
+                var fromDate = timeOflastGoodResult.Value.AddSeconds(1).ToString("s") + "Z";
+                var toDate = DateTime.UtcNow.ToString("s") + "Z";
+
+                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "")}";
+            }
+            else
+                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "");
+
+
+            var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
             var results = new List<GlucoseResult>();
@@ -114,7 +117,6 @@ namespace GlucoseTrayCore.Services
                     fetchResult.Trend = record.direction.GetTrend();
                     if (fetchResult.Trend == TrendResult.Unknown)
                         _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
-                    fetchResult.IsCriticalLow = IsCriticalLow(fetchResult);
                     results.Add(fetchResult);
                 }
 
@@ -130,40 +132,6 @@ namespace GlucoseTrayCore.Services
             }
 
             return results.OrderBy(a=>a.DateTimeUTC).ToList();
-        }
-
-
-        private async Task<GlucoseResult> GetFetchResultFromNightscout(GlucoseResult fetchResult)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")));
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-            var client = _httpClientFactory.CreateClient();
-            try
-            {
-                var response = await client.SendAsync(request).ConfigureAwait(false);
-                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var content = JsonSerializer.Deserialize<List<NightScoutResult>>(result).FirstOrDefault();
-                CalculateValues(fetchResult, content.sgv);
-                fetchResult.DateTimeUTC = DateTime.Parse(content.dateString).ToUniversalTime();
-                fetchResult.Trend = content.direction.GetTrend();
-                if (fetchResult.Trend == TrendResult.Unknown)
-                    _logger.LogWarning($"Un-expected value for direction/Trend {content.direction}");
-
-                response.Dispose();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Nightscout fetching failed or received incorrect format. {0}", ex);
-                fetchResult = GetDefaultFetchResult();
-            }
-            finally
-            {
-                request.Dispose();
-            }
-
-            fetchResult.Source = FetchMethod.NightscoutApi;
-            return fetchResult;
         }
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)

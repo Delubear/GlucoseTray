@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
+using GlucoseTrayCore.Views;
+using System.Collections.Generic;
 using GlucoseTrayCore.Views.Settings;
 
 namespace GlucoseTrayCore
@@ -23,7 +25,7 @@ namespace GlucoseTrayCore
         private readonly IGlucoseFetchService _fetchService;
         private readonly NotifyIcon trayIcon;
 
-        private GlucoseResult GlucoseResult;
+        private GlucoseResult GlucoseResult = null;
         private readonly IconService _iconService;
         private readonly TaskSchedulerService _taskScheduler;
 
@@ -82,7 +84,18 @@ namespace GlucoseTrayCore
                 try
                 {
                     Application.DoEvents();
-                    await CreateIcon().ConfigureAwait(false);
+
+                    var results = await _fetchService.GetLatestReadings(GlucoseResult?.DateTimeUTC).ConfigureAwait(false);
+
+                    if (results.Any())
+                    {
+                        LogResultToDb(results);
+
+                        GlucoseResult = results.Last();
+                    }
+
+                    CreateIcon();
+
                     await Task.Delay(_options.CurrentValue.PollingThresholdTimeSpan);
                 }
                 catch (Exception e)
@@ -102,27 +115,29 @@ namespace GlucoseTrayCore
             if (_options.CurrentValue.FetchMethod != FetchMethod.NightscoutApi)
                 return;
 
-            var newestExistingRecord = _context.GlucoseResults.OrderByDescending(a => a.DateTimeUTC).FirstOrDefault();
+            GlucoseResult = _context.GlucoseResults.OrderByDescending(a => a.DateTimeUTC).FirstOrDefault();
 
-            if (newestExistingRecord == null)
+            if (GlucoseResult == null)
             {
                 if (MessageBox.Show("Do you want to import readings from NightScout?\r\n\r\n(Warning this may take some time.)", "GlucoseTrayCore : No Readings found in local database.", MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
-
-                newestExistingRecord = new GlucoseResult() { DateTimeUTC = DateTime.UtcNow.AddYears(-100) };
             }
+
+            DateTime startDate = GlucoseResult?.DateTimeUTC ?? DateTime.UtcNow.AddYears(-100);
 
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var missingResults = await _fetchService.FetchMissingReadings(newestExistingRecord.DateTimeUTC);
+            var missingResults = await _fetchService.GetLatestReadings(startDate).ConfigureAwait(false);
             sw.Stop();
             int count = missingResults.Count();
             if (count > 0)
             {
+                var sinceMessage = (GlucoseResult != null) ? $" since last database record at {GlucoseResult.DateTimeUTC} UTC" : "";
+
                 if (count == 1)
-                    _logger.LogWarning($"Found 1 reading recorded at {missingResults[0].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC ");
+                    _logger.LogWarning($"Starting Up : Found 1 reading recorded at {missingResults[0].DateTimeUTC} UTC{sinceMessage}.");
                 else
-                    _logger.LogWarning($"Found {count} readings between {missingResults[0].DateTimeUTC} and {missingResults[count - 1].DateTimeUTC} UTC since last database record at {newestExistingRecord.DateTimeUTC} UTC. Retrieving them took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
+                    _logger.LogWarning($"Found {count} readings between {missingResults[0].DateTimeUTC} and {missingResults[count - 1].DateTimeUTC} UTC{sinceMessage}. Retrieving them took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
 
                 sw.Restart();
                 _context.GlucoseResults.AddRange(missingResults);   // None of these records will be in the database, so just add them all now.
@@ -130,6 +145,8 @@ namespace GlucoseTrayCore
                 sw.Stop();
                 if (sw.Elapsed.TotalSeconds > 5)
                     _logger.LogWarning($"Saving {missingResults.Count()} records took {sw.Elapsed.TotalSeconds:#,##0.##} seconds");
+
+                GlucoseResult = missingResults.Last();
             }
         }
 
@@ -160,10 +177,8 @@ namespace GlucoseTrayCore
             }
         }
 
-        private async Task CreateIcon()
+        private void CreateIcon()
         {
-            GlucoseResult = await _fetchService.GetLatestReading().ConfigureAwait(false);
-            LogResultToDb(GlucoseResult);
             trayIcon.Text = GetGlucoseMessage(GlucoseResult);
             _iconService.CreateTextIcon(GlucoseResult, trayIcon);
         }
@@ -172,13 +187,20 @@ namespace GlucoseTrayCore
 
         private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.CurrentValue.StaleResultsThreshold)}";
 
-        private void LogResultToDb(GlucoseResult result)
+        private void LogResultToDb(List<GlucoseResult> results)
         {
-            if (_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC && !result.WasError && g.MgValue == result.MgValue))
-                return;
-
-            _context.GlucoseResults.Add(result);
-            _context.SaveChanges();
+            if (results.Count > 1)
+            {
+                _logger.LogWarning($"Found {results.Count} readings between {results[0].DateTimeUTC} and {results[results.Count - 1].DateTimeUTC} UTC{(System.Diagnostics.Debugger.IsAttached ? " (Debugging Mode)" : "")}" );
+            }
+            foreach (var result in results)
+            {
+                if (!_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC && !result.WasError && g.MgValue == result.MgValue))
+                {
+                    _context.GlucoseResults.Add(result);
+                    _context.SaveChanges();
+                }
+            }
         }
     }
 }
