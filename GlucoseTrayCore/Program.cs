@@ -1,6 +1,5 @@
 ﻿using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
-using GlucoseTrayCore.Views;
 using GlucoseTrayCore.Views.Settings;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Win32;
 using Serilog;
 using Serilog.Events;
 using System;
