@@ -1,6 +1,6 @@
 ﻿using GlucoseTrayCore.Data;
 using GlucoseTrayCore.Services;
-using GlucoseTrayCore.Views;
+using GlucoseTrayCore.Views.Settings;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -22,13 +22,14 @@ namespace GlucoseTrayCore
         private static IConfiguration Configuration { get; set; }
         public static string SettingsFile { get; set; }
 
+        [STAThread]
         private static void Main(string[] args)
         {
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
-            using var settingsWindow = new Settings();
+            var settingsWindow = new SettingsWindow();
             if (!File.Exists(SettingsFile) || settingsWindow.ValidateSettings().Count != 0)
             {
-                if (settingsWindow.ShowDialog() != DialogResult.OK) // Did not want to setup application.
+                if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
                 {
                     Application.Exit();
                     return;

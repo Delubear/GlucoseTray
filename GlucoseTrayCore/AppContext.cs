@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GlucoseTrayCore.Extensions;
 using GlucoseTrayCore.Models;
-using GlucoseTrayCore.Views;
 using System.Collections.Generic;
+using GlucoseTrayCore.Views.Settings;
 
 namespace GlucoseTrayCore
 {
@@ -116,19 +116,16 @@ namespace GlucoseTrayCore
 
             GlucoseResult = _context.GlucoseResults.OrderByDescending(a => a.DateTimeUTC).FirstOrDefault();
 
-            if (GlucoseResult == null)
-            {
-                if (MessageBox.Show("Do you want to import readings from NightScout?\r\n\r\n(Warning this may take some time.)", "GlucoseTrayCore : No Readings found in local database.", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-            }
+            if (GlucoseResult == null && MessageBox.Show("Do you want to import readings from NightScout?\r\n\r\n(Warning this may take some time.)", "GlucoseTrayCore : No Readings found in local database.", MessageBoxButtons.YesNo) == DialogResult.No)
+                return;
 
             DateTime startDate = GlucoseResult?.DateTimeUTC ?? DateTime.UtcNow.AddYears(-100);
 
-            Stopwatch sw = new Stopwatch();
+            var sw = new Stopwatch();
             sw.Start();
             var missingResults = await _fetchService.GetLatestReadings(startDate).ConfigureAwait(false);
             sw.Stop();
-            int count = missingResults.Count();
+            int count = missingResults.Count;
             if (count > 0)
             {
                 var sinceMessage = (GlucoseResult != null) ? $" since last database record at {GlucoseResult.DateTimeUTC} UTC" : "";
@@ -149,7 +146,6 @@ namespace GlucoseTrayCore
             }
         }
 
-
         private void Exit(object sender, EventArgs e)
         {
             _logger.LogInformation("Exiting application.");
@@ -159,18 +155,16 @@ namespace GlucoseTrayCore
             Application.Exit();
         }
 
+        private bool SettingsFormIsOpen;
         private void ChangeSettings(object sender, EventArgs e)
         {
-            var existingSettingsForm = Application.OpenForms.OfType<Settings>().FirstOrDefault();
-            if (existingSettingsForm != null)
+            if (!SettingsFormIsOpen)
             {
-                Application.OpenForms.OfType<Settings>().First().BringToFront();
-            }
-            else
-            {
-                using var settings = new Settings();
-                if (settings.ShowDialog() == DialogResult.OK)
+                var settingsWindow = new SettingsWindow();
+                SettingsFormIsOpen = true;
+                if (settingsWindow.ShowDialog() == true)
                     MessageBox.Show("Settings saved");
+                SettingsFormIsOpen = false;
             }
         }
 
@@ -187,9 +181,8 @@ namespace GlucoseTrayCore
         private void LogResultToDb(List<GlucoseResult> results)
         {
             if (results.Count > 1)
-            {
                 _logger.LogWarning($"Found {results.Count} readings between {results[0].DateTimeUTC} and {results[results.Count - 1].DateTimeUTC} UTC{(System.Diagnostics.Debugger.IsAttached ? " (Debugging Mode)" : "")}" );
-            }
+
             foreach (var result in results)
             {
                 if (!_context.GlucoseResults.Any(g => g.DateTimeUTC == result.DateTimeUTC && !result.WasError && g.MgValue == result.MgValue))
