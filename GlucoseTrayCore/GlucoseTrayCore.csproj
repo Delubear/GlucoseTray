@@ -19,9 +19,6 @@
   </PropertyGroup>
 
   <!-- All new views using HTML need to be added like this. -->
-  <ItemGroup>
-    <EmbeddedResource Include="Views\Settings\SettingsUI.html" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
@@ -40,10 +37,6 @@
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
     <PackageReference Include="TaskScheduler" Version="2.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Views\Settings\SettingsUI.html" />
   </ItemGroup>
 
 </Project>

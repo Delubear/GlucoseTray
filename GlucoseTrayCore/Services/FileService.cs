@@ -31,13 +31,4 @@ namespace GlucoseTrayCore.Services
             return model;
         }
     }
-
-    public static class FileService
-    {
-        public static string LoadHtmlFromResource(string resourceName)
-        {
-            using var sr = new StreamReader(Assembly.GetEntryAssembly().GetManifestResourceStream(resourceName));
-            return sr.ReadToEnd();
-        }
-    }
 }
