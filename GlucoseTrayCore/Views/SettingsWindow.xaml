@@ -37,9 +37,9 @@
         <Label x:Name="label_nightscoutUrl" Content="Nightscout Url" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Visibility="Hidden"/>
         <Label x:Name="label_dexcom_password" Content="Dexcom Password" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130"/>
         <Label x:Name="label_nightscout_token" Content="Access Token" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130" Visibility="Hidden"/>
-        <TextBox x:Name="txt_dexcom_username" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left"/>
-        <TextBox x:Name="txt_nightscoutUrl" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left" Visibility="Hidden"/>
-        <PasswordBox x:Name="txt_dexcom_password" Grid.Column="3" Grid.Row="1" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left"/>
+        <TextBox x:Name="txt_dexcom_username" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left" Text="{Binding DexcomUsername}"/>
+        <TextBox x:Name="txt_nightscoutUrl" Grid.Column="2" Grid.Row="1" TextWrapping="Wrap" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left" Visibility="Hidden" Text="{Binding NightscoutUrl}"/>
+        <PasswordBox x:Name="txt_dexcom_password" Grid.Column="3" Grid.Row="1" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left" />
         <PasswordBox x:Name="txt_nightscout_token" Grid.Column="3" Grid.Row="1" Width="140" Height="25" Margin="5,3,5,2" HorizontalAlignment="Left" Visibility="Hidden"/>
         <Label Content="Glucose Unit" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Grid.RowSpan="2" Height="26" Width="100" Margin="10,0,0,0"/>
         <Label x:Name="label_dexcom_server" Content="Dexcom Server" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Height="25" Width="95"/>
@@ -48,26 +48,25 @@
         <ComboBox x:Name="combobox_dexcom_server" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Width="120" SelectedIndex="0" Margin="5,0,0,0"/>
         <StackPanel Grid.Column="3" Grid.Row="6"/>
         <Label Content="Glucose Thresholds" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="6" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
-        <TextBox x:Name="txt_high" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" Text="250" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0">
-        </TextBox>
+        <TextBox x:Name="txt_high" Text="{Binding HighBg}" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0" />
         <Label x:Name="label_high" Content="High" HorizontalAlignment="Right" Grid.Row="7" VerticalAlignment="Center"/>
         <Label Content="Warning High" HorizontalAlignment="Right" Grid.Row="8" VerticalAlignment="Center"/>
         <Label Content="Warning Low" HorizontalAlignment="Right" Grid.Row="9" VerticalAlignment="Center"/>
         <Label Content="Low" HorizontalAlignment="Right" Grid.Row="10" VerticalAlignment="Center"/>
         <Label Content="Critically Low" HorizontalAlignment="Right" Grid.Row="11" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_warn_high" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="8" Text="200" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
-        <TextBox x:Name="txt_warn_low" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="9" Text="80" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
-        <TextBox x:Name="txt_low" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="10" Text="70" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
-        <TextBox x:Name="txt_critical" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="11" Text="55" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_warn_high" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="8" Text="{Binding WarningHighBg}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_warn_low" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="9" Text="{Binding WarningLowBg}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_low" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="10" Text="{Binding LowBg}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_critical" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="11" Text="{Binding CriticalLowBg}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0"/>
         <Label Content="Polling Rate (seconds)" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="7" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_polling" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="7" Text="15" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_polling" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="7" Text="{Binding PollingThreshold}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
         <Label Content="Results Stale After (minutes)" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="8" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_stale" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="8" Text="15" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_stale" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="8" Text="{Binding StaleResultsThreshold}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
         <Label Content="Log Level" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="9" VerticalAlignment="Center"/>
         <ComboBox x:Name="combobox_loglevel" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="9" VerticalAlignment="Center" Width="120" Margin="5,0,0,0" SelectedIndex="0"/>
-        <CheckBox x:Name="checkbox_debug" Content="Debug Mode" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Margin="5,0,0,0"/>
+        <CheckBox x:Name="checkbox_debug" Content="Debug Mode" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Margin="5,0,0,0" IsChecked="{Binding EnableDebugMode}"/>
         <Label Content="Database Location" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="11" VerticalAlignment="Center"/>
-        <TextBox x:Name="txt_db_location" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="11" Text="C:\Temp\glucosetray.db" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
+        <TextBox x:Name="txt_db_location" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="11" Text="{Binding DatabaseLocation}" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
         <Button x:Name="button_save" Content="Save" Grid.Column="2" HorizontalAlignment="Stretch" Grid.Row="13" VerticalAlignment="Center" Height="35" Click="Button_Save_Click"/>
     </Grid>
 </Window>

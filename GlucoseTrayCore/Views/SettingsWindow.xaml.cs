@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +25,22 @@ namespace GlucoseTrayCore.Views.Settings
     /// </summary>
     public partial class SettingsWindow : Window
     {
+        public GlucoseTraySettings Settings { get; set; } = new GlucoseTraySettings
+        {
+            HighBg = 250,
+            WarningHighBg = 200,
+            WarningLowBg = 80,
+            LowBg = 70,
+            CriticalLowBg = 55,
+            EnableDebugMode = false,
+            PollingThreshold = 15,
+            StaleResultsThreshold = 15,
+            DatabaseLocation = @"C:\Temp\glucosetray.db",
+            DexcomUsername = "",
+            NightscoutUrl = "",
+            // Appears we will need to manually bind radios, dropdowns, and password fields for now.
+        };
+
         public SettingsWindow()
         {
             InitializeComponent();
@@ -43,7 +60,20 @@ namespace GlucoseTrayCore.Views.Settings
                     }
                     else
                     {
+                        model.DexcomUsername = StringEncryptionService.DecryptString(model.DexcomUsername, "i_can_probably_be_improved");
+                        model.DexcomPassword = StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
+                        txt_dexcom_password.Password = model.DexcomPassword;
+                        model.AccessToken = StringEncryptionService.DecryptString(model.AccessToken, "i_can_probably_be_improved");
+                        txt_nightscout_token.Password = model.AccessToken;
+                        if (model.FetchMethod == FetchMethod.DexcomShare)
+                            radio_source_dexcom.IsChecked = true;
+                        else
+                            radio_source_nightscout.IsChecked = true;
 
+                        combobox_loglevel.SelectedIndex = (int)model.LogLevel;
+                        combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
+
+                        Settings = model;
                     }
                 }
                 catch (Exception e) // Catch serialization errors due to a bad file
@@ -51,16 +81,37 @@ namespace GlucoseTrayCore.Views.Settings
                     MessageBox.Show("Unable to load existing settings due to a bad file.  " + e.Message + e.InnerException?.Message);
                 }
             }
+
+            DataContext = Settings;
         }
 
+        private bool HaveBypassedInitialModification = false;
         private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
         {
-            // TODO
+            if (!HaveBypassedInitialModification)
+            {
+                HaveBypassedInitialModification = true;
+                return;
+            }
+            Settings.HighBg = Math.Round(Settings.HighBg *= 18);
+            Settings.WarningHighBg = Math.Round(Settings.WarningHighBg *= 18);
+            Settings.WarningLowBg = Math.Round(Settings.WarningLowBg *= 18);
+            Settings.LowBg = Math.Round(Settings.LowBg *= 18);
+            Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg *= 18);
         }
 
         private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
         {
-            // TODO
+            if (!HaveBypassedInitialModification)
+            {
+                HaveBypassedInitialModification = true;
+                return;
+            }
+            Settings.HighBg = Math.Round(Settings.HighBg /= 18, 1);
+            Settings.WarningHighBg = Math.Round(Settings.WarningHighBg /= 18, 1);
+            Settings.WarningLowBg = Math.Round(Settings.WarningLowBg /= 18, 1);
+            Settings.LowBg = Math.Round(Settings.LowBg /= 18, 1);
+            Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg /= 18, 1);
         }
 
         // TODO: Expand me
