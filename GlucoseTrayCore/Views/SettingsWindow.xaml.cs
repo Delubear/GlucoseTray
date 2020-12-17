@@ -6,17 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GlucoseTrayCore.Views.Settings
 {
@@ -60,10 +50,10 @@ namespace GlucoseTrayCore.Views.Settings
                     }
                     else
                     {
-                        model.DexcomUsername = StringEncryptionService.DecryptString(model.DexcomUsername, "i_can_probably_be_improved");
-                        model.DexcomPassword = StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
+                        model.DexcomUsername = string.IsNullOrWhiteSpace(model.DexcomUsername) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomUsername, "i_can_probably_be_improved");
+                        model.DexcomPassword = string.IsNullOrWhiteSpace(model.DexcomPassword) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
                         txt_dexcom_password.Password = model.DexcomPassword;
-                        model.AccessToken = StringEncryptionService.DecryptString(model.AccessToken, "i_can_probably_be_improved");
+                        model.AccessToken = string.IsNullOrWhiteSpace(model.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(model.AccessToken, "i_can_probably_be_improved");
                         txt_nightscout_token.Password = model.AccessToken;
                         if (model.FetchMethod == FetchMethod.DexcomShare)
                             radio_source_dexcom.IsChecked = true;
@@ -85,7 +75,7 @@ namespace GlucoseTrayCore.Views.Settings
             DataContext = Settings;
         }
 
-        private bool HaveBypassedInitialModification = false;
+        private bool HaveBypassedInitialModification;
         private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
         {
             if (!HaveBypassedInitialModification)
@@ -114,7 +104,6 @@ namespace GlucoseTrayCore.Views.Settings
             Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg /= 18, 1);
         }
 
-        // TODO: Expand me
         /// <summary>
         /// TODO: This should not live in the window since it is used in multiple places
         /// If model is null, will validate from stored settings file.
@@ -128,23 +117,26 @@ namespace GlucoseTrayCore.Views.Settings
             {
                 model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
                 if (model is null)
+                {
                     errors.Add("File is Invalid");
+                    return errors;
+                }
             }
 
             if (model.FetchMethod == FetchMethod.DexcomShare)
             {
                 if (string.IsNullOrWhiteSpace(model.DexcomUsername))
-                    errors.Add("DexcomUsername is missing");
+                    errors.Add("Dexcom Username is missing");
                 if (string.IsNullOrWhiteSpace(model.DexcomPassword))
-                    errors.Add("DexcomPassword is missing");
+                    errors.Add("Dexcom Password is missing");
             }
             else if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
             {
-                errors.Add("NightscoutUrl is missing");
+                errors.Add("Nightscout Url is missing");
             }
 
             if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
-                errors.Add("DatabaseLocation is missing");
+                errors.Add("Database Location is missing");
 
             if (!(model.HighBg > model.WarningHighBg && model.WarningHighBg > model.WarningLowBg && model.WarningLowBg > model.LowBg && model.LowBg > model.CriticalLowBg))
                 errors.Add("Thresholds overlap ");
@@ -154,48 +146,25 @@ namespace GlucoseTrayCore.Views.Settings
 
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
-            //var settingsModel = new GlucoseTraySettings
-            //{
-            //    FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi,
-            //    AccessToken = textBox_nightscout_token.Text.Length > 0 ? StringEncryptionService.EncryptString(textBox_nightscout_token.Text, "i_can_probably_be_improved") : string.Empty,
-            //    NightscoutUrl = textBox_nightscout_url.Text,
-            //    DexcomUsername = textBox_dexcom_username.Text.Length > 0 ? StringEncryptionService.EncryptString(textBox_dexcom_username.Text, "i_can_probably_be_improved") : string.Empty,
-            //    DexcomPassword = maskedText_dexcom_password.Text.Length > 0 ? StringEncryptionService.EncryptString(maskedText_dexcom_password.Text, "i_can_probably_be_improved") : string.Empty,
-            //    DexcomServer = radio_dexcom_server_us_share1.Checked ? DexcomServerLocation.DexcomShare1 : radio_dexcom_server_us_share2.Checked ? DexcomServerLocation.DexcomShare2 : DexcomServerLocation.DexcomInternational,
-            //    CriticalLowBg = (double) txt_critical.Text,
-            //    HighBg = (double) txt_high.Text,
-            //    LowBg = (double) txt_low.Text,
-            //    WarningLowBg = (double) txt_warn_low.Text,
-            //    WarningHighBg = (double) txt_warn_high.Text,
-            //    GlucoseUnit = radio_glucose_unit_mg.Checked ? GlucoseUnitType.MG : GlucoseUnitType.MMOL,
-            //    DatabaseLocation = textBox_db_location_result.Text,
-            //    EnableDebugMode = checkBox_debug_mode.Checked,
-            //    LogLevel = LogLevels[(string)comboBox_log_level.SelectedValue],
-            //    PollingThreshold = (int) numeric_polling_threshold.Value,
-            //    StaleResultsThreshold = (int) numeric_stale_results.Value
-            //};
+            Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
+            Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
+            Settings.LogLevel = (LogEventLevel) combobox_loglevel.SelectedIndex;
+            Settings.DexcomServer = (DexcomServerLocation) combobox_dexcom_server.SelectedIndex;
+            Settings.DexcomUsername = txt_dexcom_username.Text.Length > 0 ? StringEncryptionService.EncryptString(txt_dexcom_username.Text, "i_can_probably_be_improved") : string.Empty;
+            Settings.DexcomPassword = txt_dexcom_password.Password.Length > 0 ? StringEncryptionService.EncryptString(txt_dexcom_password.Password, "i_can_probably_be_improved") : string.Empty;
+            Settings.AccessToken = txt_nightscout_token.Password.Length > 0 ? StringEncryptionService.EncryptString(txt_nightscout_token.Password, "i_can_probably_be_improved") : string.Empty;
 
-            //var errors = ValidateSettings(settingsModel);
+            var errors = ValidateSettings(Settings);
+            if (ValidateSettings(Settings).Any())
+            {
+                MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", errors));
+                return;
+            }
 
-            //if (!radio_dexcom.Checked && !radio_nightscout.Checked)
-            //    errors.Add("Glucose Datasource is missing : You must select either Dexcom or Nightscout");
+            FileService<GlucoseTraySettings>.WriteModelToJsonFile(Settings, Program.SettingsFile);
 
-            //if (radio_dexcom.Checked && (!radio_dexcom_server_us_share1.Checked && !radio_dexcom_server_us_share2.Checked && !radio_dexcom_server_international.Checked))
-            //    errors.Add("Dexcom Server is missing");
-
-            //if (!radio_glucose_unit_mg.Checked && !radio_glucose_unit_mmol.Checked)
-            //    errors.Add("Glucose Unit is missing : You must select either MG/DL or MMOL/L");
-
-            //if (errors.Any())
-            //{
-            //    MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + String.Join("\r\n", errors));
-            //    return;
-            //}
-
-            //FileService<GlucoseTraySettings>.WriteModelToJsonFile(settingsModel, Program.SettingsFile);
-
+            DialogResult = true;
             Close();
-            // DialogResult = DialogResult.OK;
         }
     }
 }

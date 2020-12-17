@@ -29,7 +29,6 @@ namespace GlucoseTrayCore
         {
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
             var settingsWindow = new SettingsWindow();
-            settingsWindow.ShowDialog();
             if (!File.Exists(SettingsFile) || settingsWindow.ValidateSettings().Count != 0)
             {
                 if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
