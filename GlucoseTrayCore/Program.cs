@@ -25,6 +25,7 @@ namespace GlucoseTrayCore
         [STAThread]
         private static void Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
             var settingsWindow = new SettingsWindow();
             if (!File.Exists(SettingsFile) || settingsWindow.ValidateSettings().Count != 0)
