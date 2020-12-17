@@ -45,7 +45,7 @@
         <Label x:Name="label_dexcom_server" Content="Dexcom Server" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="3" VerticalAlignment="Center" Height="25" Width="95"/>
         <RadioButton x:Name="radio_unit_mg" Content="MG/DL" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Height="15" Width="62" GroupName="glucose_unit" IsChecked="True" Checked="UpdateValuesFromMMoLToMG"/>
         <RadioButton x:Name="radio_unit_mmol" Content="MMOL/L" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Center" Grid.ColumnSpan="1" Height="15" Width="69" GroupName="glucose_unit" Checked="UpdateValuesFromMGToMMoL"/>
-        <ComboBox x:Name="combobox_dexcom_server" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Width="120" SelectedIndex="1" Margin="5,0,0,0"/>
+        <ComboBox x:Name="combobox_dexcom_server" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Width="120" SelectedIndex="0" Margin="5,0,0,0"/>
         <StackPanel Grid.Column="3" Grid.Row="6"/>
         <Label Content="Glucose Thresholds" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="6" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
         <TextBox x:Name="txt_high" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="7" Text="250" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Width="50" Margin="5,0,0,0">
@@ -64,7 +64,7 @@
         <Label Content="Results Stale After (minutes)" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="8" VerticalAlignment="Center"/>
         <TextBox x:Name="txt_stale" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="8" Text="15" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>
         <Label Content="Log Level" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="9" VerticalAlignment="Center"/>
-        <ComboBox x:Name="combobox_loglevel" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="9" VerticalAlignment="Center" Width="120" Margin="5,0,0,0"/>
+        <ComboBox x:Name="combobox_loglevel" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="9" VerticalAlignment="Center" Width="120" Margin="5,0,0,0" SelectedIndex="0"/>
         <CheckBox x:Name="checkbox_debug" Content="Debug Mode" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="10" VerticalAlignment="Center" Margin="5,0,0,0"/>
         <Label Content="Database Location" Grid.Column="2" HorizontalAlignment="Right" Grid.Row="11" VerticalAlignment="Center"/>
         <TextBox x:Name="txt_db_location" Grid.Column="3" HorizontalAlignment="Stretch" Grid.Row="11" Text="C:\Temp\glucosetray.db" TextWrapping="Wrap" VerticalAlignment="Stretch" Height="25" Margin="5,0,0,0"/>

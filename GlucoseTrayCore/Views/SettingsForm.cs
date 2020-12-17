@@ -152,15 +152,5 @@ namespace GlucoseTrayCore.Views
         {
             
         }
-
-        /// <summary>
-        /// If model is null, will validate from stored settings file.
-        /// </summary>
-        /// <param name="model"></param>
-        public List<string> ValidateSettings(GlucoseTraySettings model = null)
-        {
-            var errors = new List<string>();
-            return errors;
-        }
     }
 }

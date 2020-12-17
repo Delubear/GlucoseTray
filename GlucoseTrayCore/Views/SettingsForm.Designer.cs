@@ -525,7 +525,7 @@ namespace GlucoseTrayCore.Views
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 58.5443F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 41.4557F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 176F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 191F));
             this.tableLayoutPanel1.Controls.Add(this.numeric_polling_threshold, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_polling_threshold, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label_stale_results, 0, 1);
@@ -550,14 +550,14 @@ namespace GlucoseTrayCore.Views
             // numeric_polling_threshold
             // 
             this.numeric_polling_threshold.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.numeric_polling_threshold.Location = new System.Drawing.Point(308, 3);
+            this.numeric_polling_threshold.Location = new System.Drawing.Point(293, 3);
             this.numeric_polling_threshold.Maximum = new decimal(new int[] {
             99999,
             0,
             0,
             0});
             this.numeric_polling_threshold.Name = "numeric_polling_threshold";
-            this.numeric_polling_threshold.Size = new System.Drawing.Size(171, 31);
+            this.numeric_polling_threshold.Size = new System.Drawing.Size(186, 31);
             this.numeric_polling_threshold.TabIndex = 14;
             this.numeric_polling_threshold.Value = new decimal(new int[] {
             15,
@@ -598,7 +598,7 @@ namespace GlucoseTrayCore.Views
             // comboBox_log_level
             // 
             this.comboBox_log_level.FormattingEnabled = true;
-            this.comboBox_log_level.Location = new System.Drawing.Point(308, 83);
+            this.comboBox_log_level.Location = new System.Drawing.Point(293, 83);
             this.comboBox_log_level.Name = "comboBox_log_level";
             this.comboBox_log_level.Size = new System.Drawing.Size(137, 33);
             this.comboBox_log_level.TabIndex = 16;
@@ -616,9 +616,9 @@ namespace GlucoseTrayCore.Views
             // 
             this.checkBox_debug_mode.AutoSize = true;
             this.checkBox_debug_mode.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBox_debug_mode.Location = new System.Drawing.Point(182, 123);
+            this.checkBox_debug_mode.Location = new System.Drawing.Point(173, 123);
             this.checkBox_debug_mode.Name = "checkBox_debug_mode";
-            this.checkBox_debug_mode.Size = new System.Drawing.Size(120, 21);
+            this.checkBox_debug_mode.Size = new System.Drawing.Size(114, 21);
             this.checkBox_debug_mode.TabIndex = 17;
             this.checkBox_debug_mode.UseVisualStyleBackColor = true;
             // 
@@ -633,7 +633,7 @@ namespace GlucoseTrayCore.Views
             // 
             // numeric_stale_results
             // 
-            this.numeric_stale_results.Location = new System.Drawing.Point(308, 43);
+            this.numeric_stale_results.Location = new System.Drawing.Point(293, 43);
             this.numeric_stale_results.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -652,9 +652,9 @@ namespace GlucoseTrayCore.Views
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textBox_db_location_result, 2);
             this.textBox_db_location_result.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox_db_location_result.Location = new System.Drawing.Point(182, 163);
+            this.textBox_db_location_result.Location = new System.Drawing.Point(173, 163);
             this.textBox_db_location_result.Name = "textBox_db_location_result";
-            this.textBox_db_location_result.Size = new System.Drawing.Size(297, 31);
+            this.textBox_db_location_result.Size = new System.Drawing.Size(306, 31);
             this.textBox_db_location_result.TabIndex = 18;
             this.textBox_db_location_result.Text = "C:\\temp\\glucosetray.db";
             // 
