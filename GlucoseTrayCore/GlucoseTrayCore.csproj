@@ -17,6 +17,10 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Platforms>AnyCPU</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <runtime>
+      <AppContextSwitchOverrides value = "Switch.System.Windows.DoNotScaleForDpiChanges=false"/>
+    </runtime>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,9 +46,5 @@
     <TrimmerRootAssembly Include="System.Diagnostics.Debug" />
     <TrimmerRootAssembly Include="System.Runtime.Extensions" />
   </ItemGroup>
-
-  <runtime>
-    <AppContextSwitchOverrides value = "Switch.System.Windows.DoNotScaleForDpiChanges=false"/>
-  </runtime>
 
 </Project>
