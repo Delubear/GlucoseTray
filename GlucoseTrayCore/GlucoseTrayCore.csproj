@@ -45,4 +45,8 @@
     <TrimmerRootAssembly Include="System.Runtime.Extensions" />
   </ItemGroup>
 
+  <runtime>
+    <AppContextSwitchOverrides value = "Switch.System.Windows.DoNotScaleForDpiChanges=false"/>
+  </runtime>
+
 </Project>
