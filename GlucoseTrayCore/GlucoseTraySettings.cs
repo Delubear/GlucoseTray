@@ -9,6 +9,7 @@ namespace GlucoseTrayCore
 {
     public class GlucoseTraySettings : INotifyPropertyChanged
     {
+        [JsonIgnore]
         private const string EncryptionKey = "i_can_probably_be_improved";
 
         private FetchMethod fetchMethod;
