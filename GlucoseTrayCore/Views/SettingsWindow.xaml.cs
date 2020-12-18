@@ -135,46 +135,6 @@ namespace GlucoseTrayCore.Views.Settings
             combobox_dexcom_server.Visibility = Visibility.Visible;
         }
 
-        /// <summary>
-        /// TODO: This should not live in the window since it is used in multiple places
-        /// If model is null, will validate from stored settings file.
-        /// </summary>
-        /// <param name="model"></param>
-        public List<string> ValidateSettings(GlucoseTraySettings model = null)
-        {
-            var errors = new List<string>();
-
-            if (model is null)
-            {
-                model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
-                if (model is null)
-                {
-                    errors.Add("File is Invalid");
-                    return errors;
-                }
-            }
-
-            if (model.FetchMethod == FetchMethod.DexcomShare)
-            {
-                if (string.IsNullOrWhiteSpace(model.DexcomUsername))
-                    errors.Add("Dexcom Username is missing");
-                if (string.IsNullOrWhiteSpace(model.DexcomPassword))
-                    errors.Add("Dexcom Password is missing");
-            }
-            else if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
-            {
-                errors.Add("Nightscout Url is missing");
-            }
-
-            if (string.IsNullOrWhiteSpace(model.DatabaseLocation))
-                errors.Add("Database Location is missing");
-
-            if (!(model.HighBg > model.WarningHighBg && model.WarningHighBg > model.WarningLowBg && model.WarningLowBg > model.LowBg && model.LowBg > model.CriticalLowBg))
-                errors.Add("Thresholds overlap ");
-
-            return errors;
-        }
-
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
@@ -185,8 +145,8 @@ namespace GlucoseTrayCore.Views.Settings
             Settings.DexcomPassword = txt_dexcom_password.Password;
             Settings.AccessToken = txt_nightscout_token.Password;
 
-            var errors = ValidateSettings(Settings);
-            if (ValidateSettings(Settings).Any())
+            var errors = SettingsService.ValidateSettings(Settings);
+            if (errors.Any())
             {
                 MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", errors));
                 return;

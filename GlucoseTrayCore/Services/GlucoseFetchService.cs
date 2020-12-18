@@ -69,6 +69,7 @@ namespace GlucoseTrayCore.Services
         {
             // 25 MMOL is > 540 MG, most readers wont go below 40 or above 400.
             // Catch any full value MMOL readings that may be perfect integers that are delivered without a '.', i.e., 7.0 coming in as just 7
+            // TODO: Need to investigate if the (value <= 30) check is needed. Any Nightscout-MMOL users able to verify? See above line for reasoning.
             if (value.ToString().Contains(".") || value <= 30) 
             {
                 result.MmolValue = value;
@@ -109,11 +110,13 @@ namespace GlucoseTrayCore.Services
                 var content = JsonSerializer.Deserialize<List<NightScoutResult>>(result).ToList();
                 foreach (var record in content)
                 {
-                    var fetchResult = new GlucoseResult();
-                    fetchResult.Source = FetchMethod.NightscoutApi;
+                    var fetchResult = new GlucoseResult
+                    {
+                        Source = FetchMethod.NightscoutApi,
+                        DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime(),
+                        Trend = record.direction.GetTrend()
+                    };
                     CalculateValues(fetchResult, record.sgv);
-                    fetchResult.DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime();
-                    fetchResult.Trend = record.direction.GetTrend();
                     if (fetchResult.Trend == TrendResult.Unknown)
                         _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
                     results.Add(fetchResult);

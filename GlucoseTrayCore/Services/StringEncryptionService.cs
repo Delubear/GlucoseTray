@@ -17,7 +17,6 @@ namespace GlucoseTrayCore.Services
         // This constant is used to determine the keysize of the encryption algorithm
         private const int keysize = 256;
 
-        //Encrypt
         public static string EncryptString(string plainText, string passPhrase)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
@@ -37,7 +36,6 @@ namespace GlucoseTrayCore.Services
             return Convert.ToBase64String(cipherTextBytes);
         }
 
-        //Decrypt
         public static string DecryptString(string cipherText, string passPhrase)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
@@ -58,7 +56,7 @@ namespace GlucoseTrayCore.Services
 
         public static bool IsEncrypted(string cipherText, string passPhrase)
         {
-            bool isEncrypted = true;
+            var isEncrypted = true;
             try
             {
                 var result = DecryptString(cipherText, passPhrase);

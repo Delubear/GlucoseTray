@@ -26,6 +26,8 @@ namespace GlucoseTrayCore.Extensions
                     return "⮇";
                 case TrendResult.TripleDown:
                     return "⤋";
+                case TrendResult.Unknown:
+                    return "Unknown";
                 default:
                     return string.Empty;
             }
