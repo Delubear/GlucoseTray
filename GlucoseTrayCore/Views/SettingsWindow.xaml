@@ -31,8 +31,8 @@
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <Label Content="Glucose Datasource" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="26" Width="115" Grid.RowSpan="2"/>
-        <RadioButton x:Name="radio_source_dexcom" Content="Dexcom" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="62" RenderTransformOrigin="0.5,0.5" IsChecked="True"/>
-        <RadioButton x:Name="radio_source_nightscout" Content="Nightscout" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="78" Grid.Column="1"/>
+        <RadioButton x:Name="radio_source_dexcom" Content="Dexcom" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="62" RenderTransformOrigin="0.5,0.5" IsChecked="True" Checked="ShowDexcomBlock"/>
+        <RadioButton x:Name="radio_source_nightscout" Content="Nightscout" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="78" Grid.Column="1" Checked="ShowNightscoutBlock"/>
         <Label x:Name="label_dexcom_username" Content="Dexcom Username" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124"/>
         <Label x:Name="label_nightscoutUrl" Content="Nightscout Url" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Visibility="Hidden"/>
         <Label x:Name="label_dexcom_password" Content="Dexcom Password" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130"/>

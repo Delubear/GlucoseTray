@@ -104,6 +104,40 @@ namespace GlucoseTrayCore.Views.Settings
             Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg /= 18, 1);
         }
 
+        private void ShowNightscoutBlock(object sender, RoutedEventArgs e)
+        {
+            if (label_dexcom_username == null)
+                return;
+            label_dexcom_username.Visibility = Visibility.Hidden;
+            label_dexcom_password.Visibility = Visibility.Hidden;
+            txt_dexcom_password.Visibility = Visibility.Hidden;
+            txt_dexcom_username.Visibility = Visibility.Hidden;
+            label_dexcom_server.Visibility = Visibility.Hidden;
+            combobox_dexcom_server.Visibility = Visibility.Hidden;
+
+            label_nightscoutUrl.Visibility = Visibility.Visible;
+            label_nightscout_token.Visibility = Visibility.Visible;
+            txt_nightscout_token.Visibility = Visibility.Visible;
+            txt_nightscoutUrl.Visibility = Visibility.Visible;
+        }
+
+        private void ShowDexcomBlock(object sender, RoutedEventArgs e)
+        {
+            if (label_nightscoutUrl == null)
+                return;
+            label_nightscoutUrl.Visibility = Visibility.Hidden;
+            label_nightscout_token.Visibility = Visibility.Hidden;
+            txt_nightscout_token.Visibility = Visibility.Hidden;
+            txt_nightscoutUrl.Visibility = Visibility.Hidden;
+
+            label_dexcom_username.Visibility = Visibility.Visible;
+            label_dexcom_password.Visibility = Visibility.Visible;
+            txt_dexcom_password.Visibility = Visibility.Visible;
+            txt_dexcom_username.Visibility = Visibility.Visible;
+            label_dexcom_server.Visibility = Visibility.Visible;
+            combobox_dexcom_server.Visibility = Visibility.Visible;
+        }
+
         /// <summary>
         /// TODO: This should not live in the window since it is used in multiple places
         /// If model is null, will validate from stored settings file.
