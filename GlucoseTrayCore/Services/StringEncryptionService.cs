@@ -55,5 +55,19 @@ namespace GlucoseTrayCore.Services
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
         }
+
+        public static bool IsEncrypted(string cipherText, string passPhrase)
+        {
+            bool isEncrypted = true;
+            try
+            {
+                var result = DecryptString(cipherText, passPhrase);
+            }
+            catch (Exception e)
+            {
+                isEncrypted = false;
+            }
+            return isEncrypted;
+        }
     }
 }

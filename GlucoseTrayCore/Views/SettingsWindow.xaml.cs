@@ -50,10 +50,7 @@ namespace GlucoseTrayCore.Views.Settings
                     }
                     else
                     {
-                        model.DexcomUsername = string.IsNullOrWhiteSpace(model.DexcomUsername) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomUsername, "i_can_probably_be_improved");
-                        model.DexcomPassword = string.IsNullOrWhiteSpace(model.DexcomPassword) ? string.Empty : StringEncryptionService.DecryptString(model.DexcomPassword, "i_can_probably_be_improved");
                         txt_dexcom_password.Password = model.DexcomPassword;
-                        model.AccessToken = string.IsNullOrWhiteSpace(model.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(model.AccessToken, "i_can_probably_be_improved");
                         txt_nightscout_token.Password = model.AccessToken;
                         if (model.FetchMethod == FetchMethod.DexcomShare)
                             radio_source_dexcom.IsChecked = true;
@@ -184,9 +181,9 @@ namespace GlucoseTrayCore.Views.Settings
             Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
             Settings.LogLevel = (LogEventLevel) combobox_loglevel.SelectedIndex;
             Settings.DexcomServer = (DexcomServerLocation) combobox_dexcom_server.SelectedIndex;
-            Settings.DexcomUsername = txt_dexcom_username.Text.Length > 0 ? StringEncryptionService.EncryptString(txt_dexcom_username.Text, "i_can_probably_be_improved") : string.Empty;
-            Settings.DexcomPassword = txt_dexcom_password.Password.Length > 0 ? StringEncryptionService.EncryptString(txt_dexcom_password.Password, "i_can_probably_be_improved") : string.Empty;
-            Settings.AccessToken = txt_nightscout_token.Password.Length > 0 ? StringEncryptionService.EncryptString(txt_nightscout_token.Password, "i_can_probably_be_improved") : string.Empty;
+            Settings.DexcomUsername = txt_dexcom_username.Text;
+            Settings.DexcomPassword = txt_dexcom_password.Password;
+            Settings.AccessToken = txt_nightscout_token.Password;
 
             var errors = ValidateSettings(Settings);
             if (ValidateSettings(Settings).Any())

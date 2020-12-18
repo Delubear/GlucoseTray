@@ -1,4 +1,5 @@
 ﻿using GlucoseTrayCore.Enums;
+using GlucoseTrayCore.Services;
 using Serilog.Events;
 using System;
 using System.ComponentModel;
@@ -8,6 +9,8 @@ namespace GlucoseTrayCore
 {
     public class GlucoseTraySettings : INotifyPropertyChanged
     {
+        private const string EncryptionKey = "i_can_probably_be_improved";
+
         private FetchMethod fetchMethod;
         public FetchMethod FetchMethod
         {
@@ -29,19 +32,26 @@ namespace GlucoseTrayCore
         private string dexcomUsername;
         public string DexcomUsername
         {
-            get => dexcomUsername; set { dexcomUsername = value; OnPropertyChanged(nameof(DexcomUsername)); }
+            get => string.IsNullOrWhiteSpace(dexcomUsername) ? dexcomUsername : StringEncryptionService.DecryptString(dexcomUsername, EncryptionKey);
+            set
+            {
+                dexcomUsername = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey);
+                OnPropertyChanged(nameof(DexcomUsername));
+            }
         }
 
         private string dexcomPassword;
         public string DexcomPassword
         {
-            get => dexcomPassword; set { dexcomPassword = value; OnPropertyChanged(nameof(DexcomPassword)); }
+            get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
+            set { dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(DexcomPassword)); }
         }
 
         private string accessToken;
         public string AccessToken
         {
-            get => accessToken; set { accessToken = value; OnPropertyChanged(nameof(AccessToken)); }
+            get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
+            set { accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(AccessToken)); }
         }
 
         private GlucoseUnitType glucoseUnit;

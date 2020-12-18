@@ -61,7 +61,9 @@ namespace GlucoseTrayCore.Services
             return results;
         }
 
-        private bool IsCriticalLow(GlucoseResult result) => (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg) || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
+        private bool IsCriticalLow(GlucoseResult result) =>
+            (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg) 
+            || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
 
         private void CalculateValues(GlucoseResult result, double value)
         {
@@ -84,19 +86,16 @@ namespace GlucoseTrayCore.Services
         {
             string url;
 
-            var token = string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? string.Empty : StringEncryptionService.DecryptString(_options.CurrentValue.AccessToken, "i_can_probably_be_improved");
-
             if (timeOflastGoodResult.HasValue)
             {
                 int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
                 var fromDate = timeOflastGoodResult.Value.AddSeconds(1).ToString("s") + "Z";
                 var toDate = DateTime.UtcNow.ToString("s") + "Z";
 
-                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "")}";
+                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}";
             }
             else
-                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(token) ? $"&token={token}" : "");
-
+                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "");
 
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
@@ -147,9 +146,7 @@ namespace GlucoseTrayCore.Services
             // Get Session Id
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
-                Content = new StringContent("{\"accountName\":\"" + StringEncryptionService.DecryptString(_options.CurrentValue.DexcomUsername, "i_can_probably_be_improved") + "\"," +
-                                                 "\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\"," +
-                                                 "\"password\":\"" + StringEncryptionService.DecryptString(_options.CurrentValue.DexcomPassword, "i_can_probably_be_improved") + "\"}", Encoding.UTF8, "application/json")
+                Content = new StringContent($"{{\"accountName\":\"{_options.CurrentValue.DexcomUsername}\",\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\",\"password\":\"{_options.CurrentValue.DexcomPassword}\"}}", Encoding.UTF8, "application/json")
             };
 
             var client = _httpClientFactory.CreateClient();
