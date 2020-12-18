@@ -124,6 +124,36 @@ namespace GlucoseTrayCore
             get => staleResultsThreshold; set { staleResultsThreshold = value; OnPropertyChanged(nameof(StaleResultsThreshold)); }
         }
 
+        private bool highAlert;
+        public bool HighAlert
+        {
+            get => highAlert; set { highAlert = value; OnPropertyChanged(nameof(HighAlert)); }
+        }
+
+        private bool warningHighAlert;
+        public bool WarningHighAlert
+        {
+            get => warningHighAlert; set { warningHighAlert = value; OnPropertyChanged(nameof(WarningHighAlert)); }
+        }
+
+        private bool warningLowAlert;
+        public bool WarningLowAlert
+        {
+            get => warningLowAlert; set { warningLowAlert = value; OnPropertyChanged(nameof(WarningLowAlert)); }
+        }
+
+        private bool lowAlert;
+        public bool LowAlert
+        {
+            get => lowAlert; set { lowAlert = value; OnPropertyChanged(nameof(LowAlert)); }
+        }
+
+        private bool criticallyLowAlert;
+        public bool CriticallyLowAlert
+        {
+            get => criticallyLowAlert; set { criticallyLowAlert = value; OnPropertyChanged(nameof(CriticallyLowAlert)); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

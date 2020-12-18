@@ -94,6 +94,7 @@ namespace GlucoseTrayCore
                     }
 
                     CreateIcon();
+                    AlertNotification();
 
                     await Task.Delay(_options.CurrentValue.PollingThresholdTimeSpan);
                 }
@@ -108,6 +109,36 @@ namespace GlucoseTrayCore
                 }
             }
         }
+
+        private void AlertNotification()
+        {
+            if (GlucoseResult?.IsStale(_options.CurrentValue.StaleResultsThreshold) != false)
+                return;
+
+            var highAlertTriggered = _options.CurrentValue.HighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.HighBg, true);
+            var warningHighAlertTriggered = _options.CurrentValue.WarningHighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningHighBg, true);
+            var warningLowAlertTriggered = _options.CurrentValue.WarningLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningLowBg, false);
+            var lowAlertTriggered = _options.CurrentValue.LowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.LowBg, false);
+            var criticalLowAlertTriggered = _options.CurrentValue.CriticallyLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.CriticalLowBg, false);
+
+            if (highAlertTriggered)
+                ShowAlert("High Glucose Alert");
+            if (warningHighAlertTriggered)
+                ShowAlert("Warning High Glucose Alert");
+            if (warningLowAlertTriggered)
+                ShowAlert("Warning Low Glucose Alert");
+            if (lowAlertTriggered)
+                ShowAlert("Low Glucose Alert");
+            if (criticalLowAlertTriggered)
+                MessageBox.Show("Critical Low Glucose Alert", "Critical Low Glucose Alert", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+
+        private void ShowAlert(string alertName) => trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
+
+        private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, bool shouldBeBelow) =>
+            _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG
+                ? shouldBeBelow ? glucoseValueMG >= alertThreshold : glucoseValueMG <= alertThreshold
+                : shouldBeBelow ? glucoseValueMMOL >= alertThreshold : glucoseValueMMOL <= alertThreshold;
 
         private async Task CheckForMissingReadings()
         {
@@ -181,7 +212,7 @@ namespace GlucoseTrayCore
         private void LogResultToDb(List<GlucoseResult> results)
         {
             if (results.Count > 1)
-                _logger.LogWarning($"Found {results.Count} readings between {results[0].DateTimeUTC} and {results[results.Count - 1].DateTimeUTC} UTC{(System.Diagnostics.Debugger.IsAttached ? " (Debugging Mode)" : "")}" );
+                _logger.LogWarning($"Found {results.Count} readings between {results[0].DateTimeUTC} and {results[results.Count - 1].DateTimeUTC} UTC{(System.Diagnostics.Debugger.IsAttached ? " (Debugging Mode)" : "")}");
 
             foreach (var result in results)
             {
