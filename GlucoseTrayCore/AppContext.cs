@@ -115,30 +115,46 @@ namespace GlucoseTrayCore
             if (GlucoseResult?.IsStale(_options.CurrentValue.StaleResultsThreshold) != false)
                 return;
 
-            var highAlertTriggered = _options.CurrentValue.HighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.HighBg, true);
-            var warningHighAlertTriggered = _options.CurrentValue.WarningHighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningHighBg, true);
-            var warningLowAlertTriggered = _options.CurrentValue.WarningLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningLowBg, false);
-            var lowAlertTriggered = _options.CurrentValue.LowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.LowBg, false);
-            var criticalLowAlertTriggered = _options.CurrentValue.CriticallyLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.CriticalLowBg, false);
+            var highAlertTriggered = _options.CurrentValue.HighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.HighBg, UpDown.Down);
+            var warningHighAlertTriggered = _options.CurrentValue.WarningHighAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningHighBg, UpDown.Down);
+            var warningLowAlertTriggered = _options.CurrentValue.WarningLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.WarningLowBg, UpDown.Up);
+            var lowAlertTriggered = _options.CurrentValue.LowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.LowBg, UpDown.Up);
+            var criticalLowAlertTriggered = _options.CurrentValue.CriticallyLowAlert && IsAlertTriggered(GlucoseResult.MgValue, GlucoseResult.MmolValue, _options.CurrentValue.CriticalLowBg, UpDown.Up);
 
+            // Order matters. We need to show the most severe alert while avoid multiple alerts. (High > warning high.  Critical > low > warning low)
             if (highAlertTriggered)
+            {
                 ShowAlert("High Glucose Alert");
+                return;
+            }
             if (warningHighAlertTriggered)
+            {
                 ShowAlert("Warning High Glucose Alert");
-            if (warningLowAlertTriggered)
-                ShowAlert("Warning Low Glucose Alert");
-            if (lowAlertTriggered)
-                ShowAlert("Low Glucose Alert");
+                return;
+            }
             if (criticalLowAlertTriggered)
+            {
                 MessageBox.Show("Critical Low Glucose Alert", "Critical Low Glucose Alert", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+            if (lowAlertTriggered)
+            {
+                ShowAlert("Low Glucose Alert");
+                return;
+            }
+            if (warningLowAlertTriggered)
+            {
+                ShowAlert("Warning Low Glucose Alert");
+                return;
+            }
         }
 
         private void ShowAlert(string alertName) => trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
 
-        private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, bool shouldBeBelow) =>
+        private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, UpDown directionGlucoseShouldBeToNotAlert) =>
             _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG
-                ? shouldBeBelow ? glucoseValueMG >= alertThreshold : glucoseValueMG <= alertThreshold
-                : shouldBeBelow ? glucoseValueMMOL >= alertThreshold : glucoseValueMMOL <= alertThreshold;
+                ? directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMG >= alertThreshold : glucoseValueMG <= alertThreshold
+                : directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMMOL >= alertThreshold : glucoseValueMMOL <= alertThreshold;
 
         private async Task CheckForMissingReadings()
         {
