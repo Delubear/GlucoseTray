@@ -62,15 +62,25 @@ namespace GlucoseTrayCore.Services
         }
 
         private bool IsCriticalLow(GlucoseResult result) =>
-            (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg) 
+            (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg)
             || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
 
-        private void CalculateValues(GlucoseResult result, double value)
+        private void CalculateValues(GlucoseResult result, double value, GlucoseUnitType? unitType = null)
         {
             // 25 MMOL is > 540 MG, most readers wont go below 40 or above 400.
             // Catch any full value MMOL readings that may be perfect integers that are delivered without a '.', i.e., 7.0 coming in as just 7
-            // TODO: Need to investigate if the (value <= 30) check is needed. Any Nightscout-MMOL users able to verify? See above line for reasoning.
-            if (value.ToString().Contains(".") || value <= 30) 
+            // TODO: Can we find a better way to determine if a result was sent from the server as MG/MMOL ? We currently check Nightscouts status endpoint, what can we do for Dexcom?
+            if (value == 0)
+            {
+                result.MmolValue = value;
+                result.MgValue = Convert.ToInt32(value);
+            }
+            else if (unitType != null)
+            {
+                result.MmolValue = unitType.Value == GlucoseUnitType.MG ? value / 18 : value;
+                result.MgValue = unitType.Value == GlucoseUnitType.MG ? Convert.ToInt32(value) : Convert.ToInt32(value * 18);
+            }
+            else if (value.ToString().Contains(".") || value <= 30)
             {
                 result.MmolValue = value;
                 result.MgValue = Convert.ToInt32(value *= 18);
@@ -117,7 +127,7 @@ namespace GlucoseTrayCore.Services
                         DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime(),
                         Trend = record.direction.GetTrend()
                     };
-                    CalculateValues(fetchResult, record.sgv);
+                    CalculateValues(fetchResult, record.sgv, await GetNightscoutServerUnitType());
                     if (fetchResult.Trend == TrendResult.Unknown)
                         _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
                     results.Add(fetchResult);
@@ -134,7 +144,26 @@ namespace GlucoseTrayCore.Services
                 request.Dispose();
             }
 
-            return results.OrderBy(a=>a.DateTimeUTC).ToList();
+            return results.OrderBy(a => a.DateTimeUTC).ToList();
+        }
+
+        private async Task<GlucoseUnitType?> GetNightscoutServerUnitType()
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/status"));
+                request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                var statusResponse = await client.SendAsync(request).ConfigureAwait(false);
+                var statusResult = await statusResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var statusModel = JsonSerializer.Deserialize<NightScoutStatusResult>(statusResult);
+                return statusModel.settings.UnitType;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Unable to get Nightscout Status, {0}", e);
+                return null;
+            }
         }
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)
