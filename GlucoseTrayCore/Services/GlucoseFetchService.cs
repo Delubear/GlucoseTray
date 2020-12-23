@@ -93,7 +93,7 @@ namespace GlucoseTrayCore.Services
                 var fromDate = timeOflastGoodResult.Value.AddSeconds(1).ToString("s") + "Z";
                 var toDate = DateTime.UtcNow.ToString("s") + "Z";
 
-                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv,json?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}";
+                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}";
             }
             else
                 url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "");
