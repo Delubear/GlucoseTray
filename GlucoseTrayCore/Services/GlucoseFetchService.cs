@@ -152,7 +152,8 @@ namespace GlucoseTrayCore.Services
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, new Uri($"{_options.CurrentValue.NightscoutUrl}/api/v1/status"));
+                var url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/status" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"?token={_options.CurrentValue.AccessToken}" : string.Empty);
+                var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
                 request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
                 var statusResponse = await client.SendAsync(request).ConfigureAwait(false);
                 var statusResult = await statusResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
