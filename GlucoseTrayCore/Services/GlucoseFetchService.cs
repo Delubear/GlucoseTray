@@ -171,7 +171,7 @@ namespace GlucoseTrayCore.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Dexcom fetching failed or received incorrect format. {0}", ex);
+                _logger.LogError("Dexcom fetching failed or received incorrect format. " + ex.Message + ex?.InnerException?.Message + "{0}", ex);
                 fetchResult = GetDefaultFetchResult();
             }
             finally
