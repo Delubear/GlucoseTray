@@ -85,7 +85,7 @@ namespace GlucoseTrayCore.Services
 
         private async Task<List<GlucoseResult>> GetResultsFromNightscout(DateTime? timeOflastGoodResult)
         {
-            string url;
+            var url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?";
 
             if (timeOflastGoodResult.HasValue)
             {
@@ -93,10 +93,12 @@ namespace GlucoseTrayCore.Services
                 var fromDate = timeOflastGoodResult.Value.AddSeconds(1).ToString("s") + "Z";
                 var toDate = DateTime.UtcNow.ToString("s") + "Z";
 
-                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}{(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "")}";
+                url += $"find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}";
             }
             else
-                url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?count=1" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "");
+                url += "count=1";
+
+            url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "";
 
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
