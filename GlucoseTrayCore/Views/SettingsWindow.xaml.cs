@@ -57,6 +57,11 @@ namespace GlucoseTrayCore.Views.Settings
                         else
                             radio_source_nightscout.IsChecked = true;
 
+                        if (model.GlucoseUnit == GlucoseUnitType.MG)
+                            radio_unit_mg.IsChecked = true;
+                        else
+                            radio_unit_mmol.IsChecked = true;
+
                         combobox_loglevel.SelectedIndex = (int)model.LogLevel;
                         combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
 
