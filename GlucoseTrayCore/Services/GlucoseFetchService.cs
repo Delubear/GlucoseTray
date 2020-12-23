@@ -86,19 +86,18 @@ namespace GlucoseTrayCore.Services
         private async Task<List<GlucoseResult>> GetResultsFromNightscout(DateTime? timeOflastGoodResult)
         {
             var url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?";
+            var count = 1;
 
             if (timeOflastGoodResult.HasValue)
             {
-                int maximumCount = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
+                count = 1000000; // Without sending a maximum count, Nightscout will only return 10 results.
                 var fromDate = timeOflastGoodResult.Value.AddSeconds(1).ToString("s") + "Z";
                 var toDate = DateTime.UtcNow.ToString("s") + "Z";
-
-                url += $"find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&count={maximumCount}";
+                url += $"find[dateString][$gte]={fromDate}&find[dateString][$lte]={toDate}&";
             }
-            else
-                url += "count=1";
 
-            url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : "";
+            url += $"count={count}";
+            url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
 
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
