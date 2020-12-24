@@ -34,14 +34,19 @@
         <Label Content="Glucose Datasource" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="26" Width="131" Grid.ColumnSpan="2"/>
         <RadioButton TabIndex="1" x:Name="radio_source_dexcom" Content="Dexcom" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="62" RenderTransformOrigin="0.5,0.5" IsChecked="True" Checked="ShowDexcomBlock"/>
         <RadioButton TabIndex="2" x:Name="radio_source_nightscout" Content="Nightscout" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="78" Grid.Column="1" Checked="ShowNightscoutBlock" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_dexcom_username" Content="Dexcom Username" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Margin="4,0,0,0"/>
-        <Label x:Name="label_nightscoutUrl" Content="Nightscout Url" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Visibility="Hidden" Grid.ColumnSpan="2" Margin="25,0,0,0"/>
-        <Label x:Name="label_dexcom_password" Content="Dexcom Password" Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130" Margin="4,0,0,0"/>
-        <Label x:Name="label_nightscout_token" Content="Access Token" Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130" Visibility="Hidden" Margin="4,0,0,0"/>
-        <TextBox TabIndex="3" x:Name="txt_dexcom_username" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Width="140" Margin="0,4,0,3" HorizontalAlignment="Center" Text="{Binding DexcomUsername}"/>
-        <TextBox TabIndex="3" x:Name="txt_nightscoutUrl" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Width="140" Margin="0,4,0,3" HorizontalAlignment="Center" Visibility="Hidden" Text="{Binding NightscoutUrl}"/>
-        <PasswordBox TabIndex="4" x:Name="txt_dexcom_password" Grid.Column="4" Grid.Row="1" Width="140" Margin="5,4,0,3" HorizontalAlignment="Left" />
-        <PasswordBox TabIndex="4" x:Name="txt_nightscout_token" Grid.Column="4" Grid.Row="1" Width="140" Margin="5,4,0,3" HorizontalAlignment="Left" Visibility="Hidden"/>
+
+        <Label x:Name="label_dexcom_username" Content="Dexcom Username" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Margin="4,0,0,0" />
+        <Label x:Name="label_nightscoutUrl" Content="Nightscout Url" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="124" Visibility="Hidden" Margin="4,0,0,0"/>
+
+        <Label x:Name="label_dexcom_password" Content="Dexcom Password" Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130" Margin="4,0,0,0" />
+        <Label x:Name="label_nightscout_token" Content="Access Token" Grid.Column="4" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="130" Visibility="Hidden" Margin="50,0,0,0" Grid.ColumnSpan="2"/>
+
+        <TextBox TabIndex="3" x:Name="txt_dexcom_username" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Width="140" Margin="0,4,0,3" HorizontalAlignment="Center" Text="{Binding DexcomUsername}" />
+        <TextBox TabIndex="3" x:Name="txt_nightscoutUrl" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Width="184" Margin="7,4,0,3" HorizontalAlignment="Left" Visibility="Hidden" Text="{Binding NightscoutUrl}" Grid.ColumnSpan="2"/>
+
+        <PasswordBox TabIndex="4" x:Name="txt_dexcom_password" Grid.Column="4" Grid.Row="1" Width="140" Margin="5,4,0,3" HorizontalAlignment="Left"  />
+        <PasswordBox TabIndex="4" x:Name="txt_nightscout_token" Grid.Column="4" Grid.Row="1" Width="190" Margin="50,4,5,3" HorizontalAlignment="Left" Visibility="Hidden" Grid.ColumnSpan="2"/>
+
         <Label Content="Glucose Unit" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Height="26" Width="100" Margin="10,0,0,0" Grid.ColumnSpan="2"/>
         <Label x:Name="label_dexcom_server" Content="Dexcom Server" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="25" Width="95" Grid.ColumnSpan="2" Margin="62,0,0,0"/>
         <RadioButton TabIndex="6" x:Name="radio_unit_mg" Content="MG/DL" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Height="15" Width="62" GroupName="glucose_unit" IsChecked="True" Checked="UpdateValuesFromMMoLToMG"/>
@@ -75,5 +80,6 @@
         <CheckBox TabIndex="17" x:Name="checkbox_alert_low" IsChecked="{Binding LowAlert}" Content="" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="10" VerticalAlignment="Center"/>
         <ComboBox TabIndex="5" x:Name="combobox_dexcom_server" Grid.Column="4" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Width="120" SelectedIndex="0" Margin="5,0,0,0" Height="22"/>
         <CheckBox TabIndex="16" x:Name="checkbox_alert_critical" IsChecked="{Binding CriticallyLowAlert}" Content="" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="11" VerticalAlignment="Center"/>
+        <CheckBox x:Name="checkbox_server_datasource_inversed" Content="Inverse Server Data Source" Grid.Column="4" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="12" VerticalAlignment="Center" Grid.ColumnSpan="2" IsChecked="{Binding IsServerDataUnitTypeMmol}"/>
     </Grid>
 </Window>

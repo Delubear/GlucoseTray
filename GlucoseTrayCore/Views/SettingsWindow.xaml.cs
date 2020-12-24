@@ -28,6 +28,7 @@ namespace GlucoseTrayCore.Views.Settings
             DatabaseLocation = @"C:\Temp\glucosetray.db",
             DexcomUsername = "",
             NightscoutUrl = "",
+            IsServerDataUnitTypeMmol = false,
             // Appears we will need to manually bind radios, dropdowns, and password fields for now.
         };
 

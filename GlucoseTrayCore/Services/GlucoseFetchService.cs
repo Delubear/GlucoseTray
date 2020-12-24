@@ -65,28 +65,22 @@ namespace GlucoseTrayCore.Services
             (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg)
             || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
 
-        private void CalculateValues(GlucoseResult result, double value, GlucoseUnitType? unitType = null)
+        private void CalculateValues(GlucoseResult result, double value)
         {
-            // TODO: Would be nice to find a definitive way to know what unit type the server is sending us data in.
             if (value == 0)
             {
                 result.MmolValue = value;
                 result.MgValue = Convert.ToInt32(value);
             }
-            else if (unitType != null)
-            {
-                result.MmolValue = unitType.Value == GlucoseUnitType.MG ? value / 18 : value;
-                result.MgValue = unitType.Value == GlucoseUnitType.MG ? Convert.ToInt32(value) : Convert.ToInt32(value * 18);
-            }
-            else if (value <= 30) // Almost guaranteed to be an MMOL reading. This block might be hit by users using a MMOL DexCom setup? Need confirmation
+            else if (_options.CurrentValue.IsServerDataUnitTypeMmol)
             {
                 result.MmolValue = value;
-                result.MgValue = Convert.ToInt32(value *= 18);
+                result.MgValue = Convert.ToInt32(value * 18);
             }
-            else // Anything else is a MG/DL reading
+            else
             {
+                result.MmolValue = value / 18;
                 result.MgValue = Convert.ToInt32(value);
-                result.MmolValue = value /= 18;
             }
             result.IsCriticalLow = IsCriticalLow(result);
         }
@@ -125,7 +119,7 @@ namespace GlucoseTrayCore.Services
                         DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime(),
                         Trend = record.direction.GetTrend()
                     };
-                    CalculateValues(fetchResult, record.sgv, GlucoseUnitType.MG); // As of 12/24/2020, I have been informed Nightscout always sends readings back as MG/DL
+                    CalculateValues(fetchResult, record.sgv);
                     if (fetchResult.Trend == TrendResult.Unknown)
                         _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
                     results.Add(fetchResult);

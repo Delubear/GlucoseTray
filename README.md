@@ -30,3 +30,5 @@ Out-of-date readings are shown with a strikethrough effect. <br>
 -Logs readings to a local database for you to do with as you please
 
 ![alt text](https://raw.githubusercontent.com/Delubear/GlucoseTray/master/2019-05-03_16-18-24.png)
+
+https://github.com/Delubear/GlucoseTray/wiki/Setup-Guide
