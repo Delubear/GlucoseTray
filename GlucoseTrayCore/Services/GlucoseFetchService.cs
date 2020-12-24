@@ -67,9 +67,7 @@ namespace GlucoseTrayCore.Services
 
         private void CalculateValues(GlucoseResult result, double value, GlucoseUnitType? unitType = null)
         {
-            // 25 MMOL is > 540 MG, most readers wont go below 40 or above 400.
-            // Catch any full value MMOL readings that may be perfect integers that are delivered without a '.', i.e., 7.0 coming in as just 7
-            // TODO: Can we find a better way to determine if a result was sent from the server as MG/MMOL ? We currently check Nightscouts status endpoint, what can we do for Dexcom?
+            // TODO: Would be nice to find a definitive way to know what unit type the server is sending us data in.
             if (value == 0)
             {
                 result.MmolValue = value;
@@ -80,12 +78,12 @@ namespace GlucoseTrayCore.Services
                 result.MmolValue = unitType.Value == GlucoseUnitType.MG ? value / 18 : value;
                 result.MgValue = unitType.Value == GlucoseUnitType.MG ? Convert.ToInt32(value) : Convert.ToInt32(value * 18);
             }
-            else if (value.ToString().Contains(".") || value <= 30)
+            else if (value <= 30) // Almost guaranteed to be an MMOL reading. This block might be hit by users using a MMOL DexCom setup? Need confirmation
             {
                 result.MmolValue = value;
                 result.MgValue = Convert.ToInt32(value *= 18);
             }
-            else
+            else // Anything else is a MG/DL reading
             {
                 result.MgValue = Convert.ToInt32(value);
                 result.MmolValue = value /= 18;
@@ -127,7 +125,7 @@ namespace GlucoseTrayCore.Services
                         DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime(),
                         Trend = record.direction.GetTrend()
                     };
-                    CalculateValues(fetchResult, record.sgv, await GetNightscoutServerUnitType());
+                    CalculateValues(fetchResult, record.sgv, GlucoseUnitType.MG); // As of 12/24/2020, I have been informed Nightscout always sends readings back as MG/DL
                     if (fetchResult.Trend == TrendResult.Unknown)
                         _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
                     results.Add(fetchResult);
@@ -145,26 +143,6 @@ namespace GlucoseTrayCore.Services
             }
 
             return results.OrderBy(a => a.DateTimeUTC).ToList();
-        }
-
-        private async Task<GlucoseUnitType?> GetNightscoutServerUnitType()
-        {
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-                var url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/status" + (!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"?token={_options.CurrentValue.AccessToken}" : string.Empty);
-                var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
-                request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                var statusResponse = await client.SendAsync(request).ConfigureAwait(false);
-                var statusResult = await statusResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var statusModel = JsonSerializer.Deserialize<NightScoutStatusResult>(statusResult);
-                return statusModel.settings.UnitType;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Unable to get Nightscout Status, {0}", e);
-                return null;
-            }
         }
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom(GlucoseResult fetchResult)
