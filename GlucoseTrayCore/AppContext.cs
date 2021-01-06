@@ -110,6 +110,8 @@ namespace GlucoseTrayCore
             }
         }
 
+        private AlertLevel CurrentAlertLevel = AlertLevel.None;
+
         private void AlertNotification()
         {
             if (GlucoseResult?.IsStale(_options.CurrentValue.StaleResultsThreshold) != false)
@@ -124,29 +126,40 @@ namespace GlucoseTrayCore
             // Order matters. We need to show the most severe alert while avoid multiple alerts. (High > warning high.  Critical > low > warning low)
             if (highAlertTriggered)
             {
-                ShowAlert("High Glucose Alert");
+                if(CurrentAlertLevel != AlertLevel.High)
+                    ShowAlert("High Glucose Alert");
+                CurrentAlertLevel = AlertLevel.High;
                 return;
             }
             if (warningHighAlertTriggered)
             {
-                ShowAlert("Warning High Glucose Alert");
+                if (CurrentAlertLevel != AlertLevel.High && CurrentAlertLevel != AlertLevel.WarningHigh)
+                    ShowAlert("Warning High Glucose Alert");
+                CurrentAlertLevel = AlertLevel.WarningHigh;
                 return;
             }
             if (criticalLowAlertTriggered)
             {
-                MessageBox.Show("Critical Low Glucose Alert", "Critical Low Glucose Alert", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                if (CurrentAlertLevel != AlertLevel.CriticalLow)
+                    MessageBox.Show("Critical Low Glucose Alert", "Critical Low Glucose Alert", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                CurrentAlertLevel = AlertLevel.CriticalLow;
                 return;
             }
             if (lowAlertTriggered)
             {
-                ShowAlert("Low Glucose Alert");
+                if (CurrentAlertLevel != AlertLevel.CriticalLow && CurrentAlertLevel != AlertLevel.Low)
+                    ShowAlert("Low Glucose Alert");
+                CurrentAlertLevel = AlertLevel.Low;
                 return;
             }
             if (warningLowAlertTriggered)
             {
-                ShowAlert("Warning Low Glucose Alert");
+                if (CurrentAlertLevel != AlertLevel.CriticalLow && CurrentAlertLevel != AlertLevel.Low && CurrentAlertLevel != AlertLevel.WarningLow)
+                    ShowAlert("Warning Low Glucose Alert");
+                CurrentAlertLevel = AlertLevel.WarningLow;
                 return;
             }
+            CurrentAlertLevel = AlertLevel.None;
         }
 
         private void ShowAlert(string alertName) => trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
