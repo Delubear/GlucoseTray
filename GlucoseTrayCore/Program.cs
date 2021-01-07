@@ -13,6 +13,7 @@ using Serilog;
 using Serilog.Events;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace GlucoseTrayCore
@@ -25,17 +26,8 @@ namespace GlucoseTrayCore
         [STAThread]
         private static void Main(string[] args)
         {
-            Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
-            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
-            if (!File.Exists(SettingsFile) || SettingsService.ValidateSettings().Count != 0)
-            {
-                var settingsWindow = new SettingsWindow();
-                if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
-                {
-                    Application.Exit();
-                    return;
-                }
-            }
+            if (!LoadApplicationSettings())
+                return;
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
@@ -51,21 +43,10 @@ namespace GlucoseTrayCore
                 })
                 .Build();
 
-            var services = host.Services;
+            Application.ThreadException += ApplicationThreadException;
 
-            // Logger setup creates Database before we have a chance to run EnsureCreated with no table which would normally handle the GlucoseResults table.
-            // Manually call CreateTables afterwards to prevent crashes from table not existing since we check it before writing our first record.
-            var context = services.GetRequiredService<IGlucoseTrayDbContext>();
-            context.Database.EnsureCreated();
-            try
-            {
-                var creatorService = (SqliteDatabaseCreator) context.Database.GetService<IDatabaseCreator>();
-                creatorService.CreateTables();
-            }
-            catch (SqliteException)
-            {
-                Log.Logger.Verbose("Tables already created.");
-            }
+            var services = host.Services;
+            InitializeDatabase(services);
 
             var app = services.GetRequiredService<AppContext>();
             Application.Run(app);
@@ -82,5 +63,41 @@ namespace GlucoseTrayCore
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>()
                     .AddDbContext<IGlucoseTrayDbContext, SQLiteDbContext>(o => o.UseSqlite("Data Source=" + Configuration.GetValue<string>(nameof(GlucoseTraySettings.DatabaseLocation))));
         }
+
+        private static bool LoadApplicationSettings()
+        {
+            Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
+            SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
+            if (!File.Exists(SettingsFile) || SettingsService.ValidateSettings().Count != 0)
+            {
+                var settingsWindow = new SettingsWindow();
+                if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
+                {
+                    Application.Exit();
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static void InitializeDatabase(IServiceProvider services)
+        {
+            // Logger setup creates Database before we have a chance to run EnsureCreated with no table which would normally handle the GlucoseResults table.
+            // Manually call CreateTables afterwards to prevent crashes from table not existing since we check it before writing our first record.
+            var context = services.GetRequiredService<IGlucoseTrayDbContext>();
+            context.Database.EnsureCreated();
+            try
+            {
+                var creatorService = (SqliteDatabaseCreator) context.Database.GetService<IDatabaseCreator>();
+                creatorService.CreateTables();
+            }
+            catch (SqliteException)
+            {
+                Log.Logger.Verbose("Tables already created.");
+            }
+        }
+
+        private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => 
+            Log.Logger.Fatal($"Unhandled Exception Thrown. {e?.Exception?.Message} ---- {e?.Exception?.InnerException?.Message}", e);
     }
 }
