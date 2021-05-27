@@ -87,7 +87,7 @@ namespace GlucoseTrayCore.Services
 
         private async Task<List<GlucoseResult>> GetResultsFromNightscout(DateTime? timeOflastGoodResult)
         {
-            var url = $"{_options.CurrentValue.NightscoutUrl}/api/v1/entries/sgv?";
+            var url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?";
             var count = 1;
 
             if (timeOflastGoodResult.HasValue)
