@@ -21,7 +21,14 @@ namespace GlucoseTrayCore
         private string nightscoutUrl;
         public string NightscoutUrl
         {
-            get => nightscoutUrl; set { nightscoutUrl = value; OnPropertyChanged(nameof(NightscoutUrl)); }
+            get => nightscoutUrl; 
+            set 
+            { 
+                nightscoutUrl = value;
+                if (nightscoutUrl.EndsWith("/"))
+                    nightscoutUrl = nightscoutUrl.Remove(nightscoutUrl.Length - 1);
+                OnPropertyChanged(nameof(NightscoutUrl)); 
+            }
         }
 
         private DexcomServerLocation dexcomServer;
