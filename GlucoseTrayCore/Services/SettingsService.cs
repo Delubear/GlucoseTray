@@ -64,7 +64,7 @@ namespace GlucoseTrayCore.Services
             {
                 var url = $"{model.NightscoutUrl}/api/v1/status.json";
 
-                url += !string.IsNullOrWhiteSpace(model.AccessToken) ? $"&token={model.AccessToken}" : string.Empty;
+                url += !string.IsNullOrWhiteSpace(model.AccessToken) ? $"?token={model.AccessToken}" : string.Empty;
 
                 using (var httpClient = new HttpClient())
                 {
