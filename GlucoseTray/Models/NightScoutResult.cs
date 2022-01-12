@@ -1,18 +1,37 @@
-﻿namespace GlucoseTrayCore.Models
+﻿using System.Text.Json.Serialization;
+
+namespace GlucoseTrayCore.Models
 {
     /// <summary>
     /// Class that maps to the JSON from NightScout queries.
     /// </summary>
-    internal class NightScoutResult
+    public class NightScoutResult
     {
-        public string _id { get; set; }
-        public double sgv { get; set; }
-        public long date { get; set; }
-        public string dateString { get; set; }
-        public string direction { get; set; }
-        public string device { get; set; }
-        public string type { get; set; }
-        public long utcOffset { get; set; }
-        public string sysTime { get; set; }
+        [JsonPropertyName("_id")]
+        public string Id { get; set; }
+
+        [JsonPropertyName("sgv")]
+        public double Sgv { get; set; }
+
+        [JsonPropertyName("date")]
+        public long Date { get; set; }
+
+        [JsonPropertyName("dateString")]
+        public string DateString { get; set; }
+
+        [JsonPropertyName("direction")]
+        public string Direction { get; set; }
+
+        [JsonPropertyName("device")]
+        public string Device { get; set; }
+
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [JsonPropertyName("utcOffset")]
+        public long UtcOffset { get; set; }
+
+        [JsonPropertyName("sysTime")]
+        public string SystemTime { get; set; }
     }
 }

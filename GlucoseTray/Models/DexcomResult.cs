@@ -3,7 +3,7 @@
     /// <summary>
     /// Class that maps to the JSON received from DexCom queries.
     /// </summary>
-    internal class DexcomResult
+    public class DexcomResult
     {
         public string ST { get; set; }
         public string DT { get; set; }

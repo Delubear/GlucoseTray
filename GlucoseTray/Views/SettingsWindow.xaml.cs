@@ -1,8 +1,6 @@
 ﻿using GlucoseTrayCore.Enums;
 using GlucoseTrayCore.Services;
-using Serilog.Events;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -22,7 +20,6 @@ namespace GlucoseTrayCore.Views.Settings
             WarningLowBg = 80,
             LowBg = 70,
             CriticalLowBg = 55,
-            EnableDebugMode = false,
             PollingThreshold = 15,
             StaleResultsThreshold = 15,
             DexcomUsername = "",

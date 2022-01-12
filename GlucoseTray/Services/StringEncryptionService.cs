@@ -23,7 +23,7 @@ namespace GlucoseTrayCore.Services
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             var password = new PasswordDeriveBytes(passPhrase, null);
             byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = new RijndaelManaged();
+            var symmetricKey = Aes.Create("AesManaged");
             symmetricKey.Mode = CipherMode.CBC;
             ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
             var memoryStream = new MemoryStream();
@@ -42,7 +42,7 @@ namespace GlucoseTrayCore.Services
             byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
             var password = new PasswordDeriveBytes(passPhrase, null);
             byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = new RijndaelManaged();
+            var symmetricKey = Aes.Create("AesManaged");
             symmetricKey.Mode = CipherMode.CBC;
             ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
             var memoryStream = new MemoryStream(cipherTextBytes);
@@ -61,7 +61,7 @@ namespace GlucoseTrayCore.Services
             {
                 var result = DecryptString(cipherText, passPhrase);
             }
-            catch (Exception e)
+            catch
             {
                 isEncrypted = false;
             }

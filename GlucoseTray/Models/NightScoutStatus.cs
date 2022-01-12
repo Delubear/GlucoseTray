@@ -1,4 +1,6 @@
-﻿namespace GlucoseTrayCore.Models
+﻿using System.Text.Json.Serialization;
+
+namespace GlucoseTrayCore.Models
 {
     /// <summary>
     /// Class that maps to the JSON from NightScout status.
@@ -8,9 +10,9 @@
     /// 
     /// Would it be possible to read the units and alarm thresholds from nightscout?
     /// </remarks>
-    internal class NightScoutStatus
+    public class NightScoutStatus
     {
-        public string status { get; set; }
-        
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
     }
 }

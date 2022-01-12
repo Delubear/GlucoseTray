@@ -91,8 +91,7 @@ namespace GlucoseTrayCore
                 }
                 catch (Exception e)
                 {
-                    if (_options.CurrentValue.EnableDebugMode)
-                        MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     _logger.LogError(e.ToString());
                     trayIcon.Visible = false;
                     trayIcon?.Dispose();

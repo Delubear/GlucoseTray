@@ -5,14 +5,16 @@ namespace GlucoseTrayCore.Models
 {
     public class NightScoutStatusResult
     {
-        public NightScoutSettingsResult settings { get; set; }
+        [JsonPropertyName("settings")]
+        public NightScoutSettingsResult Settings { get; set; }
     }
 
     public class NightScoutSettingsResult
     {
-        public string units { get; set; }
+        [JsonPropertyName("units")]
+        public string Units { get; set; }
 
         [JsonIgnore]
-        public GlucoseUnitType UnitType => units == "mg/dl" ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
+        public GlucoseUnitType UnitType => Units == "mg/dl" ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
     }
 }

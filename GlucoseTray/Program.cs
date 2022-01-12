@@ -3,8 +3,6 @@ using GlucoseTrayCore.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Events;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -13,7 +11,7 @@ using System.Windows.Forms;
 
 namespace GlucoseTrayCore
 {
-    internal class Program
+    public class Program
     {
         private static IConfiguration Configuration { get; set; }
         public static string SettingsFile { get; set; }
@@ -30,6 +28,7 @@ namespace GlucoseTrayCore
                 .Build();
 
             Application.ThreadException += ApplicationThreadException;
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 
             var services = host.Services;
 

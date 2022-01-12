@@ -116,12 +116,12 @@ namespace GlucoseTrayCore.Services
                     var fetchResult = new GlucoseResult
                     {
                         Source = FetchMethod.NightscoutApi,
-                        DateTimeUTC = DateTime.Parse(record.dateString).ToUniversalTime(),
-                        Trend = record.direction.GetTrend()
+                        DateTimeUTC = DateTime.Parse(record.DateString).ToUniversalTime(),
+                        Trend = record.Direction.GetTrend()
                     };
-                    CalculateValues(fetchResult, record.sgv);
+                    CalculateValues(fetchResult, record.Sgv);
                     if (fetchResult.Trend == TrendResult.Unknown)
-                        _logger.LogWarning($"Un-expected value for direction/Trend {record.direction}");
+                        _logger.LogWarning($"Un-expected value for direction/Trend {record.Direction}");
                     results.Add(fetchResult);
                 }
 

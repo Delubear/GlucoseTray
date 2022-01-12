@@ -1,6 +1,5 @@
 ﻿using GlucoseTrayCore.Enums;
 using GlucoseTrayCore.Services;
-using Serilog.Events;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
@@ -106,24 +105,6 @@ namespace GlucoseTrayCore
 
         [JsonIgnore]
         public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
-
-        private string databaseLocation;
-        public string DatabaseLocation
-        {
-            get => databaseLocation; set { databaseLocation = value; OnPropertyChanged(nameof(DatabaseLocation)); }
-        }
-
-        private bool enableDebugMode;
-        public bool EnableDebugMode
-        {
-            get => enableDebugMode; set { enableDebugMode = value; OnPropertyChanged(nameof(EnableDebugMode)); }
-        }
-
-        private LogEventLevel logLevel;
-        public LogEventLevel LogLevel
-        {
-            get => logLevel; set { logLevel = value; OnPropertyChanged(nameof(LogLevel)); }
-        }
 
         private int staleResultsThreshold;
         public int StaleResultsThreshold

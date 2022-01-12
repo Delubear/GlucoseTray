@@ -1,13 +1,12 @@
 ﻿using Microsoft.Win32.TaskScheduler;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace GlucoseTrayCore.Services
 {
     public class TaskSchedulerService
     {
-        private readonly string ExecutablePath = "\"" + Process.GetCurrentProcess().MainModule.FileName + "\""; // Environment.ProcessPath should be available in the future for this
+        private readonly string ExecutablePath = "\"" + Environment.ProcessPath + "\"";
         private readonly string TaskName = "GlucoseTray-" + Environment.UserName;
         private readonly string WorkingDirectory = Directory.GetCurrentDirectory();
 

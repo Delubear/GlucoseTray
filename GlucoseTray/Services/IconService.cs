@@ -31,7 +31,7 @@ namespace GlucoseTrayCore.Services
 
         public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
-        internal Brush SetColor(double val) => val switch
+        public Brush SetColor(double val) => val switch
         {
             double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
             double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.Yellow),
@@ -42,7 +42,7 @@ namespace GlucoseTrayCore.Services
             _ => new SolidBrush(Color.White),
         };
 
-        internal void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
+        public void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
         {
             var glucoseValue = result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
