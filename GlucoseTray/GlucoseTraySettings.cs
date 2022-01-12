@@ -1,10 +1,10 @@
-﻿using GlucoseTrayCore.Enums;
-using GlucoseTrayCore.Services;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.Services;
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace GlucoseTrayCore
+namespace GlucoseTray
 {
     public class GlucoseTraySettings : INotifyPropertyChanged
     {

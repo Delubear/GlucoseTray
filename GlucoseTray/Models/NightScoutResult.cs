@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace GlucoseTrayCore.Models
+namespace GlucoseTray.Models
 {
     /// <summary>
     /// Class that maps to the JSON from NightScout queries.

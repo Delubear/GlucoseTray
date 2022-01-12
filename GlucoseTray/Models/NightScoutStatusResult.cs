@@ -1,7 +1,7 @@
-﻿using GlucoseTrayCore.Enums;
+﻿using GlucoseTray.Enums;
 using System.Text.Json.Serialization;
 
-namespace GlucoseTrayCore.Models
+namespace GlucoseTray.Models
 {
     public class NightScoutStatusResult
     {

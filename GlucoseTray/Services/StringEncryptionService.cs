@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     /// <summary>
     /// Used example from here: https://tekeye.uk/visual_studio/encrypt-decrypt-c-sharp-string

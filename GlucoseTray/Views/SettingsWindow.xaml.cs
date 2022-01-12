@@ -1,12 +1,12 @@
-﻿using GlucoseTrayCore.Enums;
-using GlucoseTrayCore.Services;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace GlucoseTrayCore.Views.Settings
+namespace GlucoseTray.Views.Settings
 {
     /// <summary>
     /// Interaction logic for Settings.xaml

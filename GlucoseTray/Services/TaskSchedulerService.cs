@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     public class TaskSchedulerService
     {

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     public static class FileService<T>
     {

@@ -1,4 +1,4 @@
-﻿namespace GlucoseTrayCore.Enums
+﻿namespace GlucoseTray.Enums
 {
     public enum GlucoseUnitType
     {

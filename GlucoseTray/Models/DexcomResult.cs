@@ -1,4 +1,4 @@
-﻿namespace GlucoseTrayCore.Models
+﻿namespace GlucoseTray.Models
 {
     /// <summary>
     /// Class that maps to the JSON received from DexCom queries.

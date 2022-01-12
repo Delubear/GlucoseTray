@@ -1,11 +1,11 @@
-﻿using GlucoseTrayCore.Enums;
+﻿using GlucoseTray.Enums;
 using System.Collections.Generic;
 using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Net.Http.Headers;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     public static class SettingsService
     {

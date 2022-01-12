@@ -1,5 +1,5 @@
-﻿using GlucoseTrayCore.Enums;
-using GlucoseTrayCore.Services;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -8,12 +8,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GlucoseTrayCore.Extensions;
-using GlucoseTrayCore.Models;
+using GlucoseTray.Extensions;
+using GlucoseTray.Models;
 using System.Collections.Generic;
-using GlucoseTrayCore.Views.Settings;
+using GlucoseTray.Views.Settings;
 
-namespace GlucoseTrayCore
+namespace GlucoseTray
 {
     public class AppContext : ApplicationContext
     {

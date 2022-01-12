@@ -1,7 +1,7 @@
-﻿using GlucoseTrayCore.Enums;
-using GlucoseTrayCore.Models;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.Models;
 
-namespace GlucoseTrayCore.Extensions
+namespace GlucoseTray.Extensions
 {
     public static class GlucoseFetchResultExtensions
     {

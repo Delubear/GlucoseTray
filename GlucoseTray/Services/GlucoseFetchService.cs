@@ -1,4 +1,4 @@
-﻿using GlucoseTrayCore.Enums;
+﻿using GlucoseTray.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -7,11 +7,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using GlucoseTrayCore.Extensions;
-using GlucoseTrayCore.Models;
+using GlucoseTray.Extensions;
+using GlucoseTray.Models;
 using System.Text.Json;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     public interface IGlucoseFetchService
     {

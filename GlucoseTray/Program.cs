@@ -1,5 +1,5 @@
-﻿using GlucoseTrayCore.Services;
-using GlucoseTrayCore.Views.Settings;
+﻿using GlucoseTray.Services;
+using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace GlucoseTrayCore
+namespace GlucoseTray
 {
     public class Program
     {

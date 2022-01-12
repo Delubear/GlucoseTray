@@ -1,14 +1,14 @@
-﻿using GlucoseTrayCore.Enums;
+﻿using GlucoseTray.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using GlucoseTrayCore.Extensions;
-using GlucoseTrayCore.Models;
+using GlucoseTray.Extensions;
+using GlucoseTray.Models;
 
-namespace GlucoseTrayCore.Services
+namespace GlucoseTray.Services
 {
     public class IconService
     {
