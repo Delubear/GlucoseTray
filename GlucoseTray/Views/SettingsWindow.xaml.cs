@@ -25,7 +25,6 @@ namespace GlucoseTrayCore.Views.Settings
             EnableDebugMode = false,
             PollingThreshold = 15,
             StaleResultsThreshold = 15,
-            DatabaseLocation = @"C:\Temp\glucosetray.db",
             DexcomUsername = "",
             NightscoutUrl = "",
             IsServerDataUnitTypeMmol = false,
@@ -36,7 +35,6 @@ namespace GlucoseTrayCore.Views.Settings
         {
             InitializeComponent();
 
-            combobox_loglevel.ItemsSource = Enum.GetNames<LogEventLevel>();
             combobox_dexcom_server.ItemsSource = typeof(DexcomServerLocation).GetFields().Select(x => (DescriptionAttribute[])x.GetCustomAttributes(typeof(DescriptionAttribute), false)).SelectMany(x => x).Select(x => x.Description);
 
             if (File.Exists(Program.SettingsFile))
@@ -63,9 +61,7 @@ namespace GlucoseTrayCore.Views.Settings
                         else
                             radio_unit_mmol.IsChecked = true;
 
-                        combobox_loglevel.SelectedIndex = (int)model.LogLevel;
                         combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
-
                         Settings = model;
                     }
                 }
@@ -145,7 +141,6 @@ namespace GlucoseTrayCore.Views.Settings
         {
             Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
             Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
-            Settings.LogLevel = (LogEventLevel) combobox_loglevel.SelectedIndex;
             Settings.DexcomServer = (DexcomServerLocation) combobox_dexcom_server.SelectedIndex;
             Settings.DexcomUsername = txt_dexcom_username.Text;
             Settings.DexcomPassword = txt_dexcom_password.Password;
