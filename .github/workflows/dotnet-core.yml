@@ -14,7 +14,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 6.x
     - name: Install dependencies
       run: dotnet restore
     - name: Build
@@ -26,7 +26,7 @@ jobs:
       uses: notiz-dev/github-action-json-property@release
       with:
         # path to json file
-        path: ./GlucoseTraycore/appsettings.json
+        path: ./GlucoseTray/appsettings.json
         # which property to read
         prop_path: appsettings.Version
     - name: Create Release
@@ -37,8 +37,8 @@ jobs:
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
         #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        #artifacts: './GlucoseTrayCore/bin/Release/net5.0-windows/win-x64/publish/'
-        artifacts: './GlucoseTrayCore/bin/Release/net5.0-windows/win-x64/publish/GlucoseTrayCore.exe'
+        #artifacts: './GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/'
+        artifacts: './GlucoseTray/bin/Release/net6.0-windows/win-x64/publish/GlucoseTray.exe'
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
