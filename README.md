@@ -27,7 +27,6 @@ Out-of-date readings are shown with a strikethrough effect. <br>
 -See latest glucose reading in taskbar.  Also get time of reading and trend on hover or double-click. <br>
 -Context Menu option to open up your Nightscout url in browser. <br>
 -Option to start application on system startup. <br>
--Logs readings to a local database for you to do with as you please
 
 ![alt text](https://raw.githubusercontent.com/Delubear/GlucoseTray/master/2019-05-03_16-18-24.png)
 
