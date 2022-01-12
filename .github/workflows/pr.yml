@@ -28,6 +28,6 @@ jobs:
       uses: notiz-dev/github-action-json-property@release
       with:
         # path to json file
-        path: ./GlucoseTraycore/appsettings.json
+        path: ./GlucoseTray/appsettings.json
         # which property to read
         prop_path: appsettings.Version

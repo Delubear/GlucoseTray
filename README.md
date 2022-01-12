@@ -11,7 +11,7 @@ Always check with your DexCom reader before making any treatment decisions.
 
 
 <strong>Step-by-step Instructions:</strong> <br>
-Download and run the GlucoseTrayCore.exe
+Download and run the GlucoseTray.exe
 On first run, you will be prompted to define your settings which will include telling the program where to load your data from (Dexcom and Nightscout currently supported).
 
 High Glucose displays red. <br>
