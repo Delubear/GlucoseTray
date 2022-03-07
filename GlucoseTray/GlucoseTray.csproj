@@ -5,10 +5,15 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>GlucoseTray</RootNamespace>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishSingleFile>true</PublishSingleFile>
+
+	  <!-- 
+	  <PublishSingleFile>true</PublishSingleFile>
+	  -->
+	  <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
+	  
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ApplicationIcon />
-    <StartupObject />
+	  <StartupObject />
     <UseWindowsForms>true</UseWindowsForms>
     <UseWpf>true</UseWpf>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
