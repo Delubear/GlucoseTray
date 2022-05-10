@@ -48,7 +48,24 @@ namespace GlucoseTray.Services
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             byte[] plainTextBytes = new byte[cipherTextBytes.Length];
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+
+            // int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+
+            // Amended for Dotnet 6.0 and above which now longer guarentees that you will get all 
+            // the bytes you asked for in the first read, so we need to keep reading until the end.
+            int decryptedByteCount = 0;
+            byte[] tempBytes = new byte[cipherTextBytes.Length];
+            do
+            {
+                int bytesRead  = cryptoStream.Read(tempBytes, 0, tempBytes.Length);
+                if (bytesRead == 0)
+                    break;
+
+                Array.Copy(tempBytes, 0, plainTextBytes, decryptedByteCount, bytesRead);
+                decryptedByteCount += bytesRead;
+            }
+            while (true);
+
             memoryStream.Close();
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
