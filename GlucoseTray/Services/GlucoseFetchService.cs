@@ -116,7 +116,9 @@ namespace GlucoseTray.Services
                     var fetchResult = new GlucoseResult
                     {
                         Source = FetchMethod.NightscoutApi,
-                        DateTimeUTC = DateTime.Parse(record.DateString).ToUniversalTime(),
+                        DateTimeUTC = !String.IsNullOrEmpty(record.DateString) ?
+                                        DateTime.Parse(record.DateString).ToUniversalTime() :
+                                        DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime,
                         Trend = record.Direction.GetTrend()
                     };
                     CalculateValues(fetchResult, record.Sgv);
