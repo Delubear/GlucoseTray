@@ -1,4 +1,6 @@
 ﻿using GlucoseTray.Enums;
+using GlucoseTray.Extensions;
+using GlucoseTray.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -6,10 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using GlucoseTray.Extensions;
-using GlucoseTray.Models;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace GlucoseTray.Services
 {
@@ -151,26 +151,53 @@ namespace GlucoseTray.Services
                 _ => "share1.dexcom.com",
             };
 
-            // Get Session Id
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
+            var client = _httpClientFactory.CreateClient();
+            string accountId = string.Empty;
+
+            // Get Account Id
+            var accountIdRequestJson = JsonSerializer.Serialize(new { accountName = _options.CurrentValue.DexcomUsername, applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13", password = _options.CurrentValue.DexcomPassword });
+            var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/AuthenticatePublisherAccount"))
             {
-                Content = new StringContent($"{{\"accountName\":\"{_options.CurrentValue.DexcomUsername}\",\"applicationId\":\"d8665ade-9673-4e27-9ff6-92db4ce13d13\",\"password\":\"{_options.CurrentValue.DexcomPassword}\"}}", Encoding.UTF8, "application/json")
+                Content = new StringContent(accountIdRequestJson, Encoding.UTF8, "application/json")
             };
 
-            var client = _httpClientFactory.CreateClient();
+            try
+            {
+                var response = await client.SendAsync(accountIdRequest).ConfigureAwait(false);
+                accountId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Issue getting account id");
+                throw;
+            }
+            finally
+            {
+                accountIdRequest.Dispose();
+            }
+
+            // Get Session Id
+            var sessionIdRequestJson = JsonSerializer.Serialize(new { accountId = accountId, accountName = _options.CurrentValue.DexcomUsername, applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13", password = _options.CurrentValue.DexcomPassword });
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
+            {
+                Content = new StringContent(sessionIdRequestJson, Encoding.UTF8, "application/json")
+            };
+
             try
             {
                 var response = await client.SendAsync(request).ConfigureAwait(false);
                 var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
-                var result = JsonSerializer.Deserialize<List<DexcomResult>>(await (await client.SendAsync(request).ConfigureAwait(false)).Content.ReadAsStringAsync().ConfigureAwait(false)).First();
+                var initialResult = await client.SendAsync(request).ConfigureAwait(false);
+                var stringResult = await initialResult.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;
 
                 CalculateValues(fetchResult, result.Value);
                 fetchResult.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
-                fetchResult.Trend = (TrendResult)trend;
+                fetchResult.Trend = trend.GetTrend();
                 response.Dispose();
             }
             catch (Exception ex)
