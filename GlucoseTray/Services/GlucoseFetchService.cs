@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,28 +35,26 @@ namespace GlucoseTray.Services
         public async Task<List<GlucoseResult>> GetLatestReadings(DateTime? timeOflastGoodResult)
         {
             var fetchResult = new GlucoseResult();
-
             var results = new List<GlucoseResult>();
             try
             {
-                if (_options.CurrentValue.FetchMethod == FetchMethod.DexcomShare)
+                switch (_options.CurrentValue.FetchMethod)
                 {
-                    await GetFetchResultFromDexcom(fetchResult).ConfigureAwait(false);
-                    results.Add(fetchResult);
-                }
-                else if (_options.CurrentValue.FetchMethod == FetchMethod.NightscoutApi)
-                {
-                    results = await GetResultsFromNightscout(timeOflastGoodResult).ConfigureAwait(false);
-                }
-                else
-                {
-                    _logger.LogError("Invalid fetch method specified.");
-                    throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
+                    case FetchMethod.DexcomShare:
+                        await GetFetchResultFromDexcom(fetchResult);
+                        results.Add(fetchResult);
+                        break;
+                    case FetchMethod.NightscoutApi:
+                        results = await GetResultsFromNightscout(timeOflastGoodResult);
+                        break;
+                    default:
+                        _logger.LogError("Invalid fetch method specified.");
+                        throw new InvalidOperationException("Fetch Method either not specified or invalid specification.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to get data. {0}", ex);
+                _logger.LogError(ex, "Failed to get data.");
             }
 
             return results;
@@ -102,21 +101,21 @@ namespace GlucoseTray.Services
             url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
 
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var results = new List<GlucoseResult>();
             var client = _httpClientFactory.CreateClient();
             try
             {
-                var response = await client.SendAsync(request).ConfigureAwait(false);
-                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var response = await client.SendAsync(request);
+                var result = await response.Content.ReadAsStringAsync();
                 var content = JsonSerializer.Deserialize<List<NightScoutResult>>(result).ToList();
                 foreach (var record in content)
                 {
                     var fetchResult = new GlucoseResult
                     {
                         Source = FetchMethod.NightscoutApi,
-                        DateTimeUTC = !String.IsNullOrEmpty(record.DateString) ?
+                        DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ?
                                         DateTime.Parse(record.DateString).ToUniversalTime() :
                                         DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime,
                         Trend = record.Direction.GetTrend()
@@ -131,7 +130,7 @@ namespace GlucoseTray.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Nightscout fetching failed or received incorrect format. {0}", ex);
+                _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
             }
             finally
             {
@@ -155,7 +154,12 @@ namespace GlucoseTray.Services
             string accountId = string.Empty;
 
             // Get Account Id
-            var accountIdRequestJson = JsonSerializer.Serialize(new { accountName = _options.CurrentValue.DexcomUsername, applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13", password = _options.CurrentValue.DexcomPassword });
+            var accountIdRequestJson = JsonSerializer.Serialize(new
+            {
+                accountName = _options.CurrentValue.DexcomUsername,
+                applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
+                password = _options.CurrentValue.DexcomPassword
+            });
             var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/AuthenticatePublisherAccount"))
             {
                 Content = new StringContent(accountIdRequestJson, Encoding.UTF8, "application/json")
@@ -163,8 +167,8 @@ namespace GlucoseTray.Services
 
             try
             {
-                var response = await client.SendAsync(accountIdRequest).ConfigureAwait(false);
-                accountId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
+                var response = await client.SendAsync(accountIdRequest);
+                accountId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
             }
             catch (Exception ex)
             {
@@ -177,7 +181,13 @@ namespace GlucoseTray.Services
             }
 
             // Get Session Id
-            var sessionIdRequestJson = JsonSerializer.Serialize(new { accountId = accountId, accountName = _options.CurrentValue.DexcomUsername, applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13", password = _options.CurrentValue.DexcomPassword });
+            var sessionIdRequestJson = JsonSerializer.Serialize(new
+            {
+                accountId = accountId,
+                accountName = _options.CurrentValue.DexcomUsername,
+                applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
+                password = _options.CurrentValue.DexcomPassword
+            });
             var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
             {
                 Content = new StringContent(sessionIdRequestJson, Encoding.UTF8, "application/json")
@@ -185,11 +195,11 @@ namespace GlucoseTray.Services
 
             try
             {
-                var response = await client.SendAsync(request).ConfigureAwait(false);
-                var sessionId = (await response.Content.ReadAsStringAsync().ConfigureAwait(false)).Replace("\"", "");
+                var response = await client.SendAsync(request);
+                var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
-                var initialResult = await client.SendAsync(request).ConfigureAwait(false);
-                var stringResult = await initialResult.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var initialResult = await client.SendAsync(request);
+                var stringResult = await initialResult.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
@@ -202,7 +212,7 @@ namespace GlucoseTray.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Dexcom fetching failed or received incorrect format. " + ex.Message + ex?.InnerException?.Message + "{0}", ex);
+                _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
                 fetchResult = GetDefaultFetchResult();
             }
             finally
@@ -214,7 +224,7 @@ namespace GlucoseTray.Services
             return fetchResult;
         }
 
-        private GlucoseResult GetDefaultFetchResult() => new GlucoseResult
+        private static GlucoseResult GetDefaultFetchResult() => new()
         {
             MmolValue = 0,
             MgValue = 0,

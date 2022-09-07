@@ -79,7 +79,7 @@ namespace GlucoseTray
                 {
                     Application.DoEvents();
 
-                    var results = await _fetchService.GetLatestReadings(GlucoseResult?.DateTimeUTC).ConfigureAwait(false);
+                    var results = await _fetchService.GetLatestReadings(GlucoseResult?.DateTimeUTC);
 
                     if (results.Any())
                         GlucoseResult = results.Last();
@@ -116,7 +116,7 @@ namespace GlucoseTray
             // Order matters. We need to show the most severe alert while avoid multiple alerts. (High > warning high.  Critical > low > warning low)
             if (highAlertTriggered)
             {
-                if(CurrentAlertLevel != AlertLevel.High)
+                if (CurrentAlertLevel != AlertLevel.High)
                     ShowAlert("High Glucose Alert");
                 CurrentAlertLevel = AlertLevel.High;
                 return;
