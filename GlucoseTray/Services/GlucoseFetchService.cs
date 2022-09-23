@@ -106,6 +106,8 @@ namespace GlucoseTray.Services
                 _ => "share1.dexcom.com",
             };
 
+            var debugText = "Server: " + host + Environment.NewLine;
+
             var client = _httpClientFactory.CreateClient();
             string accountId = string.Empty;
 
@@ -121,9 +123,11 @@ namespace GlucoseTray.Services
                 Content = new StringContent(accountIdRequestJson, Encoding.UTF8, "application/json")
             };
 
+            debugText += "Sending account id request: " + Environment.NewLine;
             try
             {
                 var response = await client.SendAsync(accountIdRequest);
+                debugText += "Status Code: " + response.StatusCode + Environment.NewLine;
                 accountId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
             }
             catch (Exception ex)
@@ -137,6 +141,7 @@ namespace GlucoseTray.Services
             {
                 accountIdRequest.Dispose();
             }
+            debugText += "Account Id: " + accountId + Environment.NewLine;
 
             // Get Session Id
             var sessionIdRequestJson = JsonSerializer.Serialize(new
@@ -152,7 +157,7 @@ namespace GlucoseTray.Services
             };
 
             GlucoseResult fetchResult = new();
-            var debugText = "Sending Session Id Request." + Environment.NewLine;
+            debugText += "Sending Session Id Request." + Environment.NewLine;
             try
             {
                 var response = await client.SendAsync(request);
