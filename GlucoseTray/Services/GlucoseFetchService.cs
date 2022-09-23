@@ -152,13 +152,20 @@ namespace GlucoseTray.Services
             };
 
             GlucoseResult fetchResult = new();
+            var debugText = "Sending Session Id Request." + Environment.NewLine;
             try
             {
                 var response = await client.SendAsync(request);
+                debugText += "Status code: " + response.StatusCode + Environment.NewLine;
                 var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
+                debugText += "Session Id: " + sessionId + Environment.NewLine;
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
+                debugText += "Sending Glucose Event Request: " + Environment.NewLine;
                 var initialResult = await client.SendAsync(request);
+                debugText += "Status Code: " + initialResult.StatusCode + Environment.NewLine;
                 var stringResult = await initialResult.Content.ReadAsStringAsync();
+                debugText += "String content: " + stringResult + Environment.NewLine;
+                debugText += "Attempting to deserialize: " + Environment.NewLine;
                 var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
@@ -174,7 +181,7 @@ namespace GlucoseTray.Services
             {
                 _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
                 if (_options.CurrentValue.IsDebugMode)
-                    DebugService.ShowDebugAlert(ex, "DexCom result fetch");
+                    DebugService.ShowDebugAlert(ex, "DexCom result fetch", debugText);
                 fetchResult = GetDefaultFetchResult();
             }
             finally
