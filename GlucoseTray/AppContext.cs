@@ -79,10 +79,9 @@ namespace GlucoseTray
                 {
                     Application.DoEvents();
 
-                    var results = await _fetchService.GetLatestReadings(GlucoseResult?.DateTimeUTC);
-
-                    if (results.Any())
-                        GlucoseResult = results.Last();
+                    var result = await _fetchService.GetLatestReadings();
+                    if (result is not null)
+                        GlucoseResult = result;
 
                     CreateIcon();
                     AlertNotification();
