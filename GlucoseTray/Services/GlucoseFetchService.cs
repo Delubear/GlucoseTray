@@ -58,58 +58,27 @@ namespace GlucoseTray.Services
             return fetchResult;
         }
 
-        private bool IsCriticalLow(GlucoseResult result) =>
-            (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= _options.CurrentValue.CriticalLowBg)
-            || (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= _options.CurrentValue.CriticalLowBg);
-
-        private void CalculateValues(GlucoseResult result, double value)
-        {
-            if (value == 0)
-            {
-                result.MmolValue = value;
-                result.MgValue = Convert.ToInt32(value);
-            }
-            else if (_options.CurrentValue.IsServerDataUnitTypeMmol)
-            {
-                result.MmolValue = value;
-                result.MgValue = Convert.ToInt32(value * 18);
-            }
-            else
-            {
-                result.MmolValue = value / 18;
-                result.MgValue = Convert.ToInt32(value);
-            }
-            result.IsCriticalLow = IsCriticalLow(result);
-        }
-
         private async Task<GlucoseResult> GetResultsFromNightscout()
         {
             var url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
-
             url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
 
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            GlucoseResult results = new();
+            GlucoseResult fetchResult = new();
             var client = _httpClientFactory.CreateClient();
             try
             {
                 var response = await client.SendAsync(request);
                 var result = await response.Content.ReadAsStringAsync();
                 var record = JsonSerializer.Deserialize<List<NightScoutResult>>(result).Last();
-                var fetchResult = new GlucoseResult
-                {
-                    Source = FetchMethod.NightscoutApi,
-                    DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ?
-                                    DateTime.Parse(record.DateString).ToUniversalTime() :
-                                    DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime,
-                    Trend = record.Direction.GetTrend(),
-                };
-                CalculateValues(fetchResult, record.Sgv);
+                fetchResult.Source = FetchMethod.NightscoutApi;
+                fetchResult.DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ? DateTime.Parse(record.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime;
+                fetchResult.Trend = record.Direction.GetTrend();
+                GlucoseMath.CalculateValues(fetchResult, record.Sgv, _options.CurrentValue);
                 if (fetchResult.Trend == TrendResult.Unknown)
                     _logger.LogWarning($"Un-expected value for direction/Trend {record.Direction}");
-                results = fetchResult;
 
                 response.Dispose();
             }
@@ -124,7 +93,7 @@ namespace GlucoseTray.Services
                 request.Dispose();
             }
 
-            return results;
+            return fetchResult;
         }
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom()
@@ -195,9 +164,10 @@ namespace GlucoseTray.Services
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;
 
-                CalculateValues(fetchResult, result.Value);
+                GlucoseMath.CalculateValues(fetchResult, result.Value, _options.CurrentValue);
                 fetchResult.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
                 fetchResult.Trend = trend.GetTrend();
+                fetchResult.Source = FetchMethod.DexcomShare;
                 response.Dispose();
             }
             catch (Exception ex)
@@ -212,7 +182,6 @@ namespace GlucoseTray.Services
                 request.Dispose();
             }
 
-            fetchResult.Source = FetchMethod.DexcomShare;
             return fetchResult;
         }
 
