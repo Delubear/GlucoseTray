@@ -25,6 +25,7 @@ namespace GlucoseTray.Views.Settings
             DexcomUsername = "",
             NightscoutUrl = "",
             IsServerDataUnitTypeMmol = false,
+            IsDebugMode = false,
             // Appears we will need to manually bind radios, dropdowns, and password fields for now.
         };
 
@@ -138,7 +139,7 @@ namespace GlucoseTray.Views.Settings
         {
             Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
             Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
-            Settings.DexcomServer = (DexcomServerLocation) combobox_dexcom_server.SelectedIndex;
+            Settings.DexcomServer = (DexcomServerLocation)combobox_dexcom_server.SelectedIndex;
             Settings.DexcomUsername = txt_dexcom_username.Text;
             Settings.DexcomPassword = txt_dexcom_password.Password;
             Settings.AccessToken = txt_nightscout_token.Password;

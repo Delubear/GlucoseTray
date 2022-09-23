@@ -76,5 +76,6 @@
         <ComboBox TabIndex="5" x:Name="combobox_dexcom_server" Grid.Column="4" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Width="120" SelectedIndex="0" Margin="5,0,0,0" Height="22"/>
         <CheckBox TabIndex="16" x:Name="checkbox_alert_critical" IsChecked="{Binding CriticallyLowAlert}" Content="" Grid.Column="2" HorizontalAlignment="Center" Grid.Row="11" VerticalAlignment="Center"/>
         <CheckBox x:Name="checkbox_server_datasource_inversed" ToolTip="My DexCom/Nightscout instance is returning the opposite unit value of what I want to see. I.e. Nightscout is set to return MMOL but you want to see MG/DL" Content="Display unit is different than server unit" Grid.Column="4" HorizontalAlignment="Left" Margin="5,0,0,0" Grid.Row="12" VerticalAlignment="Center" Grid.ColumnSpan="2" IsChecked="{Binding IsServerDataUnitTypeMmol}" Height="30" Width="235"/>
+        <CheckBox x:Name="checkbox_debug" ToolTip="Will display alerts for every error encountered." Content="Enable Debug Mode" Grid.Column="4" HorizontalAlignment="Left" Margin="5,22,0,0" Grid.Row="10" VerticalAlignment="Top" Grid.ColumnSpan="2" IsChecked="{Binding IsDebugMode}" Height="30" Width="235" Grid.RowSpan="2"/>
     </Grid>
 </Window>

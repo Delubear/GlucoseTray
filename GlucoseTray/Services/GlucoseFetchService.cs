@@ -131,6 +131,8 @@ namespace GlucoseTray.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
+                if (_options.CurrentValue.IsDebugMode)
+                    DebugService.ShowDebugAlert(ex, "Nightscout result fetch");
             }
             finally
             {
@@ -173,6 +175,8 @@ namespace GlucoseTray.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Issue getting account id");
+                if (_options.CurrentValue.IsDebugMode)
+                    DebugService.ShowDebugAlert(ex, "DexCom account id fetch");
                 throw;
             }
             finally
@@ -213,6 +217,8 @@ namespace GlucoseTray.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
+                if (_options.CurrentValue.IsDebugMode)
+                    DebugService.ShowDebugAlert(ex, "DexCom result fetch");
                 fetchResult = GetDefaultFetchResult();
             }
             finally
