@@ -24,12 +24,14 @@ namespace GlucoseTray.Services
         private readonly IOptionsMonitor<GlucoseTraySettings> _options;
         private readonly ILogger<IGlucoseFetchService> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly UrlAssembler _urlBuilder;
 
-        public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory)
+        public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory, UrlAssembler urlBuilder)
         {
             _logger = logger;
             _options = options;
             _httpClientFactory = httpClientFactory;
+            _urlBuilder = urlBuilder;
         }
 
         public async Task<GlucoseResult> GetLatestReadings()
@@ -60,9 +62,7 @@ namespace GlucoseTray.Services
 
         private async Task<GlucoseResult> GetResultsFromNightscout()
         {
-            var url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
-            url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
-
+            var url = _urlBuilder.BuildNightscoutUrl();
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -98,14 +98,6 @@ namespace GlucoseTray.Services
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom()
         {
-            var host = _options.CurrentValue.DexcomServer switch
-            {
-                DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
-                DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",
-                DexcomServerLocation.DexcomInternational => "shareous1.dexcom.com",
-                _ => "share1.dexcom.com",
-            };
-
             var client = _httpClientFactory.CreateClient();
             string accountId = string.Empty;
 
@@ -116,7 +108,9 @@ namespace GlucoseTray.Services
                 applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
                 password = _options.CurrentValue.DexcomPassword
             });
-            var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/AuthenticatePublisherAccount"))
+
+            var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();
+            var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(accountUrl))
             {
                 Content = new StringContent(accountIdRequestJson, Encoding.UTF8, "application/json")
             };
@@ -146,7 +140,9 @@ namespace GlucoseTray.Services
                 applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
                 password = _options.CurrentValue.DexcomPassword
             });
-            var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName"))
+
+            var sessionUrl = _urlBuilder.BuildDexComSessionUrl();
+            var request = new HttpRequestMessage(HttpMethod.Post, new Uri(sessionUrl))
             {
                 Content = new StringContent(sessionIdRequestJson, Encoding.UTF8, "application/json")
             };
@@ -156,7 +152,8 @@ namespace GlucoseTray.Services
             {
                 var response = await client.SendAsync(request);
                 var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
-                request = new HttpRequestMessage(HttpMethod.Post, new Uri($"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1"));
+                var url = _urlBuilder.BuildDexComGlucoseValueUrl(sessionId);
+                request = new HttpRequestMessage(HttpMethod.Post, new Uri(url));
                 var initialResult = await client.SendAsync(request);
                 var stringResult = await initialResult.Content.ReadAsStringAsync();
                 var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();

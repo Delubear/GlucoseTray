@@ -43,6 +43,7 @@ namespace GlucoseTray
                     .AddHttpClient()
                     .AddScoped<AppContext, AppContext>()
                     .AddScoped<IconService, IconService>()
+                    .AddScoped<UrlAssembler, UrlAssembler>()
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
         }
