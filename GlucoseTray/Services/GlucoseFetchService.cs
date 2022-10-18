@@ -24,6 +24,7 @@ namespace GlucoseTray.Services
         private readonly IOptionsMonitor<GlucoseTraySettings> _options;
         private readonly ILogger<IGlucoseFetchService> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
+        private List<string> DebugText = new();
         private readonly UrlAssembler _urlBuilder;
 
         public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IHttpClientFactory httpClientFactory, UrlAssembler urlBuilder)
@@ -62,6 +63,9 @@ namespace GlucoseTray.Services
 
         private async Task<GlucoseResult> GetResultsFromNightscout()
         {
+            DebugText.Add("Starting Nightscout Fetch");
+            DebugText.Add(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? "Using access token." : "No access token.");
+
             var url = _urlBuilder.BuildNightscoutUrl();
             var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -71,8 +75,18 @@ namespace GlucoseTray.Services
             try
             {
                 var response = await client.SendAsync(request);
+
+                DebugText.Add("Sending request.  Status code response: " + response.StatusCode);
+
                 var result = await response.Content.ReadAsStringAsync();
+
+                DebugText.Add("Result: " + result);
+                DebugText.Add("Attempting to deserialize");
+
                 var record = JsonSerializer.Deserialize<List<NightScoutResult>>(result).Last();
+
+                DebugText.Add("Deserialized.");
+
                 fetchResult.Source = FetchMethod.NightscoutApi;
                 fetchResult.DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ? DateTime.Parse(record.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime;
                 fetchResult.Trend = record.Direction.GetTrend();
@@ -86,7 +100,7 @@ namespace GlucoseTray.Services
             {
                 _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
                 if (_options.CurrentValue.IsDebugMode)
-                    DebugService.ShowDebugAlert(ex, "Nightscout result fetch");
+                    DebugService.ShowDebugAlert(ex, "Nightscout result fetch", string.Join(Environment.NewLine, DebugText));
             }
             finally
             {
@@ -98,6 +112,18 @@ namespace GlucoseTray.Services
 
         private async Task<GlucoseResult> GetFetchResultFromDexcom()
         {
+            DebugText.Add("Starting DexCom Fetch");
+
+            var host = _options.CurrentValue.DexcomServer switch
+            {
+                DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
+                DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",
+                DexcomServerLocation.DexcomInternational => "shareous1.dexcom.com",
+                _ => "share1.dexcom.com",
+            };
+
+            DebugText.Add("Server: " + host);
+
             var client = _httpClientFactory.CreateClient();
             string accountId = string.Empty;
 
@@ -118,13 +144,21 @@ namespace GlucoseTray.Services
             try
             {
                 var response = await client.SendAsync(accountIdRequest);
+
+                DebugText.Add("Sending Account Id Request. Status code: " + response.StatusCode);
+
                 accountId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
+
+                if (accountId.Any(x => x != '0' && x != '-'))
+                    DebugText.Add("Got a valid account id");
+                else
+                    DebugText.Add("Invalid account id");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Issue getting account id");
                 if (_options.CurrentValue.IsDebugMode)
-                    DebugService.ShowDebugAlert(ex, "DexCom account id fetch");
+                    DebugService.ShowDebugAlert(ex, "DexCom account id fetch", string.Join(Environment.NewLine, DebugText));
                 throw;
             }
             finally
@@ -136,7 +170,6 @@ namespace GlucoseTray.Services
             var sessionIdRequestJson = JsonSerializer.Serialize(new
             {
                 accountId = accountId,
-                accountName = _options.CurrentValue.DexcomUsername,
                 applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
                 password = _options.CurrentValue.DexcomPassword
             });
@@ -151,12 +184,30 @@ namespace GlucoseTray.Services
             try
             {
                 var response = await client.SendAsync(request);
+
+                DebugText.Add("Sending Session Id Request. Status code: " + response.StatusCode);
+
                 var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
+
+                if (accountId.Any(x => x != '0' && x != '-'))
+                    DebugText.Add("Got a valid session id");
+                else
+                    DebugText.Add("Invalid session id");
+
                 var url = _urlBuilder.BuildDexComGlucoseValueUrl(sessionId);
                 request = new HttpRequestMessage(HttpMethod.Post, new Uri(url));
                 var initialResult = await client.SendAsync(request);
+
+                DebugText.Add("Sending Gluocse Event Request. Status code: " + initialResult.StatusCode);
+
                 var stringResult = await initialResult.Content.ReadAsStringAsync();
+
+                DebugText.Add("Result: " + stringResult);
+                DebugText.Add("Attempting to deserialize");
+
                 var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();
+
+                DebugText.Add("Deserialized");
 
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;
@@ -171,7 +222,7 @@ namespace GlucoseTray.Services
             {
                 _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
                 if (_options.CurrentValue.IsDebugMode)
-                    DebugService.ShowDebugAlert(ex, "DexCom result fetch");
+                    DebugService.ShowDebugAlert(ex, "DexCom result fetch", string.Join(Environment.NewLine, DebugText));
                 fetchResult = GetDefaultFetchResult();
             }
             finally

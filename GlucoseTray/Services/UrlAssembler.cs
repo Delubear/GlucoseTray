@@ -37,7 +37,7 @@ namespace GlucoseTray.Services
         public string BuildDexComSessionUrl()
         {
             var host = GetDexComServer();
-            var url = $"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountByName";
+            var url = $"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountById";
             return url;
         }
 
