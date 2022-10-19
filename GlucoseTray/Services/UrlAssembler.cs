@@ -19,7 +19,7 @@ namespace GlucoseTray.Services
             return url;
         }
 
-        private string GetDexComServer() => _options.CurrentValue.DexcomServer switch
+        public string GetDexComServer() => _options.CurrentValue.DexcomServer switch
         {
             DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
             DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",

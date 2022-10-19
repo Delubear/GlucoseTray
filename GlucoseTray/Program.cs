@@ -44,6 +44,7 @@ namespace GlucoseTray
                     .AddScoped<AppContext, AppContext>()
                     .AddScoped<IconService, IconService>()
                     .AddScoped<UrlAssembler, UrlAssembler>()
+                    .AddScoped<UiService, UiService>()
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
         }
