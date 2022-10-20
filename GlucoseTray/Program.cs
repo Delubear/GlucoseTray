@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
@@ -15,6 +16,7 @@ namespace GlucoseTray
     {
         private static IConfiguration Configuration { get; set; }
         public static string SettingsFile { get; set; }
+        public static AppSettings AppSettings { get; set; }
 
         [STAThread]
         private static void Main(string[] args)
@@ -23,7 +25,7 @@ namespace GlucoseTray
                 return;
 
             var host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
+                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))//.AddJsonFile("GlucoseTray.Properties.Resources.appsettings.json", optional: false))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .Build();
 
@@ -31,6 +33,8 @@ namespace GlucoseTray
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 
             var services = host.Services;
+
+            AppSettings = GetAppSettings();
 
             var app = services.GetRequiredService<AppContext>();
             Application.Run(app);
@@ -47,6 +51,13 @@ namespace GlucoseTray
                     .AddScoped<UiService, UiService>()
                     .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
+        }
+
+        private static AppSettings GetAppSettings()
+        {
+            var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json");
+            var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource);
+            return container.AppSettings;
         }
 
         private static bool LoadApplicationSettings()

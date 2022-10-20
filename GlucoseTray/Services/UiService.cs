@@ -70,6 +70,7 @@ namespace GlucoseTray.Services
             var taskEnabled = _taskScheduler.HasTaskEnabled();
             _trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem(taskEnabled ? "Disable Run on startup" : "Run on startup", null, (obj, e) => ToggleTask(!taskEnabled, exitEvent)));
             _trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Change Settings", null, new EventHandler(ChangeSettings)));
+            _trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("About", null, new EventHandler(About)));
             _trayIcon.ContextMenuStrip.Items.Add(new ToolStripMenuItem("Exit", null, exitEvent));
         }
 
@@ -77,6 +78,18 @@ namespace GlucoseTray.Services
         {
             _taskScheduler.ToggleTask(enable);
             PopulateContextMenu(exitEvent);
+        }
+
+        private void About(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show($"Version: {Program.AppSettings.Version} \r\n\r\n Link: {Program.AppSettings.Url} \r\n\r\n Open link?", "About", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (result == DialogResult.OK)
+            {
+                var process = new Process();
+                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.FileName = Program.AppSettings.Url;
+                process.Start();
+            }
         }
 
         private void ChangeSettings(object sender, EventArgs e)
