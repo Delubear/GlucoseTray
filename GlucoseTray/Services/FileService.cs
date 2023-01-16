@@ -7,9 +7,9 @@ namespace GlucoseTray.Services
     {
         public static void WriteModelToJsonFile(T model, string file)
         {
-            using var sw = File.CreateText(file);
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            var json = JsonSerializer.Serialize(model, options);
+            using StreamWriter sw = File.CreateText(file);
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(model, options);
             sw.Write(json);
         }
 
@@ -18,7 +18,7 @@ namespace GlucoseTray.Services
             T model = default;
             try
             {
-                var json = File.ReadAllText(file);
+                string json = File.ReadAllText(file);
                 model = JsonSerializer.Deserialize<T>(json);
             }
             catch

@@ -15,11 +15,12 @@ namespace GlucoseTray.Services
         /// <param name="model"></param>
         public static List<string> ValidateSettings(GlucoseTraySettings model = null)
         {
-            var errors = new List<string>();
+            List<string> errors = new List<string>();
 
             if (model is null)
             {
                 model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+
                 if (model is null)
                 {
                     errors.Add("File is Invalid");
@@ -47,7 +48,7 @@ namespace GlucoseTray.Services
             return errors;
         }
 
-        private static string ValidateNightScout(GlucoseTraySettings model)
+        static string ValidateNightScout(GlucoseTraySettings model)
         {
             if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
                 return "Nightscout Url is missing";
@@ -58,32 +59,32 @@ namespace GlucoseTray.Services
 
             try
             {
-                var url = $"{model.NightscoutUrl}/api/v1/status.json";
+                string url = $"{model.NightscoutUrl}/api/v1/status.json";
                 url += !string.IsNullOrWhiteSpace(model.AccessToken) ? $"?token={model.AccessToken}" : string.Empty;
 
-                using var httpClient = new HttpClient();
-                var request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
+                using HttpClient httpClient = new HttpClient();
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, new Uri(url));
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = httpClient.SendAsync(request).Result;
+                HttpResponseMessage response = httpClient.SendAsync(request).Result;
 
                 if (!response.IsSuccessStatusCode)
-                    return "Invalid Nightscout url - Error : " + response.ReasonPhrase;
+                    return $"Invalid Nightscout url - Error : {response.ReasonPhrase}";
 
-                var result = response.Content.ReadAsStringAsync().Result;
+                string result = response.Content.ReadAsStringAsync().Result;
 
                 try
                 {
-                    var status = JsonSerializer.Deserialize<Models.NightScoutStatus>(result);
-                    return string.Equals(status.Status, "ok", StringComparison.CurrentCultureIgnoreCase) ? null : "Nightscout status is " + status.Status;
+                    Models.NightScoutStatus status = JsonSerializer.Deserialize<Models.NightScoutStatus>(result);
+                    return string.Equals(status.Status, "ok", StringComparison.CurrentCultureIgnoreCase) ? null : $"Nightscout status is {status.Status}";
                 }
                 catch (JsonException)
                 {
-                    return "Nightscout URL returned invalid staus " + result;
+                    return $"Nightscout URL returned invalid staus {result}";
                 }
             }
             catch (Exception ex)
             {
-                return "Can not access Nightscout : Error " + ex.Message;
+                return $"Can not access Nightscout : Error {ex.Message}";
             }
         }
     }

@@ -39,7 +39,7 @@ namespace GlucoseTray.Views.Settings
             {
                 try
                 {
-                    var model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+                    GlucoseTraySettings model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
 
                     if (model is null)
                     {
@@ -49,6 +49,7 @@ namespace GlucoseTray.Views.Settings
                     {
                         txt_dexcom_password.Password = model.DexcomPassword;
                         txt_nightscout_token.Password = model.AccessToken;
+
                         if (model.FetchMethod == FetchMethod.DexcomShare)
                             radio_source_dexcom.IsChecked = true;
                         else
@@ -65,21 +66,22 @@ namespace GlucoseTray.Views.Settings
                 }
                 catch (Exception e) // Catch serialization errors due to a bad file
                 {
-                    MessageBox.Show("Unable to load existing settings due to a bad file.  " + e.Message + e.InnerException?.Message);
+                    MessageBox.Show($"Unable to load existing settings due to a bad file.  {e.Message + e.InnerException?.Message}");
                 }
             }
 
             DataContext = Settings;
         }
 
-        private bool HaveBypassedInitialModification;
-        private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
+        bool HaveBypassedInitialModification;
+        void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
         {
             if (!HaveBypassedInitialModification)
             {
                 HaveBypassedInitialModification = true;
                 return;
             }
+
             Settings.HighBg = Math.Round(Settings.HighBg *= 18);
             Settings.WarningHighBg = Math.Round(Settings.WarningHighBg *= 18);
             Settings.WarningLowBg = Math.Round(Settings.WarningLowBg *= 18);
@@ -87,13 +89,14 @@ namespace GlucoseTray.Views.Settings
             Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg *= 18);
         }
 
-        private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
+        void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
         {
             if (!HaveBypassedInitialModification)
             {
                 HaveBypassedInitialModification = true;
                 return;
             }
+
             Settings.HighBg = Math.Round(Settings.HighBg /= 18, 1);
             Settings.WarningHighBg = Math.Round(Settings.WarningHighBg /= 18, 1);
             Settings.WarningLowBg = Math.Round(Settings.WarningLowBg /= 18, 1);
@@ -101,10 +104,10 @@ namespace GlucoseTray.Views.Settings
             Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg /= 18, 1);
         }
 
-        private void ShowNightscoutBlock(object sender, RoutedEventArgs e)
+        void ShowNightscoutBlock(object sender, RoutedEventArgs e)
         {
-            if (label_dexcom_username == null)
-                return;
+            if (label_dexcom_username == null) return;
+
             label_dexcom_username.Visibility = Visibility.Hidden;
             label_dexcom_password.Visibility = Visibility.Hidden;
             txt_dexcom_password.Visibility = Visibility.Hidden;
@@ -118,10 +121,10 @@ namespace GlucoseTray.Views.Settings
             txt_nightscoutUrl.Visibility = Visibility.Visible;
         }
 
-        private void ShowDexcomBlock(object sender, RoutedEventArgs e)
+        void ShowDexcomBlock(object sender, RoutedEventArgs e)
         {
-            if (label_nightscoutUrl == null)
-                return;
+            if (label_nightscoutUrl == null) return;
+
             label_nightscoutUrl.Visibility = Visibility.Hidden;
             label_nightscout_token.Visibility = Visibility.Hidden;
             txt_nightscout_token.Visibility = Visibility.Hidden;
@@ -135,7 +138,7 @@ namespace GlucoseTray.Views.Settings
             combobox_dexcom_server.Visibility = Visibility.Visible;
         }
 
-        private void Button_Save_Click(object sender, RoutedEventArgs e)
+        void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
             Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
@@ -144,7 +147,8 @@ namespace GlucoseTray.Views.Settings
             Settings.DexcomPassword = txt_dexcom_password.Password;
             Settings.AccessToken = txt_nightscout_token.Password;
 
-            var errors = SettingsService.ValidateSettings(Settings);
+            System.Collections.Generic.List<string> errors = SettingsService.ValidateSettings(Settings);
+
             if (errors.Any())
             {
                 MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", errors));

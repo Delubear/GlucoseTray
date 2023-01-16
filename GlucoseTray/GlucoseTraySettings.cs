@@ -9,34 +9,33 @@ namespace GlucoseTray
     public class GlucoseTraySettings : INotifyPropertyChanged
     {
         [JsonIgnore]
-        private const string EncryptionKey = "i_can_probably_be_improved";
+        const string EncryptionKey = "i_can_probably_be_improved";
 
-        private FetchMethod fetchMethod;
+        FetchMethod fetchMethod;
         public FetchMethod FetchMethod
         {
             get => fetchMethod; set { fetchMethod = value; OnPropertyChanged(nameof(FetchMethod)); }
         }
 
-        private string nightscoutUrl;
+        string nightscoutUrl;
         public string NightscoutUrl
         {
             get => nightscoutUrl;
             set
             {
                 nightscoutUrl = value;
-                if (nightscoutUrl.EndsWith("/"))
-                    nightscoutUrl = nightscoutUrl.Remove(nightscoutUrl.Length - 1);
+                if (nightscoutUrl.EndsWith("/")) nightscoutUrl = nightscoutUrl.Remove(nightscoutUrl.Length - 1);
                 OnPropertyChanged(nameof(NightscoutUrl));
             }
         }
 
-        private DexcomServerLocation dexcomServer;
+        DexcomServerLocation dexcomServer;
         public DexcomServerLocation DexcomServer
         {
             get => dexcomServer; set { dexcomServer = value; OnPropertyChanged(nameof(DexcomServer)); }
         }
 
-        private string dexcomUsername;
+        string dexcomUsername;
         public string DexcomUsername
         {
             get => string.IsNullOrWhiteSpace(dexcomUsername) ? dexcomUsername : StringEncryptionService.DecryptString(dexcomUsername, EncryptionKey);
@@ -47,57 +46,57 @@ namespace GlucoseTray
             }
         }
 
-        private string dexcomPassword;
+        string dexcomPassword;
         public string DexcomPassword
         {
             get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
             set { dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(DexcomPassword)); }
         }
 
-        private string accessToken;
+        string accessToken;
         public string AccessToken
         {
             get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
             set { accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(AccessToken)); }
         }
 
-        private GlucoseUnitType glucoseUnit;
+        GlucoseUnitType glucoseUnit;
         public GlucoseUnitType GlucoseUnit
         {
             get => glucoseUnit; set { glucoseUnit = value; OnPropertyChanged(nameof(GlucoseUnit)); }
         }
 
-        private double warningHighBg;
+        double warningHighBg;
         public double WarningHighBg
         {
             get => warningHighBg; set { warningHighBg = value; OnPropertyChanged(nameof(WarningHighBg)); }
         }
 
-        private double highBg;
+        double highBg;
         public double HighBg
         {
             get => highBg; set { highBg = value; OnPropertyChanged(nameof(HighBg)); }
         }
 
-        private double warningLowBg;
+        double warningLowBg;
         public double WarningLowBg
         {
             get => warningLowBg; set { warningLowBg = value; OnPropertyChanged(nameof(WarningLowBg)); }
         }
 
-        private double lowBg;
+        double lowBg;
         public double LowBg
         {
             get => lowBg; set { lowBg = value; OnPropertyChanged(nameof(LowBg)); }
         }
 
-        private double criticalLowBg;
+        double criticalLowBg;
         public double CriticalLowBg
         {
             get => criticalLowBg; set { criticalLowBg = value; OnPropertyChanged(nameof(CriticalLowBg)); }
         }
 
-        private int pollingThreshold;
+        int pollingThreshold;
         public int PollingThreshold
         {
             get => pollingThreshold; set { pollingThreshold = value; OnPropertyChanged(nameof(PollingThreshold)); }
@@ -106,50 +105,50 @@ namespace GlucoseTray
         [JsonIgnore]
         public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
 
-        private int staleResultsThreshold;
+        int staleResultsThreshold;
         public int StaleResultsThreshold
         {
             get => staleResultsThreshold; set { staleResultsThreshold = value; OnPropertyChanged(nameof(StaleResultsThreshold)); }
         }
 
-        private bool highAlert;
+        bool highAlert;
         public bool HighAlert
         {
             get => highAlert; set { highAlert = value; OnPropertyChanged(nameof(HighAlert)); }
         }
 
-        private bool warningHighAlert;
+        bool warningHighAlert;
         public bool WarningHighAlert
         {
             get => warningHighAlert; set { warningHighAlert = value; OnPropertyChanged(nameof(WarningHighAlert)); }
         }
 
-        private bool warningLowAlert;
+        bool warningLowAlert;
         public bool WarningLowAlert
         {
             get => warningLowAlert; set { warningLowAlert = value; OnPropertyChanged(nameof(WarningLowAlert)); }
         }
 
-        private bool lowAlert;
+        bool lowAlert;
         public bool LowAlert
         {
             get => lowAlert; set { lowAlert = value; OnPropertyChanged(nameof(LowAlert)); }
         }
 
-        private bool criticallyLowAlert;
+        bool criticallyLowAlert;
         public bool CriticallyLowAlert
         {
             get => criticallyLowAlert; set { criticallyLowAlert = value; OnPropertyChanged(nameof(CriticallyLowAlert)); }
         }
 
-        private bool isServerDataUnitTypeMmol;
+        bool isServerDataUnitTypeMmol;
         public bool IsServerDataUnitTypeMmol
         {
             get => isServerDataUnitTypeMmol; set { isServerDataUnitTypeMmol = value; OnPropertyChanged(nameof(IsServerDataUnitTypeMmol)); }
         }
 
 
-        private bool isDebugMode;
+        bool isDebugMode;
         public bool IsDebugMode
         {
             get => isDebugMode; set { isDebugMode = value; OnPropertyChanged(nameof(IsDebugMode)); }

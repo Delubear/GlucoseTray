@@ -6,9 +6,9 @@ namespace GlucoseTray.Services
 {
     internal static class GlucoseMath
     {
-        private static bool IsCriticalLow(GlucoseResult result, GlucoseTraySettings currentSettings) =>
-            (currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg)
-            || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
+        static bool IsCriticalLow(GlucoseResult result, GlucoseTraySettings currentSettings) =>
+           (currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg)
+           || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
 
         internal static void CalculateValues(GlucoseResult result, double value, GlucoseTraySettings currentSettings)
         {

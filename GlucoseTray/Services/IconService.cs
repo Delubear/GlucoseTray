@@ -12,13 +12,13 @@ namespace GlucoseTray.Services
 {
     public class IconService
     {
-        private readonly ILogger<IconService> _logger;
-        private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-        private readonly float _standardOffset = -3f;
-        private readonly int _defaultFontSize = 10;
-        private readonly int _smallerFontSize = 9;
-        private Font _fontToUse;
-        private bool _useDefaultFontSize = true;
+        readonly ILogger<IconService> _logger;
+        readonly IOptionsMonitor<GlucoseTraySettings> _options;
+        readonly float _standardOffset = -3f;
+        readonly int _defaultFontSize = 10;
+        readonly int _smallerFontSize = 9;
+        Font _fontToUse;
+        bool _useDefaultFontSize = true;
 
         public IconService(ILogger<IconService> logger, IOptionsMonitor<GlucoseTraySettings> options)
         {
@@ -27,7 +27,7 @@ namespace GlucoseTray.Services
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern bool DestroyIcon(IntPtr handle);
+        static extern bool DestroyIcon(IntPtr handle);
 
         public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
@@ -42,11 +42,12 @@ namespace GlucoseTray.Services
             _ => new SolidBrush(Color.White),
         };
 
+        string glucoseValue = string.Empty;
+        bool isStale = false;
         public void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
         {
-            var glucoseValue = result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
-
-            var isStale = result.IsStale(_options.CurrentValue.StaleResultsThreshold);
+            glucoseValue = result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
+            isStale = result.IsStale(_options.CurrentValue.StaleResultsThreshold);
 
             if (glucoseValue == "0")
             {
@@ -59,16 +60,16 @@ namespace GlucoseTray.Services
                 glucoseValue = "DAN";
             }
 
-            var xOffset = CalculateXPosition(result);
-            var fontSize = _useDefaultFontSize ? _defaultFontSize : _smallerFontSize;
+            float xOffset = CalculateXPosition(result);
+            int fontSize = _useDefaultFontSize ? _defaultFontSize : _smallerFontSize;
             _fontToUse = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
-            var bitmapText = new Bitmap(16, 16);
-            var g = Graphics.FromImage(bitmapText);
+            Bitmap bitmapText = new Bitmap(16, 16);
+            Graphics g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
             g.DrawString(glucoseValue, _fontToUse, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), xOffset, 0f);
-            var hIcon = bitmapText.GetHicon();
-            var myIcon = Icon.FromHandle(hIcon);
+            IntPtr hIcon = bitmapText.GetHicon();
+            Icon myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
 
             DestroyMyIcon(myIcon.Handle);
@@ -77,17 +78,20 @@ namespace GlucoseTray.Services
             myIcon.Dispose();
         }
 
-        private float CalculateXPosition(GlucoseResult result)
+        float CalculateXPosition(GlucoseResult result)
         {
             _useDefaultFontSize = true;
-            var value = _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
+            double value = _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
+
             if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG) // Non MMOL display, use our standard offset.
                 return _standardOffset;
+
             if (value > 9.9) // MMOL with 3 digits over 20. This requires also changing the font size from 10 to 9.
             {
                 _useDefaultFontSize = false;
                 return _standardOffset;
             }
+
             return _standardOffset; // MMOL display with only two digits, use our standard offset.
         }
     }

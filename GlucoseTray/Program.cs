@@ -14,17 +14,17 @@ namespace GlucoseTray
 {
     public class Program
     {
-        private static IConfiguration Configuration { get; set; }
+        static IConfiguration Configuration { get; set; }
         public static string SettingsFile { get; set; }
         public static AppSettings AppSettings { get; set; }
 
         [STAThread]
-        private static void Main(string[] args)
+        static void Main(string[] args)
         {
             if (!LoadApplicationSettings())
                 return;
 
-            var host = Host.CreateDefaultBuilder()
+            IHost host = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))//.AddJsonFile("GlucoseTray.Properties.Resources.appsettings.json", optional: false))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
                 .Build();
@@ -32,15 +32,15 @@ namespace GlucoseTray
             Application.ThreadException += ApplicationThreadException;
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
 
-            var services = host.Services;
+            IServiceProvider services = host.Services;
 
             AppSettings = GetAppSettings();
 
-            var app = services.GetRequiredService<AppContext>();
+            AppContext app = services.GetRequiredService<AppContext>();
             Application.Run(app);
         }
 
-        private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
+        static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             Configuration = configuration;
             services.Configure<GlucoseTraySettings>(Configuration)
@@ -53,20 +53,21 @@ namespace GlucoseTray
                     .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
         }
 
-        private static AppSettings GetAppSettings()
+        static AppSettings GetAppSettings()
         {
-            var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json");
-            var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource);
+            Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json");
+            AppSettingsContainer container = JsonSerializer.Deserialize<AppSettingsContainer>(resource);
             return container.AppSettings;
         }
 
-        private static bool LoadApplicationSettings()
+        static bool LoadApplicationSettings()
         {
             Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
             SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
+
             if (!File.Exists(SettingsFile) || SettingsService.ValidateSettings().Count != 0)
             {
-                var settingsWindow = new SettingsWindow();
+                SettingsWindow settingsWindow = new SettingsWindow();
                 if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
                 {
                     Application.Exit();
@@ -76,6 +77,6 @@ namespace GlucoseTray
             return true;
         }
 
-        private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(JsonSerializer.Serialize(e), "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(JsonSerializer.Serialize(e), "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }

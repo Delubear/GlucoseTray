@@ -7,7 +7,7 @@ namespace GlucoseTray.Services
     {
         internal static void ShowDebugAlert(Exception ex, string message, string supplementalText = "")
         {
-            MessageBox.Show(ex?.Message + ex?.InnerException?.Message + supplementalText, message, MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"{ex?.Message} {ex?.InnerException?.Message} {supplementalText}", message, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace GlucoseTray.Services
 {
     public class UrlAssembler
     {
-        private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+        readonly IOptionsMonitor<GlucoseTraySettings> _options;
 
         public UrlAssembler(IOptionsMonitor<GlucoseTraySettings> options)
         {
@@ -14,7 +14,7 @@ namespace GlucoseTray.Services
 
         public string BuildNightscoutUrl()
         {
-            var url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
+            string url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
             url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
             return url;
         }
@@ -29,22 +29,22 @@ namespace GlucoseTray.Services
 
         public string BuildDexComAccountIdUrl()
         {
-            var host = GetDexComServer();
-            var url = $"https://{host}/ShareWebServices/Services/General/AuthenticatePublisherAccount";
+            string host = GetDexComServer();
+            string url = $"https://{host}/ShareWebServices/Services/General/AuthenticatePublisherAccount";
             return url;
         }
 
         public string BuildDexComSessionUrl()
         {
-            var host = GetDexComServer();
-            var url = $"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountById";
+            string host = GetDexComServer();
+            string url = $"https://{host}/ShareWebServices/Services/General/LoginPublisherAccountById";
             return url;
         }
 
         public string BuildDexComGlucoseValueUrl(string sessionId)
         {
-            var host = GetDexComServer();
-            var url = $"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1";
+            string host = GetDexComServer();
+            string url = $"https://{host}/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId={sessionId}&minutes=1440&maxCount=1";
             return url;
         }
     }

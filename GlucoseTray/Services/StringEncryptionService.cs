@@ -12,22 +12,22 @@ namespace GlucoseTray.Services
     {
         // This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be 32 bytes long.
         // Using a 16 character string here gives us 32 bytes when converted to a byte array.
-        private const string initVector = "pemgail9uzpgzl88";
+        const string initVector = "pemgail9uzpgzl88";
 
         // This constant is used to determine the keysize of the encryption algorithm
-        private const int keysize = 256;
+        const int keysize = 256;
 
         public static string EncryptString(string plainText, string passPhrase)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            var password = new PasswordDeriveBytes(passPhrase, null);
+            PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
             byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = Aes.Create("AesManaged");
+            Aes symmetricKey = Aes.Create("AesManaged");
             symmetricKey.Mode = CipherMode.CBC;
             ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
-            var memoryStream = new MemoryStream();
-            var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
+            MemoryStream memoryStream = new MemoryStream();
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
             cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
             cryptoStream.FlushFinalBlock();
             byte[] cipherTextBytes = memoryStream.ToArray();
@@ -40,13 +40,13 @@ namespace GlucoseTray.Services
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
             byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
-            var password = new PasswordDeriveBytes(passPhrase, null);
+            PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
             byte[] keyBytes = password.GetBytes(keysize / 8);
-            var symmetricKey = Aes.Create("AesManaged");
+            Aes symmetricKey = Aes.Create("AesManaged");
             symmetricKey.Mode = CipherMode.CBC;
             ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
-            var memoryStream = new MemoryStream(cipherTextBytes);
-            var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
+            MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             byte[] plainTextBytes = new byte[cipherTextBytes.Length];
 
             // int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
@@ -57,10 +57,8 @@ namespace GlucoseTray.Services
             byte[] tempBytes = new byte[cipherTextBytes.Length];
             do
             {
-                int bytesRead  = cryptoStream.Read(tempBytes, 0, tempBytes.Length);
-                if (bytesRead == 0)
-                    break;
-
+                int bytesRead = cryptoStream.Read(tempBytes, 0, tempBytes.Length);
+                if (bytesRead == 0) break;
                 Array.Copy(tempBytes, 0, plainTextBytes, decryptedByteCount, bytesRead);
                 decryptedByteCount += bytesRead;
             }
@@ -71,9 +69,10 @@ namespace GlucoseTray.Services
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
         }
 
+        static bool isEncrypted = true;
         public static bool IsEncrypted(string cipherText, string passPhrase)
         {
-            var isEncrypted = true;
+            isEncrypted = true;
             try
             {
                 var result = DecryptString(cipherText, passPhrase);
