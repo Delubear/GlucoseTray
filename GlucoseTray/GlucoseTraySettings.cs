@@ -158,4 +158,16 @@ namespace GlucoseTray
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
+
+    public class AppSettings
+    {
+        public string Version { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class AppSettingsContainer
+    {
+        [JsonPropertyName("appsettings")]
+        public AppSettings AppSettings { get; set; }
+    }
 }

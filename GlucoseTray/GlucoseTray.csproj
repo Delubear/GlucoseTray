@@ -5,15 +5,10 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <RootNamespace>GlucoseTray</RootNamespace>
     <PublishReadyToRun>true</PublishReadyToRun>
-
-	  <!-- 
-	  <PublishSingleFile>true</PublishSingleFile>
-	  -->
-	  <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-	  
+	<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ApplicationIcon />
-	  <StartupObject />
+	<StartupObject />
     <UseWindowsForms>true</UseWindowsForms>
     <UseWpf>true</UseWpf>
     <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
@@ -27,7 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Remove="app.manifest" />
+    <EmbeddedResource Include="appsettings.json" />
   </ItemGroup>
 
   <ItemGroup>
