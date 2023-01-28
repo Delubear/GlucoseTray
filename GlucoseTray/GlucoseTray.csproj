@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
     <RootNamespace>GlucoseTray</RootNamespace>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRun>false</PublishReadyToRun> <!-- Turn on again once fixed: https://github.com/dotnet/wpf/issues/7282 -->
 	<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ApplicationIcon />
@@ -37,11 +37,4 @@
     <PackageReference Include="System.Text.Json" Version="7.0.1" />
     <PackageReference Include="TaskScheduler" Version="2.10.1" />
   </ItemGroup>
-
-  <ItemGroup>
-    <TrimmerRootAssembly Include="System.Runtime" />
-    <TrimmerRootAssembly Include="System.Diagnostics.Debug" />
-    <TrimmerRootAssembly Include="System.Runtime.Extensions" />
-  </ItemGroup>
-
 </Project>

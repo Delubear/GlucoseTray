@@ -76,6 +76,6 @@ namespace GlucoseTray
             return true;
         }
 
-        private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(JsonSerializer.Serialize(e), "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(e?.Exception?.Message + " --- " + e?.Exception?.InnerException?.Message, "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 }
