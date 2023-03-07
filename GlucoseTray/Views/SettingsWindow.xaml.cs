@@ -26,6 +26,7 @@ namespace GlucoseTray.Views.Settings
             NightscoutUrl = "",
             IsServerDataUnitTypeMmol = false,
             IsDebugMode = false,
+            IsDarkMode = true,
             // Appears we will need to manually bind radios, dropdowns, and password fields for now.
         };
 

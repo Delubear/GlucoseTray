@@ -155,6 +155,12 @@ namespace GlucoseTray
             get => isDebugMode; set { isDebugMode = value; OnPropertyChanged(nameof(IsDebugMode)); }
         }
 
+        private bool isDarkMode;
+        public bool IsDarkMode
+        {
+            get => isDarkMode; set { isDarkMode = value; OnPropertyChanged(nameof(IsDarkMode)); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

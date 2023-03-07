@@ -31,16 +31,37 @@ namespace GlucoseTray.Services
 
         public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
-        public Brush SetColor(double val) => val switch
+        public Brush SetColor(double val)
         {
-            double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
-            double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.Yellow),
-            double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
-            double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.Yellow),
-            double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
-            double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
-            _ => new SolidBrush(Color.White),
-        };
+            if (_options.CurrentValue.IsDarkMode)
+            {
+                return val switch
+                {
+                    double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
+                    double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.Yellow),
+                    double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
+                    double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.Yellow),
+                    double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
+                    double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                    _ => new SolidBrush(Color.White),
+                };
+            }
+            else
+            {
+                // Still having issues when using against a "light" background. Main issue appears to be when we use "DrawString" it is adding a black border/shadow here around the generated image numbers.
+                // Need to investigate if it's possible to have a double-wide icon, feasibility of multiple icons, or some other method of making this clearer.
+                return val switch
+                {
+                    double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.Black),
+                    double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.DarkGoldenrod),
+                    double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
+                    double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.DarkGoldenrod),
+                    double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
+                    double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                    _ => new SolidBrush(Color.Black),
+                };
+            }
+        }
 
         public void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
         {
