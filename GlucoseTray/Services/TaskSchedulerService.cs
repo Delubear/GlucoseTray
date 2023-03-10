@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32.TaskScheduler;
-using System;
 using System.IO;
 
 namespace GlucoseTray.Services
@@ -34,7 +33,7 @@ namespace GlucoseTray.Services
             var task = ts.GetTask(TaskName);
             if (task is null)
             {
-                var trigger = new LogonTrigger(){ UserId = Environment.UserName };
+                var trigger = new LogonTrigger() { UserId = Environment.UserName };
                 var action = new ExecAction(ExecutablePath, workingDirectory: WorkingDirectory);
                 var description = "GlucoseTray task for " + Environment.UserName;
                 task = ts.AddTask(TaskName, trigger, action, description: description);

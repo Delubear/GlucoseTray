@@ -1,8 +1,4 @@
-﻿using GlucoseTray.Enums;
-using GlucoseTray.Models;
-using System;
-
-namespace GlucoseTray.Services
+﻿namespace GlucoseTray.Services
 {
     internal static class GlucoseMath
     {

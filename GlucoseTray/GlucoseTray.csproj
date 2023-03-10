@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
+	<Nullable>enable</Nullable>
     <RootNamespace>GlucoseTray</RootNamespace>
     <PublishReadyToRun>false</PublishReadyToRun> <!-- Turn on again once fixed: https://github.com/dotnet/wpf/issues/7282 -->
 	<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>

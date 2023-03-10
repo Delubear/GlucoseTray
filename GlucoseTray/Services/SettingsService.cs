@@ -1,7 +1,4 @@
-﻿using GlucoseTray.Enums;
-using System.Collections.Generic;
-using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text.Json;
 using System.Net.Http.Headers;
 
@@ -13,7 +10,7 @@ namespace GlucoseTray.Services
         /// If model is null, will validate from stored settings file.
         /// </summary>
         /// <param name="model"></param>
-        public static List<string> ValidateSettings(GlucoseTraySettings model = null)
+        public static List<string> ValidateSettings(GlucoseTraySettings? model = null)
         {
             var errors = new List<string>();
 
@@ -73,8 +70,8 @@ namespace GlucoseTray.Services
 
                 try
                 {
-                    var status = JsonSerializer.Deserialize<Models.NightScoutStatus>(result);
-                    return string.Equals(status.Status, "ok", StringComparison.CurrentCultureIgnoreCase) ? null : "Nightscout status is " + status.Status;
+                    var status = JsonSerializer.Deserialize<NightScoutStatus>(result);
+                    return string.Equals(status?.Status, "ok", StringComparison.CurrentCultureIgnoreCase) ? string.Empty : "Nightscout status is " + status?.Status;
                 }
                 catch (JsonException)
                 {

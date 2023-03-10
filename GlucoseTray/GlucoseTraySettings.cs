@@ -1,7 +1,4 @@
-﻿using GlucoseTray.Enums;
-using GlucoseTray.Services;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace GlucoseTray
@@ -17,7 +14,7 @@ namespace GlucoseTray
             get => fetchMethod; set { fetchMethod = value; OnPropertyChanged(nameof(FetchMethod)); }
         }
 
-        private string nightscoutUrl;
+        private string nightscoutUrl = string.Empty;
         public string NightscoutUrl
         {
             get => nightscoutUrl;
@@ -36,7 +33,7 @@ namespace GlucoseTray
             get => dexcomServer; set { dexcomServer = value; OnPropertyChanged(nameof(DexcomServer)); }
         }
 
-        private string dexcomUsername;
+        private string dexcomUsername = string.Empty;
         public string DexcomUsername
         {
             get => string.IsNullOrWhiteSpace(dexcomUsername) ? dexcomUsername : StringEncryptionService.DecryptString(dexcomUsername, EncryptionKey);
@@ -47,14 +44,14 @@ namespace GlucoseTray
             }
         }
 
-        private string dexcomPassword;
+        private string dexcomPassword = string.Empty;
         public string DexcomPassword
         {
             get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
             set { dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(DexcomPassword)); }
         }
 
-        private string accessToken;
+        private string accessToken = string.Empty;
         public string AccessToken
         {
             get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
@@ -161,19 +158,19 @@ namespace GlucoseTray
             get => isDarkMode; set { isDarkMode = value; OnPropertyChanged(nameof(IsDarkMode)); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 
     public class AppSettings
     {
-        public string Version { get; set; }
-        public string Url { get; set; }
+        public string Version { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
     }
 
     public class AppSettingsContainer
     {
         [JsonPropertyName("appsettings")]
-        public AppSettings AppSettings { get; set; }
+        public AppSettings AppSettings { get; set; } = new AppSettings();
     }
 }

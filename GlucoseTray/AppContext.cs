@@ -1,12 +1,8 @@
-﻿using GlucoseTray.Enums;
-using GlucoseTray.Services;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GlucoseTray.Extensions;
-using GlucoseTray.Models;
+
 
 namespace GlucoseTray
 {
@@ -17,7 +13,7 @@ namespace GlucoseTray
         private readonly IGlucoseFetchService _fetchService;
         private NotifyIcon _trayIcon;
         private AlertLevel _currentAlertLevel = AlertLevel.None;
-        private GlucoseResult _currentGlucoseResult = null;
+        private GlucoseResult? _currentGlucoseResult = null;
         private readonly UiService _uiService;
 
         public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, UiService uiService)
@@ -39,10 +35,7 @@ namespace GlucoseTray
                 {
                     Application.DoEvents();
 
-                    var result = await _fetchService.GetLatestReadingsAsync();
-                    if (result is not null)
-                        _currentGlucoseResult = result;
-
+                    _currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
                     _uiService.CreateIcon(_currentGlucoseResult);
                     AlertNotification();
 
@@ -109,14 +102,12 @@ namespace GlucoseTray
             _currentAlertLevel = AlertLevel.None;
         }
 
-
-
         private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, UpDown directionGlucoseShouldBeToNotAlert) =>
             _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG
                 ? directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMG >= alertThreshold : glucoseValueMG <= alertThreshold
                 : directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMMOL >= alertThreshold : glucoseValueMMOL <= alertThreshold;
 
-        private void Exit(object sender, EventArgs e)
+        private void Exit(object? sender, EventArgs e)
         {
             _logger.LogInformation("Exiting application.");
             _trayIcon.Visible = false;

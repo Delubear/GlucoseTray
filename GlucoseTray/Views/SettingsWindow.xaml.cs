@@ -1,7 +1,4 @@
-﻿using GlucoseTray.Enums;
-using GlucoseTray.Services;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;

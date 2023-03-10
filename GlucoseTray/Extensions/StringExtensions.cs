@@ -1,6 +1,4 @@
-﻿using GlucoseTray.Enums;
-
-namespace GlucoseTray.Extensions
+﻿namespace GlucoseTray.Extensions
 {
     public static class StringExtensions
     {

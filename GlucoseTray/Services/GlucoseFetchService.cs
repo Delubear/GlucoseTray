@@ -1,10 +1,5 @@
-﻿using GlucoseTray.Enums;
-using GlucoseTray.Extensions;
-using GlucoseTray.Models;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -80,7 +75,7 @@ namespace GlucoseTray.Services
                 var result = await response.Content.ReadAsStringAsync();
                 DebugText.Add("Result: " + result);
                 DebugText.Add("Attempting to deserialize");
-                var record = JsonSerializer.Deserialize<List<NightScoutResult>>(result).Last();
+                var record = JsonSerializer.Deserialize<List<NightScoutResult>>(result)!.Last();
                 DebugText.Add("Deserialized.");
                 fetchResult.Source = FetchMethod.NightscoutApi;
                 fetchResult.DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ? DateTime.Parse(record.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime;
@@ -181,7 +176,7 @@ namespace GlucoseTray.Services
                 var stringResult = await initialResult.Content.ReadAsStringAsync();
                 DebugText.Add("Result: " + stringResult);
                 DebugText.Add("Attempting to deserialize");
-                var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult).First();
+                var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult)!.First();
                 DebugText.Add("Deserialized");
                 var unixTime = string.Join("", result.ST.Where(char.IsDigit));
                 var trend = result.Trend;

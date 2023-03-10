@@ -1,7 +1,4 @@
-﻿using GlucoseTray.Enums;
-using System;
-
-namespace GlucoseTray.Models
+﻿namespace GlucoseTray.Models
 {
     public class GlucoseResult
     {

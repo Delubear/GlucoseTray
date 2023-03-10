@@ -1,9 +1,7 @@
-﻿using GlucoseTray.Services;
-using GlucoseTray.Views.Settings;
+﻿using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -14,9 +12,9 @@ namespace GlucoseTray
 {
     public class Program
     {
-        private static IConfiguration Configuration { get; set; }
-        public static string SettingsFile { get; set; }
-        public static AppSettings AppSettings { get; set; }
+        private static IConfiguration? Configuration { get; set; }
+        public static string SettingsFile { get; set; } = string.Empty;
+        public static AppSettings AppSettings { get; set; } = new();
 
         [STAThread]
         private static void Main(string[] args)
@@ -55,8 +53,8 @@ namespace GlucoseTray
 
         private static AppSettings GetAppSettings()
         {
-            var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json");
-            var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource);
+            var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json") ?? throw new NullReferenceException();
+            var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource) ?? new AppSettingsContainer();
             return container.AppSettings;
         }
 

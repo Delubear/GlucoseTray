@@ -1,12 +1,8 @@
-﻿using GlucoseTray.Enums;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using GlucoseTray.Extensions;
-using GlucoseTray.Models;
 
 namespace GlucoseTray.Services
 {
@@ -17,7 +13,6 @@ namespace GlucoseTray.Services
         private readonly float _standardOffset = -10f;
         private readonly int _defaultFontSize = 40;
         private readonly int _smallerFontSize = 38;
-        private Font _fontToUse;
 
         public IconService(ILogger<IconService> logger, IOptionsMonitor<GlucoseTraySettings> options)
         {
@@ -28,7 +23,7 @@ namespace GlucoseTray.Services
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern bool DestroyIcon(IntPtr handle);
 
-        public void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
+        public static void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
 
         public Brush SetColor(double val)
         {
@@ -80,12 +75,12 @@ namespace GlucoseTray.Services
             }
 
             var fontSize = CalculateFontSize(result);
-            _fontToUse = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
+            var font = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
             var bitmapText = new Bitmap(64, 64);
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.DrawString(glucoseValue, _fontToUse, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
+            g.DrawString(glucoseValue, font, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;

@@ -13,9 +13,9 @@ namespace GlucoseTray.Services
             sw.Write(json);
         }
 
-        public static T ReadModelFromFile(string file)
+        public static T? ReadModelFromFile(string file)
         {
-            T model = default;
+            T? model = default;
             try
             {
                 var json = File.ReadAllText(file);
