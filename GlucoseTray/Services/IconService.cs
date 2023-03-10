@@ -14,11 +14,10 @@ namespace GlucoseTray.Services
     {
         private readonly ILogger<IconService> _logger;
         private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-        private readonly float _standardOffset = -3f;
-        private readonly int _defaultFontSize = 10;
-        private readonly int _smallerFontSize = 9;
+        private readonly float _standardOffset = -10f;
+        private readonly int _defaultFontSize = 40;
+        private readonly int _smallerFontSize = 38;
         private Font _fontToUse;
-        private bool _useDefaultFontSize = true;
 
         public IconService(ILogger<IconService> logger, IOptionsMonitor<GlucoseTraySettings> options)
         {
@@ -80,14 +79,13 @@ namespace GlucoseTray.Services
                 glucoseValue = "DAN";
             }
 
-            var xOffset = CalculateXPosition(result);
-            var fontSize = _useDefaultFontSize ? _defaultFontSize : _smallerFontSize;
+            var fontSize = CalculateFontSize(result);
             _fontToUse = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
-            var bitmapText = new Bitmap(16, 16);
+            var bitmapText = new Bitmap(64, 64);
             var g = Graphics.FromImage(bitmapText);
             g.Clear(Color.Transparent);
-            g.DrawString(glucoseValue, _fontToUse, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), xOffset, 0f);
+            g.DrawString(glucoseValue, _fontToUse, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
             var hIcon = bitmapText.GetHicon();
             var myIcon = Icon.FromHandle(hIcon);
             trayIcon.Icon = myIcon;
@@ -98,18 +96,12 @@ namespace GlucoseTray.Services
             myIcon.Dispose();
         }
 
-        private float CalculateXPosition(GlucoseResult result)
+        private int CalculateFontSize(GlucoseResult result)
         {
-            _useDefaultFontSize = true;
             var value = _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
-            if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG) // Non MMOL display, use our standard offset.
-                return _standardOffset;
-            if (value > 9.9) // MMOL with 3 digits over 20. This requires also changing the font size from 10 to 9.
-            {
-                _useDefaultFontSize = false;
-                return _standardOffset;
-            }
-            return _standardOffset; // MMOL display with only two digits, use our standard offset.
+            if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && value > 9.9) // MMOL with 3 digits over 20. This requires also changing the font size from 10 to 9.
+                return _smallerFontSize;
+            return _defaultFontSize;
         }
     }
 }
