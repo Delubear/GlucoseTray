@@ -158,6 +158,12 @@ namespace GlucoseTray
             get => isDarkMode; set { isDarkMode = value; OnPropertyChanged(nameof(IsDarkMode)); }
         }
 
+        private string selectedLanguage = "en-us";
+        public string SelectedLanguage
+        {
+            get => selectedLanguage; set { selectedLanguage = value; OnPropertyChanged(nameof(SelectedLanguage)); }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -23,7 +24,7 @@ namespace GlucoseTray
                 return;
 
             var builder = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))//.AddJsonFile("GlucoseTray.Properties.Resources.appsettings.json", optional: false))
+                .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))
                 .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services));
             var host = builder.Build();
 
@@ -33,6 +34,10 @@ namespace GlucoseTray
             var services = host.Services;
 
             AppSettings = GetAppSettings();
+
+            var projectOptions = services.GetRequiredService<IOptionsMonitor<GlucoseTraySettings>>();
+            if (string.IsNullOrWhiteSpace(projectOptions.CurrentValue.SelectedLanguage) == false)
+                LocalizationService.SetLanguage(projectOptions.CurrentValue.SelectedLanguage);
 
             var app = services.GetRequiredService<AppContext>();
             Application.Run(app);

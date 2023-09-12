@@ -8,17 +8,17 @@ namespace GlucoseTray.Services
 
         public static string GetText(string key)
         {
-            var currentCulter = Thread.CurrentThread.CurrentUICulture;
+            var currentCulture = Thread.CurrentThread.CurrentUICulture;
 
-            if (Program.AppSettings.Languages.TryGetValue(currentCulter.Name.ToLower(), out var text))
+            if (Program.AppSettings.Languages.TryGetValue(currentCulture.Name.ToLower(), out var currentLanguage))
             {
-                if (text.TryGetValue(key, out var value))
+                if (currentLanguage.TryGetValue(key, out var value))
                     return value;
             }
 
-            if (Program.AppSettings.Languages.TryGetValue(DefaultCulture, out var defaultText))
+            if (Program.AppSettings.Languages.TryGetValue(DefaultCulture, out var defaultLanguage))
             {
-                if (defaultText.TryGetValue(key, out var value))
+                if (defaultLanguage.TryGetValue(key, out var value))
                     return value;
             }
 
