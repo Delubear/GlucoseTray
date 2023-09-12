@@ -31,6 +31,8 @@ namespace GlucoseTray.Views.Settings
         {
             InitializeComponent();
 
+            settings_glucose_datasource_label.Content = LocalizationService.GetText("Settings_Datasource_Label");
+
             combobox_dexcom_server.ItemsSource = typeof(DexcomServerLocation).GetFields().Select(x => (DescriptionAttribute[])x.GetCustomAttributes(typeof(DescriptionAttribute), false)).SelectMany(x => x).Select(x => x.Description);
 
             if (File.Exists(Program.SettingsFile))

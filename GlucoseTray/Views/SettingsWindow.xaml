@@ -31,7 +31,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
-        <Label Content="Glucose Datasource" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="26" Width="131" Grid.ColumnSpan="2"/>
+        <Label x:Name="settings_glucose_datasource_label" Content="Glucose Datasource" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Height="26" Width="131" Grid.ColumnSpan="2"/>
         <RadioButton TabIndex="1" x:Name="radio_source_dexcom" Content="Dexcom" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="62" RenderTransformOrigin="0.5,0.5" IsChecked="True" Checked="ShowDexcomBlock"/>
         <RadioButton TabIndex="2" x:Name="radio_source_nightscout" Content="Nightscout" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" GroupName="glucose_datasource" Height="15" Width="78" Grid.Column="1" Checked="ShowNightscoutBlock" Grid.ColumnSpan="2"/>
 

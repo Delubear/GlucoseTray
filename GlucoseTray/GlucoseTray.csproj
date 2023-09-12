@@ -16,6 +16,7 @@
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Platforms>AnyCPU</Platforms>
+	<UICulture>en-US</UICulture>
 
     <runtime>
       <AppContextSwitchOverrides value="Switch.System.Windows.DoNotScaleForDpiChanges=false" />

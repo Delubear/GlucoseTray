@@ -22,10 +22,10 @@ namespace GlucoseTray
             if (!LoadApplicationSettings())
                 return;
 
-            var host = Host.CreateDefaultBuilder()
+            var builder = Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(SettingsFile, optional: false, reloadOnChange: true))//.AddJsonFile("GlucoseTray.Properties.Resources.appsettings.json", optional: false))
-                .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services))
-                .Build();
+                .ConfigureServices((context, services) => ConfigureServices(context.Configuration, services));
+            var host = builder.Build();
 
             Application.ThreadException += ApplicationThreadException;
             Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);

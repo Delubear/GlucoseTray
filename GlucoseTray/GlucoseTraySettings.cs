@@ -166,6 +166,7 @@ namespace GlucoseTray
     {
         public string Version { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
+        public Dictionary<string, Dictionary<string, string>> Languages { get; set; } = new();
     }
 
     public class AppSettingsContainer
