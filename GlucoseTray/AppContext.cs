@@ -102,10 +102,25 @@ namespace GlucoseTray
             _currentAlertLevel = AlertLevel.None;
         }
 
-        private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, UpDown directionGlucoseShouldBeToNotAlert) =>
-            _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG
-                ? directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMG >= alertThreshold : glucoseValueMG <= alertThreshold
-                : directionGlucoseShouldBeToNotAlert == UpDown.Down ? glucoseValueMMOL >= alertThreshold : glucoseValueMMOL <= alertThreshold;
+        private bool IsAlertTriggered(double glucoseValueMG, double glucoseValueMMOL, double alertThreshold, UpDown directionGlucoseShouldBeToNotAlert)
+        {
+            if (glucoseValueMMOL == 0) // If a null / default result is returned, do not trigger alerts.
+                return false;
+            if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG)
+            {
+                if (directionGlucoseShouldBeToNotAlert == UpDown.Down)
+                    return glucoseValueMG >= alertThreshold;
+                else
+                    return glucoseValueMG <= alertThreshold;
+            }
+            else
+            {
+                if (directionGlucoseShouldBeToNotAlert == UpDown.Down)
+                    return glucoseValueMMOL >= alertThreshold;
+                else
+                    return glucoseValueMMOL <= alertThreshold;
+            }
+        }
 
         private void Exit(object? sender, EventArgs e)
         {

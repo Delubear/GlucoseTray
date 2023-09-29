@@ -2,9 +2,13 @@
 {
     internal static class GlucoseMath
     {
-        private static bool IsCriticalLow(GlucoseResult result, GlucoseTraySettings currentSettings) =>
-            (currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg)
-            || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
+        private static bool IsCriticalLow(GlucoseResult result, GlucoseTraySettings currentSettings)
+        {
+            if (result.MmolValue == 0) // Don't treat a zero / null / default result as critical low.
+                return false;
+            return (currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg)
+                || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
+        }
 
         internal static void CalculateValues(GlucoseResult result, double value, GlucoseTraySettings currentSettings)
         {
