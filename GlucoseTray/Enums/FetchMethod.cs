@@ -1,8 +1,7 @@
-﻿namespace GlucoseTray.Enums
+﻿namespace GlucoseTray.Enums;
+
+public enum FetchMethod
 {
-    public enum FetchMethod
-    {
-        DexcomShare = 0,
-        NightscoutApi = 1,
-    }
+    DexcomShare = 0,
+    NightscoutApi = 1,
 }

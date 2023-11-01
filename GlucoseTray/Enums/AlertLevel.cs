@@ -1,12 +1,11 @@
-﻿namespace GlucoseTray.Enums
+﻿namespace GlucoseTray.Enums;
+
+public enum AlertLevel
 {
-    public enum AlertLevel
-    {
-        None,
-        High,
-        WarningHigh,
-        WarningLow,
-        Low,
-        CriticalLow
-    }
+    None,
+    High,
+    WarningHigh,
+    WarningLow,
+    Low,
+    CriticalLow
 }
