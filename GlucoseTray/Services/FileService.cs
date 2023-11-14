@@ -3,23 +3,23 @@ using System.Text.Json;
 
 namespace GlucoseTray.Services;
 
-public static class FileService<T>
+public static class FileService
 {
-    public static void WriteModelToJsonFile(T model, string file)
+    public static void WriteModelToJsonFile(GlucoseTraySettings model, string file)
     {
         using var sw = File.CreateText(file);
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        var json = JsonSerializer.Serialize(model, options);
+        //var options = new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = GlucoseSourceGenerationContext.Default };
+        var json = JsonSerializer.Serialize(model, GlucoseSourceGenerationContext.Default.GlucoseTraySettings);
         sw.Write(json);
     }
 
-    public static T? ReadModelFromFile(string file)
+    public static GlucoseTraySettings? ReadModelFromFile(string file)
     {
-        T? model = default;
+        GlucoseTraySettings? model = default;
         try
         {
             var json = File.ReadAllText(file);
-            model = JsonSerializer.Deserialize<T>(json);
+            model = JsonSerializer.Deserialize<GlucoseTraySettings>(json, GlucoseSourceGenerationContext.Default.GlucoseTraySettings);
         }
         catch
         {

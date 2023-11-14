@@ -5,8 +5,10 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Forms;
+using static GlucoseTray.Services.GlucoseFetchService;
 
 namespace GlucoseTray;
 
@@ -55,7 +57,7 @@ public class Program
     private static AppSettings GetAppSettings()
     {
         var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream("GlucoseTray.appsettings.json") ?? throw new NullReferenceException();
-        var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource) ?? new AppSettingsContainer();
+        var container = JsonSerializer.Deserialize<AppSettingsContainer>(resource, GlucoseSourceGenerationContext.Default.AppSettingsContainer) ?? new AppSettingsContainer();
         return container.AppSettings;
     }
 
@@ -77,3 +79,11 @@ public class Program
 
     private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(e?.Exception?.Message + " --- " + e?.Exception?.InnerException?.Message, "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 }
+
+
+
+//[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Serialization)]
+//public partial class AppSettingsSourceGenerationContext : JsonSerializerContext
+//{
+
+//}

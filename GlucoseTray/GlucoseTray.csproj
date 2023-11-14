@@ -5,7 +5,7 @@
     <TargetFramework>net8.0-windows7.0</TargetFramework>
 	<Nullable>enable</Nullable>
     <RootNamespace>GlucoseTray</RootNamespace>
-    <PublishReadyToRun>false</PublishReadyToRun> <!-- Turn on again once fixed: https://github.com/dotnet/wpf/issues/7282 -->
+    <PublishReadyToRun>true</PublishReadyToRun> <!-- Turn on again once fixed: https://github.com/dotnet/wpf/issues/7282 -->
 	<PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ApplicationIcon />
@@ -16,6 +16,9 @@
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Platforms>AnyCPU</Platforms>
+	  <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+	  <PublishAot>true</PublishAot>
+	  <PublishTrimmed>false</PublishTrimmed>
 
     <runtime>
       <AppContextSwitchOverrides value="Switch.System.Windows.DoNotScaleForDpiChanges=false" />

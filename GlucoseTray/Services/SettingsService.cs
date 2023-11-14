@@ -16,7 +16,7 @@ public static class SettingsService
 
         if (model is null)
         {
-            model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+            model = FileService.ReadModelFromFile(Program.SettingsFile);
             if (model is null)
             {
                 errors.Add("File is Invalid");
@@ -70,7 +70,7 @@ public static class SettingsService
 
             try
             {
-                var status = JsonSerializer.Deserialize<NightScoutStatus>(result);
+                NightScoutStatus? status = JsonSerializer.Deserialize<NightScoutStatus>(result, GlucoseSourceGenerationContext.Default.NightScoutStatus);
                 return string.Equals(status?.Status, "ok", StringComparison.CurrentCultureIgnoreCase) ? string.Empty : "Nightscout status is " + status?.Status;
             }
             catch (JsonException)

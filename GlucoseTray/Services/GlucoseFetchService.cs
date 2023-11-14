@@ -75,7 +75,7 @@ public class GlucoseFetchService : IGlucoseFetchService
             var result = await response.Content.ReadAsStringAsync();
             DebugText.Add("Result: " + result);
             DebugText.Add("Attempting to deserialize");
-            var record = JsonSerializer.Deserialize<List<NightScoutResult>>(result)!.Last();
+            var record = (JsonSerializer.Deserialize<List<NightScoutResult>>(result, GlucoseSourceGenerationContext.Default.ListNightScoutResult))!.Last();
             DebugText.Add("Deserialized.");
             fetchResult.Source = FetchMethod.NightscoutApi;
             fetchResult.DateTimeUTC = !string.IsNullOrEmpty(record.DateString) ? DateTime.Parse(record.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(record.Date).UtcDateTime;
@@ -100,6 +100,19 @@ public class GlucoseFetchService : IGlucoseFetchService
         return fetchResult;
     }
 
+    public class DexComAccountIdJson
+    {
+        public string accountName { get; set; }
+        public string applicationId { get; set; }
+        public string password { get; set; }
+    }
+    public class DexComAccountIdJsonId
+    {
+        public string accountId { get; set; }
+        public string applicationId { get; set; }
+        public string password { get; set; }
+    }
+
     private async Task<GlucoseResult> GetFetchResultFromDexcom()
     {
         DebugText.Add("Starting DexCom Fetch");
@@ -109,12 +122,12 @@ public class GlucoseFetchService : IGlucoseFetchService
         string accountId = string.Empty;
 
         // Get Account Id
-        var accountIdRequestJson = JsonSerializer.Serialize(new
+        var accountIdRequestJson = JsonSerializer.Serialize(new DexComAccountIdJson
         {
             accountName = _options.CurrentValue.DexcomUsername,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
             password = _options.CurrentValue.DexcomPassword
-        });
+        }, GlucoseSourceGenerationContext.Default.DexComAccountIdJson);
 
         var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();
         var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(accountUrl))
@@ -145,12 +158,12 @@ public class GlucoseFetchService : IGlucoseFetchService
         }
 
         // Get Session Id
-        var sessionIdRequestJson = JsonSerializer.Serialize(new
+        var sessionIdRequestJson = JsonSerializer.Serialize(new DexComAccountIdJsonId
         {
             accountId = accountId,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
             password = _options.CurrentValue.DexcomPassword
-        });
+        }, GlucoseSourceGenerationContext.Default.DexComAccountIdJsonId);
 
         var sessionUrl = _urlBuilder.BuildDexComSessionUrl();
         var request = new HttpRequestMessage(HttpMethod.Post, new Uri(sessionUrl))
@@ -176,7 +189,7 @@ public class GlucoseFetchService : IGlucoseFetchService
             var stringResult = await initialResult.Content.ReadAsStringAsync();
             DebugText.Add("Result: " + stringResult);
             DebugText.Add("Attempting to deserialize");
-            var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult)!.First();
+            var result = (JsonSerializer.Deserialize<List<DexcomResult>>(stringResult, GlucoseSourceGenerationContext.Default.ListDexcomResult))!.First();
             DebugText.Add("Deserialized");
             var unixTime = string.Join("", result.ST.Where(char.IsDigit));
             var trend = result.Trend;
