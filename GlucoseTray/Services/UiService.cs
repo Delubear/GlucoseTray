@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
-public class UiService
+internal class UiService
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
     private readonly ILogger<UiService> _logger;
@@ -17,7 +17,7 @@ public class UiService
     private GlucoseResult _currentGlucoseResult = new();
     private NotifyIcon _trayIcon = new();
 
-    public UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService)
+    internal UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService)
     {
         _options = options;
         _logger = logger;
@@ -25,7 +25,7 @@ public class UiService
         _iconService = iconService;
     }
 
-    public NotifyIcon InitializeTrayIcon(EventHandler exitEvent)
+    internal NotifyIcon InitializeTrayIcon(EventHandler exitEvent)
     {
         _trayIcon = new NotifyIcon()
         {
@@ -37,16 +37,16 @@ public class UiService
         return _trayIcon;
     }
 
-    public void CreateIcon(GlucoseResult glucoseResult)
+    internal void CreateIcon(GlucoseResult glucoseResult)
     {
         _currentGlucoseResult = glucoseResult;
         _trayIcon.Text = GetGlucoseMessage(_currentGlucoseResult);
         _iconService.CreateTextIcon(_currentGlucoseResult, _trayIcon);
     }
 
-    public void ShowAlert(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
+    internal void ShowAlert(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
 
-    private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
+    internal void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
 
     private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.CurrentValue.StaleResultsThreshold)}";
 

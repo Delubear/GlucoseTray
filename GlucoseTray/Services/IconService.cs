@@ -57,7 +57,7 @@ public class IconService
         }
     }
 
-    public void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
+    internal void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
     {
         var glucoseValue = result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 

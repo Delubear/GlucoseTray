@@ -15,7 +15,7 @@ public class AlertService
         _uiService = uiService;
     }
 
-    public void AlertNotification(GlucoseResult? currentGlucoseResult)
+    internal void AlertNotification(GlucoseResult? currentGlucoseResult)
     {
         if (currentGlucoseResult?.IsStale(_options.CurrentValue.StaleResultsThreshold) != false)
             return;

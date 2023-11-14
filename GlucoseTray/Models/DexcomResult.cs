@@ -3,11 +3,11 @@
 /// <summary>
 /// Class that maps to the JSON received from DexCom queries.
 /// </summary>
-public class DexcomResult
+internal class DexcomResult
 {
-    public string ST { get; set; } = string.Empty;
-    public string DT { get; set; } = string.Empty;
-    public string Trend { get; set; } = string.Empty;
-    public double Value { get; set; }
-    public string WT { get; set; } = string.Empty;
+    internal string ST { get; set; } = string.Empty;
+    internal string DT { get; set; } = string.Empty;
+    internal string Trend { get; set; } = string.Empty;
+    internal double Value { get; set; }
+    internal string WT { get; set; } = string.Empty;
 }

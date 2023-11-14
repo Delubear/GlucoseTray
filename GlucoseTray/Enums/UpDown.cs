@@ -1,6 +1,6 @@
 ﻿namespace GlucoseTray.Enums;
 
-public enum UpDown
+internal enum UpDown
 {
     Up,
     Down

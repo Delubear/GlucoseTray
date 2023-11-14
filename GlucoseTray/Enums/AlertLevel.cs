@@ -1,6 +1,6 @@
 ﻿namespace GlucoseTray.Enums;
 
-public enum AlertLevel
+internal enum AlertLevel
 {
     None,
     High,

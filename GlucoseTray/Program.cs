@@ -79,11 +79,3 @@ public class Program
 
     private static void ApplicationThreadException(object sender, ThreadExceptionEventArgs e) => MessageBox.Show(e?.Exception?.Message + " --- " + e?.Exception?.InnerException?.Message, "Fatal Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 }
-
-
-
-//[JsonSourceGenerationOptions(GenerationMode = JsonSourceGenerationMode.Serialization)]
-//public partial class AppSettingsSourceGenerationContext : JsonSerializerContext
-//{
-
-//}

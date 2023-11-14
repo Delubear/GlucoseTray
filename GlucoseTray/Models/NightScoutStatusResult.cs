@@ -2,17 +2,17 @@
 
 namespace GlucoseTray.Models;
 
-public class NightScoutStatusResult
+internal class NightScoutStatusResult
 {
     [JsonPropertyName("settings")]
-    public NightScoutSettingsResult Settings { get; set; } = new();
+    internal NightScoutSettingsResult Settings { get; set; } = new();
 }
 
-public class NightScoutSettingsResult
+internal class NightScoutSettingsResult
 {
     [JsonPropertyName("units")]
-    public string Units { get; set; } = string.Empty;
+    internal string Units { get; set; } = string.Empty;
 
     [JsonIgnore]
-    public GlucoseUnitType UnitType => Units == "mg/dl" ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
+    internal GlucoseUnitType UnitType => Units == "mg/dl" ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
 }

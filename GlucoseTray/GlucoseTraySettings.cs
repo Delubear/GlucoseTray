@@ -9,13 +9,13 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     private const string EncryptionKey = "i_can_probably_be_improved";
 
     private FetchMethod fetchMethod;
-    public FetchMethod FetchMethod
+    internal FetchMethod FetchMethod
     {
         get => fetchMethod; set { fetchMethod = value; OnPropertyChanged(nameof(FetchMethod)); }
     }
 
     private string nightscoutUrl = string.Empty;
-    public string NightscoutUrl
+    internal string NightscoutUrl
     {
         get => nightscoutUrl;
         set
@@ -28,13 +28,13 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     }
 
     private DexcomServerLocation dexcomServer;
-    public DexcomServerLocation DexcomServer
+    internal DexcomServerLocation DexcomServer
     {
         get => dexcomServer; set { dexcomServer = value; OnPropertyChanged(nameof(DexcomServer)); }
     }
 
     private string dexcomUsername = string.Empty;
-    public string DexcomUsername
+    internal string DexcomUsername
     {
         get => string.IsNullOrWhiteSpace(dexcomUsername) ? dexcomUsername : StringEncryptionService.DecryptString(dexcomUsername, EncryptionKey);
         set
@@ -45,72 +45,72 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     }
 
     private string dexcomPassword = string.Empty;
-    public string DexcomPassword
+    internal string DexcomPassword
     {
         get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
         set { dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(DexcomPassword)); }
     }
 
     private string accessToken = string.Empty;
-    public string AccessToken
+    internal string AccessToken
     {
         get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
         set { accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(AccessToken)); }
     }
 
     private GlucoseUnitType glucoseUnit;
-    public GlucoseUnitType GlucoseUnit
+    internal GlucoseUnitType GlucoseUnit
     {
         get => glucoseUnit; set { glucoseUnit = value; OnPropertyChanged(nameof(GlucoseUnit)); }
     }
 
     private double warningHighBg;
-    public double WarningHighBg
+    internal double WarningHighBg
     {
         get => warningHighBg; set { warningHighBg = value; OnPropertyChanged(nameof(WarningHighBg)); }
     }
 
     private double highBg;
-    public double HighBg
+    internal double HighBg
     {
         get => highBg; set { highBg = value; OnPropertyChanged(nameof(HighBg)); }
     }
 
     private double warningLowBg;
-    public double WarningLowBg
+    internal double WarningLowBg
     {
         get => warningLowBg; set { warningLowBg = value; OnPropertyChanged(nameof(WarningLowBg)); }
     }
 
     private double lowBg;
-    public double LowBg
+    internal double LowBg
     {
         get => lowBg; set { lowBg = value; OnPropertyChanged(nameof(LowBg)); }
     }
 
     private double criticalLowBg;
-    public double CriticalLowBg
+    internal double CriticalLowBg
     {
         get => criticalLowBg; set { criticalLowBg = value; OnPropertyChanged(nameof(CriticalLowBg)); }
     }
 
     private int pollingThreshold;
-    public int PollingThreshold
+    internal int PollingThreshold
     {
         get => pollingThreshold; set { pollingThreshold = value; OnPropertyChanged(nameof(PollingThreshold)); }
     }
 
     [JsonIgnore]
-    public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
+    internal TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
 
     private int staleResultsThreshold;
-    public int StaleResultsThreshold
+    internal int StaleResultsThreshold
     {
         get => staleResultsThreshold; set { staleResultsThreshold = value; OnPropertyChanged(nameof(StaleResultsThreshold)); }
     }
 
     private bool highAlert;
-    public bool HighAlert
+    internal bool HighAlert
     {
         get => highAlert; set { highAlert = value; OnPropertyChanged(nameof(HighAlert)); }
     }
@@ -122,38 +122,38 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     }
 
     private bool warningLowAlert;
-    public bool WarningLowAlert
+    internal bool WarningLowAlert
     {
         get => warningLowAlert; set { warningLowAlert = value; OnPropertyChanged(nameof(WarningLowAlert)); }
     }
 
     private bool lowAlert;
-    public bool LowAlert
+    internal bool LowAlert
     {
         get => lowAlert; set { lowAlert = value; OnPropertyChanged(nameof(LowAlert)); }
     }
 
     private bool criticallyLowAlert;
-    public bool CriticallyLowAlert
+    internal bool CriticallyLowAlert
     {
         get => criticallyLowAlert; set { criticallyLowAlert = value; OnPropertyChanged(nameof(CriticallyLowAlert)); }
     }
 
     private bool isServerDataUnitTypeMmol;
-    public bool IsServerDataUnitTypeMmol
+    internal bool IsServerDataUnitTypeMmol
     {
         get => isServerDataUnitTypeMmol; set { isServerDataUnitTypeMmol = value; OnPropertyChanged(nameof(IsServerDataUnitTypeMmol)); }
     }
 
 
     private bool isDebugMode;
-    public bool IsDebugMode
+    internal bool IsDebugMode
     {
         get => isDebugMode; set { isDebugMode = value; OnPropertyChanged(nameof(IsDebugMode)); }
     }
 
     private bool isDarkMode;
-    public bool IsDarkMode
+    internal bool IsDarkMode
     {
         get => isDarkMode; set { isDarkMode = value; OnPropertyChanged(nameof(IsDarkMode)); }
     }
@@ -164,12 +164,12 @@ public class GlucoseTraySettings : INotifyPropertyChanged
 
 public class AppSettings
 {
-    public string Version { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
+    internal string Version { get; set; } = string.Empty;
+    internal string Url { get; set; } = string.Empty;
 }
 
 public class AppSettingsContainer
 {
     [JsonPropertyName("appsettings")]
-    public AppSettings AppSettings { get; set; } = new AppSettings();
+    internal AppSettings AppSettings { get; set; } = new AppSettings();
 }

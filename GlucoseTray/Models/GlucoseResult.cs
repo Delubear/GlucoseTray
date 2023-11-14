@@ -1,13 +1,13 @@
 ﻿namespace GlucoseTray.Models;
 
-public class GlucoseResult
+internal class GlucoseResult
 {
-    public int Id { get; set; }
-    public int MgValue { get; set; }
-    public double MmolValue { get; set; }
-    public DateTime DateTimeUTC { get; set; }
-    public TrendResult Trend { get; set; }
-    public bool WasError { get; set; }
-    public FetchMethod Source { get; set; }
-    public bool IsCriticalLow { get; set; }
+    internal int Id { get; set; }
+    internal int MgValue { get; set; }
+    internal double MmolValue { get; set; }
+    internal DateTime DateTimeUTC { get; set; }
+    internal TrendResult Trend { get; set; }
+    internal bool WasError { get; set; }
+    internal FetchMethod Source { get; set; }
+    internal bool IsCriticalLow { get; set; }
 }

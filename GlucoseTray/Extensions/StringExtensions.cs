@@ -1,8 +1,8 @@
 ﻿namespace GlucoseTray.Extensions;
 
-public static class StringExtensions
+internal static class StringExtensions
 {
-    public static string GetTrendArrow(this TrendResult input)
+    internal static string GetTrendArrow(this TrendResult input)
     {
         return input switch
         {
@@ -20,7 +20,7 @@ public static class StringExtensions
         };
     }
 
-    public static TrendResult GetTrend(this string direction)
+    internal static TrendResult GetTrend(this string direction)
     {
         // Values for Direction copied from https://github.com/nightscout/cgm-remote-monitor/blob/41ac93f7217b1b7023ec6ad6fc35d29dcf2e4f88/lib/plugins/direction.js
         return direction switch

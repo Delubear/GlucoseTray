@@ -2,7 +2,7 @@
 
 namespace GlucoseTray.Enums;
 
-public enum DexcomServerLocation
+internal enum DexcomServerLocation
 {
     [Description("US Share 1")]
     DexcomShare1 = 0,

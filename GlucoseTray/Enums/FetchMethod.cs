@@ -1,6 +1,6 @@
 ﻿namespace GlucoseTray.Enums;
 
-public enum FetchMethod
+internal enum FetchMethod
 {
     DexcomShare = 0,
     NightscoutApi = 1,

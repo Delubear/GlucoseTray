@@ -1,6 +1,6 @@
 ﻿namespace GlucoseTray.Enums;
 
-public enum TrendResult
+internal enum TrendResult
 {
     TripleUp = 0,
     DoubleUp = 1,

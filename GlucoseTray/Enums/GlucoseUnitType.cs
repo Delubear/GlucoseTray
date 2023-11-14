@@ -1,6 +1,6 @@
 ﻿namespace GlucoseTray.Enums;
 
-public enum GlucoseUnitType
+internal enum GlucoseUnitType
 {
     MG = 0,
     MMOL = 1

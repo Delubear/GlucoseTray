@@ -10,8 +10,8 @@ namespace GlucoseTray.Models;
 /// 
 /// Would it be possible to read the units and alarm thresholds from nightscout?
 /// </remarks>
-public class NightScoutStatus
+internal class NightScoutStatus
 {
     [JsonPropertyName("status")]
-    public string Status { get; set; } = string.Empty;
+    internal string Status { get; set; } = string.Empty;
 }
