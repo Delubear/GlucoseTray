@@ -48,10 +48,7 @@ public static class StringEncryptionService
         var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
         byte[] plainTextBytes = new byte[cipherTextBytes.Length];
 
-        // int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-
-        // Amended for Dotnet 6.0 and above which now longer guarentees that you will get all 
-        // the bytes you asked for in the first read, so we need to keep reading until the end.
+        // Amended for Dotnet 6.0 and above which now longer guarentees that you will get all the bytes you asked for in the first read, so we need to keep reading until the end.
         int decryptedByteCount = 0;
         byte[] tempBytes = new byte[cipherTextBytes.Length];
         do
