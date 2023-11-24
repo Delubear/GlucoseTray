@@ -14,12 +14,13 @@ public class AppContext : ApplicationContext
     private readonly UiService _uiService;
     private readonly AlertService _alertService;
 
-    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, UiService uiService)
+    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, UiService uiService, AlertService alertService)
     {
         _logger = logger;
         _fetchService = fetchService;
         _options = options;
         _uiService = uiService;
+        _alertService = alertService;
 
         _trayIcon = _uiService.InitializeTrayIcon(new EventHandler(Exit));
         BeginCycle();
