@@ -1,8 +1,7 @@
-﻿namespace GlucoseTray.Enums
+﻿namespace GlucoseTray.Enums;
+
+public enum UpDown
 {
-    public enum UpDown
-    {
-        Up,
-        Down
-    }
+    Up,
+    Down
 }
