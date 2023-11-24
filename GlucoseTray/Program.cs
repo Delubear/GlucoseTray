@@ -50,6 +50,7 @@ public class Program
                 .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                 .AddScoped<INightscoutService, NightscoutService>()
                 .AddScoped<IDexcomService, DexcomService>()
+                .AddScoped<AlertService, AlertService>()
                 .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
     }
 
