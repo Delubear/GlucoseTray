@@ -53,6 +53,7 @@ public class Program
                 .AddScoped<AlertService, AlertService>()
                 .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddScoped<DebugService, DebugService>()
+                .AddScoped<ISettingsWindowService, SettingsWindowService>()
                 .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
     }
 
@@ -69,7 +70,7 @@ public class Program
         SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
         if (!File.Exists(SettingsFile) || SettingsService.ValidateSettings().Count != 0)
         {
-            var settingsWindow = new SettingsWindow();
+            var settingsWindow = new SettingsWindow(new SettingsWindowService());
             if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
             {
                 Application.Exit();

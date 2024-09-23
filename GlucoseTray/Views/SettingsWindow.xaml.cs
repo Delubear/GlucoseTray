@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 
 namespace GlucoseTray.Views.Settings;
 
@@ -10,67 +7,41 @@ namespace GlucoseTray.Views.Settings;
 /// </summary>
 public partial class SettingsWindow : Window
 {
-    public GlucoseTraySettings Settings { get; set; } = new GlucoseTraySettings
-    {
-        HighBg = 250,
-        WarningHighBg = 200,
-        WarningLowBg = 80,
-        LowBg = 70,
-        CriticalLowBg = 55,
-        PollingThreshold = 15,
-        StaleResultsThreshold = 15,
-        DexcomUsername = "",
-        NightscoutUrl = "",
-        IsServerDataUnitTypeMmol = false,
-        IsDebugMode = false,
-        IsDarkMode = true,
-        // Appears we will need to manually bind radios, dropdowns, and password fields for now.
-    };
+    private readonly ISettingsWindowService _service;
+    private GlucoseTraySettings _settings;
+    private bool HaveBypassedInitialModification;
 
-    public SettingsWindow()
+    public SettingsWindow(ISettingsWindowService service)
     {
+        _service = service;
+        _settings = _service.GetDefaultSettings();
+
         InitializeComponent();
 
-        combobox_dexcom_server.ItemsSource = typeof(DexcomServerLocation).GetFields().Select(x => (DescriptionAttribute[])x.GetCustomAttributes(typeof(DescriptionAttribute), false)).SelectMany(x => x).Select(x => x.Description);
+        combobox_dexcom_server.ItemsSource = _service.GetDexComServerLocationDescriptions();
 
-        if (File.Exists(Program.SettingsFile))
+        var model = _service.GetSettingsFromFile();
+        if (model is not null)
         {
-            try
-            {
-                var model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+            txt_dexcom_password.Password = model.DexcomPassword;
+            txt_nightscout_token.Password = model.AccessToken;
+            if (model.FetchMethod == FetchMethod.DexcomShare)
+                radio_source_dexcom.IsChecked = true;
+            else
+                radio_source_nightscout.IsChecked = true;
 
-                if (model is null)
-                {
-                    MessageBox.Show("Unable to load existing settings due to a bad file.");
-                }
-                else
-                {
-                    txt_dexcom_password.Password = model.DexcomPassword;
-                    txt_nightscout_token.Password = model.AccessToken;
-                    if (model.FetchMethod == FetchMethod.DexcomShare)
-                        radio_source_dexcom.IsChecked = true;
-                    else
-                        radio_source_nightscout.IsChecked = true;
+            if (model.GlucoseUnit == GlucoseUnitType.MG)
+                radio_unit_mg.IsChecked = true;
+            else
+                radio_unit_mmol.IsChecked = true;
 
-                    if (model.GlucoseUnit == GlucoseUnitType.MG)
-                        radio_unit_mg.IsChecked = true;
-                    else
-                        radio_unit_mmol.IsChecked = true;
-
-                    combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
-                    Settings = model;
-                }
-            }
-            catch (Exception e) // Catch serialization errors due to a bad file
-            {
-                MessageBox.Show("Unable to load existing settings due to a bad file.  " + e.Message + e.InnerException?.Message);
-            }
+            combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
+            _settings = model;
         }
 
-        DataContext = Settings;
+        DataContext = _settings;
     }
 
-    private bool HaveBypassedInitialModification;
     private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
     {
         if (!HaveBypassedInitialModification)
@@ -78,11 +49,8 @@ public partial class SettingsWindow : Window
             HaveBypassedInitialModification = true;
             return;
         }
-        Settings.HighBg = Math.Round(Settings.HighBg *= 18);
-        Settings.WarningHighBg = Math.Round(Settings.WarningHighBg *= 18);
-        Settings.WarningLowBg = Math.Round(Settings.WarningLowBg *= 18);
-        Settings.LowBg = Math.Round(Settings.LowBg *= 18);
-        Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg *= 18);
+
+        _service.UpdateValuesFromMMoLToMG(_settings);
     }
 
     private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
@@ -92,11 +60,8 @@ public partial class SettingsWindow : Window
             HaveBypassedInitialModification = true;
             return;
         }
-        Settings.HighBg = Math.Round(Settings.HighBg /= 18, 1);
-        Settings.WarningHighBg = Math.Round(Settings.WarningHighBg /= 18, 1);
-        Settings.WarningLowBg = Math.Round(Settings.WarningLowBg /= 18, 1);
-        Settings.LowBg = Math.Round(Settings.LowBg /= 18, 1);
-        Settings.CriticalLowBg = Math.Round(Settings.CriticalLowBg /= 18, 1);
+
+        _service.UpdateValuesFromMGToMMoL(_settings);
     }
 
     private void ShowNightscoutBlock(object sender, RoutedEventArgs e)
@@ -135,21 +100,21 @@ public partial class SettingsWindow : Window
 
     private void Button_Save_Click(object sender, RoutedEventArgs e)
     {
-        Settings.FetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
-        Settings.GlucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
-        Settings.DexcomServer = (DexcomServerLocation)combobox_dexcom_server.SelectedIndex;
-        Settings.DexcomUsername = txt_dexcom_username.Text;
-        Settings.DexcomPassword = txt_dexcom_password.Password;
-        Settings.AccessToken = txt_nightscout_token.Password;
-
-        var errors = SettingsService.ValidateSettings(Settings);
-        if (errors.Any())
+        var fetchMethod = radio_source_dexcom.IsChecked == true ? FetchMethod.DexcomShare : FetchMethod.NightscoutApi;
+        var glucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
+        var dexcomServer = (DexcomServerLocation)combobox_dexcom_server.SelectedIndex;
+        var dexcomUsername = txt_dexcom_username.Text;
+        var dexcomPassword = txt_dexcom_password.Password;
+        var nightscoutAccessToken = txt_nightscout_token.Password;
+        _service.UpdateServerDetails(_settings, fetchMethod, glucoseUnit, dexcomServer, dexcomUsername, dexcomPassword, nightscoutAccessToken);
+        var isValidResult = _service.IsValid(_settings);
+        if (isValidResult.IsValid == false)
         {
-            MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", errors));
+            MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", isValidResult.Errors));
             return;
         }
 
-        FileService<GlucoseTraySettings>.WriteModelToJsonFile(Settings, Program.SettingsFile);
+        _service.Save(_settings);
 
         DialogResult = true;
         Close();

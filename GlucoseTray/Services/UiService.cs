@@ -93,7 +93,7 @@ public class UiService
     {
         if (!SettingsFormIsOpen)
         {
-            var settingsWindow = new SettingsWindow();
+            var settingsWindow = new SettingsWindow(new SettingsWindowService());
             SettingsFormIsOpen = true;
             settingsWindow.ShowDialog();
             SettingsFormIsOpen = false;
