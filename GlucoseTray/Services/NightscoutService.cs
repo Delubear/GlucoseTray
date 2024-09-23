@@ -13,24 +13,25 @@ public interface INightscoutService
 public class NightscoutService : INightscoutService
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-    private readonly List<string> DebugText = [];
     private readonly ILogger _logger;
     private readonly UrlAssembler _urlBuilder;
     private readonly IExternalCommunicationAdapter _externalAdapter;
+    private readonly DebugService _debug;
 
-    public NightscoutService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter)
+    public NightscoutService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
     {
         _options = options;
         _logger = logger;
         _urlBuilder = urlBuilder;
         _externalAdapter = externalAdapter;
+        _debug = debug;
     }
 
     public async Task<GlucoseResult> GetLatestReadingAsync()
     {
-        DebugText.Clear();
-        DebugText.Add("Starting Nightscout Fetch");
-        DebugText.Add(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? "Using access token." : "No access token.");
+        _debug.ClearDebugText();
+        _debug.AddDebugText("Starting Nightscout Fetch");
+        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? "Using access token." : "No access token.");
 
         GlucoseResult result = new();
 
@@ -38,9 +39,9 @@ public class NightscoutService : INightscoutService
         {
             var response = await GetApiResponse();
 
-            DebugText.Add("Attempting to deserialize");
+            _debug.AddDebugText("Attempting to deserialize");
             var record = JsonSerializer.Deserialize<List<NightScoutResult>>(response)!.Last();
-            DebugText.Add("Deserialized.");
+            _debug.AddDebugText("Deserialized.");
 
             result = MapToResult(record);
         }
@@ -48,7 +49,7 @@ public class NightscoutService : INightscoutService
         {
             _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
             if (_options.CurrentValue.IsDebugMode)
-                DebugService.ShowDebugAlert(ex, "Nightscout result fetch", string.Join(Environment.NewLine, DebugText));
+                _debug.ShowDebugAlert(ex, "Nightscout result fetch");
         }
 
         return result;

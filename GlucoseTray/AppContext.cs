@@ -9,8 +9,7 @@ public class AppContext : ApplicationContext
     private readonly ILogger<AppContext> _logger;
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
     private readonly IGlucoseFetchService _fetchService;
-    private NotifyIcon _trayIcon;
-    private GlucoseResult? _currentGlucoseResult = null;
+    private readonly NotifyIcon _trayIcon;
     private readonly UiService _uiService;
     private readonly AlertService _alertService;
 
@@ -34,18 +33,18 @@ public class AppContext : ApplicationContext
             {
                 Application.DoEvents();
 
-                _currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
-                _uiService.CreateIcon(_currentGlucoseResult);
-                _alertService.AlertNotification(_currentGlucoseResult);
+                var currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
+                _uiService.CreateIcon(currentGlucoseResult);
+                _alertService.AlertNotification(currentGlucoseResult);
 
                 await Task.Delay(_options.CurrentValue.PollingThresholdTimeSpan);
             }
             catch (Exception e)
             {
                 MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _logger.LogError(e.ToString());
+                _logger.LogError(e, "An error occurred while fetching the latest glucose readings.");
                 _trayIcon.Visible = false;
-                _trayIcon?.Dispose();
+                _trayIcon.Dispose();
                 Environment.Exit(0);
             }
         }
@@ -55,7 +54,7 @@ public class AppContext : ApplicationContext
     {
         _logger.LogInformation("Exiting application.");
         _trayIcon.Visible = false;
-        _trayIcon?.Dispose();
+        _trayIcon.Dispose();
         Application.ExitThread();
         Application.Exit();
     }

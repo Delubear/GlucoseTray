@@ -15,15 +15,16 @@ namespace GlucoseTray.Services
     public class ExternalCommunicationAdapter : IExternalCommunicationAdapter
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly List<string> DebugText = [];
+        private readonly DebugService _debug;
         private readonly ILogger _logger;
         private readonly IOptionsMonitor<GlucoseTraySettings> _options;
 
-        public ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger, IOptionsMonitor<GlucoseTraySettings> options)
+        public ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger, IOptionsMonitor<GlucoseTraySettings> options, DebugService debug)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _options = options;
+            _debug = debug;
         }
 
         public async Task<string> PostApiResponseAsync(string url, string? content = null)
@@ -58,20 +59,20 @@ namespace GlucoseTray.Services
             {
                 var client = _httpClientFactory.CreateClient();
 
-                DebugText.Add("Requesting: " + request.RequestUri);
+                _debug.AddDebugText("Requesting: " + request.RequestUri);
                 response = await client.SendAsync(request);
-                DebugText.Add("Response received with status code: " + response.StatusCode);
+                _debug.AddDebugText("Response received with status code: " + response.StatusCode);
                 var result = await response.Content.ReadAsStringAsync();
-                DebugText.Add("Result: " + result);
+                _debug.AddDebugText("Result: " + result);
 
                 return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Invalid external response.");
-                DebugText.Add("Error with external communication: " + ex.Message);
+                _debug.AddDebugText("Error with external communication: " + ex.Message);
                 if (_options.CurrentValue.IsDebugMode)
-                    DebugService.ShowDebugAlert(ex, "External result fetch", string.Join(Environment.NewLine, DebugText));
+                    _debug.ShowDebugAlert(ex, "External result fetch");
                 throw;
             }
             finally

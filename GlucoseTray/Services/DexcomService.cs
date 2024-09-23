@@ -13,24 +13,25 @@ public interface IDexcomService
 public class DexcomService : IDexcomService
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-    private readonly List<string> DebugText = new();
     private readonly ILogger _logger;
     private readonly UrlAssembler _urlBuilder;
     private readonly IExternalCommunicationAdapter _externalAdapter;
+    private readonly DebugService _debug;
 
-    public DexcomService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter)
+    public DexcomService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
     {
         _options = options;
         _logger = logger;
         _urlBuilder = urlBuilder;
         _externalAdapter = externalAdapter;
+        _debug = debug;
     }
 
     public async Task<GlucoseResult> GetLatestReadingAsync()
     {
-        DebugText.Clear();
-        DebugText.Add("Starting DexCom Fetch");
-        DebugText.Add("Server: " + _urlBuilder.GetDexComServer());
+        _debug.ClearDebugText();
+        _debug.AddDebugText("Starting DexCom Fetch");
+        _debug.AddDebugText("Server: " + _urlBuilder.GetDexComServer());
 
         GlucoseResult glucoseResult;
 
@@ -40,9 +41,9 @@ public class DexcomService : IDexcomService
             string sessionId = await GetSessionId(accountId);
             string response = await GetApiResponse(sessionId);
 
-            DebugText.Add("Attempting to deserialize");
+            _debug.AddDebugText("Attempting to deserialize");
             var data = JsonSerializer.Deserialize<List<DexcomResult>>(response)!.First();
-            DebugText.Add("Deserialized");
+            _debug.AddDebugText("Deserialized");
 
             glucoseResult = MapToResult(data);
         }
@@ -50,7 +51,7 @@ public class DexcomService : IDexcomService
         {
             _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
             if (_options.CurrentValue.IsDebugMode)
-                DebugService.ShowDebugAlert(ex, "Dexcom result fetch", string.Join(Environment.NewLine, DebugText));
+                _debug.ShowDebugAlert(ex, "Dexcom result fetch");
 
             glucoseResult = GlucoseResult.Default;
         }
@@ -93,11 +94,11 @@ public class DexcomService : IDexcomService
         var result = await _externalAdapter.PostApiResponseAsync(sessionUrl, sessionIdRequestJson);
         var sessionId = result.Replace("\"", "");
 
-        if (sessionId.Any(x => x != '0' && x != '-'))
-            DebugText.Add("Got a valid session id");
+        if (IsValidId(sessionId))
+            _debug.AddDebugText("Got a valid session id");
         else
         {
-            DebugText.Add("Invalid session id");
+            _debug.AddDebugText("Invalid session id");
             throw new InvalidOperationException("Invalid session id");
         }
 
@@ -118,14 +119,16 @@ public class DexcomService : IDexcomService
         var result = await _externalAdapter.PostApiResponseAsync(accountUrl, accountIdRequestJson);
         var accountId = result.Replace("\"", "");
 
-        if (accountId.Any(x => x != '0' && x != '-'))
-            DebugText.Add("Got a valid account id");
+        if (IsValidId(accountId))
+            _debug.AddDebugText("Got a valid account id");
         else
         {
-            DebugText.Add("Invalid account id");
+            _debug.AddDebugText("Invalid account id");
             throw new InvalidOperationException("Invalid account id");
         }
 
         return accountId;
     }
+
+    private static bool IsValidId(string id) => id.Any(x => x != '0' && x != '-');
 }
