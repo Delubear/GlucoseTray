@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 
 namespace GlucoseTray.Services;
@@ -18,15 +16,14 @@ public class DexcomService : IDexcomService
     private readonly List<string> DebugText = new();
     private readonly ILogger _logger;
     private readonly UrlAssembler _urlBuilder;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IExternalCommunicationAdapter _externalAdapter;
 
-
-    public DexcomService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IHttpClientFactory httpClientFactory)
+    public DexcomService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter)
     {
         _options = options;
         _logger = logger;
         _urlBuilder = urlBuilder;
-        _httpClientFactory = httpClientFactory;
+        _externalAdapter = externalAdapter;
     }
 
     public async Task<GlucoseResult> GetLatestReadingAsync()
@@ -35,46 +32,55 @@ public class DexcomService : IDexcomService
         DebugText.Add("Starting DexCom Fetch");
         DebugText.Add("Server: " + _urlBuilder.GetDexComServer());
 
-        var client = _httpClientFactory.CreateClient();
-        string accountId = string.Empty;
-
-        // Get Account Id
-        var accountIdRequestJson = JsonSerializer.Serialize(new
-        {
-            accountName = _options.CurrentValue.DexcomUsername,
-            applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = _options.CurrentValue.DexcomPassword
-        });
-
-        var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();
-        var accountIdRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(accountUrl))
-        {
-            Content = new StringContent(accountIdRequestJson, Encoding.UTF8, "application/json")
-        };
+        GlucoseResult glucoseResult;
 
         try
         {
-            var response = await client.SendAsync(accountIdRequest);
-            DebugText.Add("Sending Account Id Request. Status code: " + response.StatusCode);
-            accountId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
-            if (accountId.Any(x => x != '0' && x != '-'))
-                DebugText.Add("Got a valid account id");
-            else
-                DebugText.Add("Invalid account id");
+            string accountId = await GetAccountId();
+            string sessionId = await GetSessionId(accountId);
+            string response = await GetApiResponse(sessionId);
+
+            DebugText.Add("Attempting to deserialize");
+            var data = JsonSerializer.Deserialize<List<DexcomResult>>(response)!.First();
+            DebugText.Add("Deserialized");
+
+            glucoseResult = MapToResult(data);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Issue getting account id");
+            _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
             if (_options.CurrentValue.IsDebugMode)
-                DebugService.ShowDebugAlert(ex, "DexCom account id fetch", string.Join(Environment.NewLine, DebugText));
-            throw;
-        }
-        finally
-        {
-            accountIdRequest.Dispose();
+                DebugService.ShowDebugAlert(ex, "Dexcom result fetch", string.Join(Environment.NewLine, DebugText));
+
+            glucoseResult = GlucoseResult.Default;
         }
 
-        // Get Session Id
+        return glucoseResult;
+    }
+
+    private GlucoseResult MapToResult(DexcomResult data)
+    {
+        GlucoseResult result = new();
+
+        var unixTime = string.Join("", data.ST.Where(char.IsDigit));
+        var trend = data.Trend;
+
+        GlucoseMath.CalculateValues(result, data.Value, _options.CurrentValue);
+        result.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
+        result.Trend = trend.GetTrend();
+        result.Source = FetchMethod.DexcomShare;
+        return result;
+    }
+
+    private async Task<string> GetApiResponse(string sessionId)
+    {
+        var url = _urlBuilder.BuildDexComGlucoseValueUrl(sessionId);
+        var result = await _externalAdapter.PostApiResponseAsync(url);
+        return result;
+    }
+
+    private async Task<string> GetSessionId(string accountId)
+    {
         var sessionIdRequestJson = JsonSerializer.Serialize(new
         {
             accountId = accountId,
@@ -83,52 +89,43 @@ public class DexcomService : IDexcomService
         });
 
         var sessionUrl = _urlBuilder.BuildDexComSessionUrl();
-        var request = new HttpRequestMessage(HttpMethod.Post, new Uri(sessionUrl))
-        {
-            Content = new StringContent(sessionIdRequestJson, Encoding.UTF8, "application/json")
-        };
 
-        GlucoseResult fetchResult = new();
-        try
-        {
-            var response = await client.SendAsync(request);
-            DebugText.Add("Sending Session Id Request. Status code: " + response.StatusCode);
-            var sessionId = (await response.Content.ReadAsStringAsync()).Replace("\"", "");
-            if (accountId.Any(x => x != '0' && x != '-'))
-                DebugText.Add("Got a valid session id");
-            else
-                DebugText.Add("Invalid session id");
+        var result = await _externalAdapter.PostApiResponseAsync(sessionUrl, sessionIdRequestJson);
+        var sessionId = result.Replace("\"", "");
 
-            var url = _urlBuilder.BuildDexComGlucoseValueUrl(sessionId);
-            request = new HttpRequestMessage(HttpMethod.Post, new Uri(url));
-            var initialResult = await client.SendAsync(request);
-            DebugText.Add("Sending Gluocse Event Request. Status code: " + initialResult.StatusCode);
-            var stringResult = await initialResult.Content.ReadAsStringAsync();
-            DebugText.Add("Result: " + stringResult);
-            DebugText.Add("Attempting to deserialize");
-            var result = JsonSerializer.Deserialize<List<DexcomResult>>(stringResult)!.First();
-            DebugText.Add("Deserialized");
-            var unixTime = string.Join("", result.ST.Where(char.IsDigit));
-            var trend = result.Trend;
-
-            GlucoseMath.CalculateValues(fetchResult, result.Value, _options.CurrentValue);
-            fetchResult.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
-            fetchResult.Trend = trend.GetTrend();
-            fetchResult.Source = FetchMethod.DexcomShare;
-            response.Dispose();
-        }
-        catch (Exception ex)
+        if (sessionId.Any(x => x != '0' && x != '-'))
+            DebugText.Add("Got a valid session id");
+        else
         {
-            _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
-            if (_options.CurrentValue.IsDebugMode)
-                DebugService.ShowDebugAlert(ex, "DexCom result fetch", string.Join(Environment.NewLine, DebugText));
-            fetchResult = GlucoseResult.Default;
-        }
-        finally
-        {
-            request.Dispose();
+            DebugText.Add("Invalid session id");
+            throw new InvalidOperationException("Invalid session id");
         }
 
-        return fetchResult;
+        return sessionId;
+    }
+
+    private async Task<string> GetAccountId()
+    {
+        var accountIdRequestJson = JsonSerializer.Serialize(new
+        {
+            accountName = _options.CurrentValue.DexcomUsername,
+            applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
+            password = _options.CurrentValue.DexcomPassword
+        });
+
+        var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();
+
+        var result = await _externalAdapter.PostApiResponseAsync(accountUrl, accountIdRequestJson);
+        var accountId = result.Replace("\"", "");
+
+        if (accountId.Any(x => x != '0' && x != '-'))
+            DebugText.Add("Got a valid account id");
+        else
+        {
+            DebugText.Add("Invalid account id");
+            throw new InvalidOperationException("Invalid account id");
+        }
+
+        return accountId;
     }
 }

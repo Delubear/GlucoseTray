@@ -51,6 +51,7 @@ public class Program
                 .AddScoped<INightscoutService, NightscoutService>()
                 .AddScoped<IDexcomService, DexcomService>()
                 .AddScoped<AlertService, AlertService>()
+                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
     }
 

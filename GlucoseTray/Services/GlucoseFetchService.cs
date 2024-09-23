@@ -11,11 +11,11 @@ public interface IGlucoseFetchService
 public class GlucoseFetchService : IGlucoseFetchService
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-    private readonly ILogger<IGlucoseFetchService> _logger;
+    private readonly ILogger<GlucoseFetchService> _logger;
     private readonly IDexcomService _dexcomService;
     private readonly INightscoutService _nightscoutService;
 
-    public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<IGlucoseFetchService> logger, IDexcomService dexcomService, INightscoutService nightscoutService)
+    public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<GlucoseFetchService> logger, IDexcomService dexcomService, INightscoutService nightscoutService)
     {
         _logger = logger;
         _options = options;
