@@ -46,7 +46,7 @@ public class Program
                 .AddScoped<AppContext, AppContext>()
                 .AddScoped<IconService, IconService>()
                 .AddScoped<UrlAssembler, UrlAssembler>()
-                .AddScoped<UiService, UiService>()
+                .AddScoped<IUiService, UiService>()
                 .AddScoped<TaskSchedulerService, TaskSchedulerService>()
                 .AddScoped<INightscoutService, NightscoutService>()
                 .AddScoped<IDexcomService, DexcomService>()

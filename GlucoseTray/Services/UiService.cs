@@ -7,7 +7,15 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
-public class UiService
+public interface IUiService
+{
+    void ShowErrorAlert(string messageBoxText, string caption);
+    NotifyIcon InitializeTrayIcon(EventHandler exitEvent);
+    void CreateIcon(GlucoseResult glucoseResult);
+    void ShowAlert(string alertName);
+}
+
+public class UiService : IUiService
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
     private readonly ILogger<UiService> _logger;
@@ -23,6 +31,11 @@ public class UiService
         _logger = logger;
         _taskScheduler = taskScheduler;
         _iconService = iconService;
+    }
+
+    public void ShowErrorAlert(string messageBoxText, string caption)
+    {
+        MessageBox.Show(messageBoxText, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     public NotifyIcon InitializeTrayIcon(EventHandler exitEvent)

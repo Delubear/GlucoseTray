@@ -2,7 +2,6 @@
 
 public class GlucoseResult
 {
-    public int Id { get; set; }
     public int MgValue { get; set; }
     public double MmolValue { get; set; }
     public DateTime DateTimeUTC { get; set; }

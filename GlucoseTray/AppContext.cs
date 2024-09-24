@@ -10,10 +10,10 @@ public class AppContext : ApplicationContext
     private readonly IOptionsMonitor<GlucoseTraySettings> _options;
     private readonly IGlucoseFetchService _fetchService;
     private readonly NotifyIcon _trayIcon;
-    private readonly UiService _uiService;
+    private readonly IUiService _uiService;
     private readonly AlertService _alertService;
 
-    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, UiService uiService, AlertService alertService)
+    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, IUiService uiService, AlertService alertService)
     {
         _logger = logger;
         _fetchService = fetchService;

@@ -3,17 +3,11 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
-public class AlertService
+public class AlertService(IOptionsMonitor<GlucoseTraySettings> options, IUiService uiService)
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-    private readonly UiService _uiService;
+    private readonly IOptionsMonitor<GlucoseTraySettings> _options = options;
+    private readonly IUiService _uiService = uiService;
     private AlertLevel _currentAlertLevel = AlertLevel.None;
-
-    public AlertService(IOptionsMonitor<GlucoseTraySettings> options, UiService uiService)
-    {
-        _options = options;
-        _uiService = uiService;
-    }
 
     public void AlertNotification(GlucoseResult? currentGlucoseResult)
     {
