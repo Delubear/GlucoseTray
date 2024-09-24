@@ -38,4 +38,10 @@
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
     <PackageReference Include="TaskScheduler" Version="2.11.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
