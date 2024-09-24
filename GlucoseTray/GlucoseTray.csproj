@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <None Update="Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>

@@ -33,7 +33,7 @@ jobs:
         # Whether or not to skip the build using the '--no-build' flag (defaults to true).
         skip-build: true # optional, default is true
     - name: Publish
-      run: dotnet publish --configuration Release --no-restore  -p:PublishProfile=PublishToSingleSelfContainedExe
+      run: dotnet publish --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: read JSON property
       id: version
       uses: notiz-dev/github-action-json-property@release
