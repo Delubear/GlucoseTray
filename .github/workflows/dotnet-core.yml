@@ -10,9 +10,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4.1.7
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4.0.1
       with:
         dotnet-version: 8.x
     - name: Install dependencies
@@ -43,7 +43,7 @@ jobs:
         # which property to read
         prop_path: appsettings.Version
     - name: Create Release
-      uses: ncipollo/release-action@v1.7.1
+      uses: ncipollo/release-action@v1.14.0
       with:
         # An optional flag which indicates if we should update a release if it already exists. Defaults to false.
         allowUpdates: true
