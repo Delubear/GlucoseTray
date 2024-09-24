@@ -36,7 +36,7 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: read JSON property
       id: version
-      uses: notiz-dev/github-action-json-property@release
+      uses: notiz-dev/github-action-json-property@v0.2.0
       with:
         # path to json file
         path: ./GlucoseTray/appsettings.json
