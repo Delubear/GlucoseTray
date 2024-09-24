@@ -12,9 +12,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4.1.7
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4.0.1
       with:
         dotnet-version: 8.x
     - name: Install dependencies
@@ -38,7 +38,7 @@ jobs:
       run: dotnet publish --configuration Release --no-restore
     - name: read JSON property
       id: version
-      uses: notiz-dev/github-action-json-property@release
+      uses: notiz-dev/github-action-json-property@v0.2.0
       with:
         # path to json file
         path: ./GlucoseTray/appsettings.json
