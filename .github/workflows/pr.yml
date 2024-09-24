@@ -21,6 +21,19 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Dotnet Tests
+      # You may pin to the exact commit or the version.
+      # uses: EasyDesk/action-dotnet-test@228a60327933ff6200594e89a6fa906a69e5f1e6
+      uses: EasyDesk/action-dotnet-test@v1.0.0
+      with:
+        # Additional arguments to pass to 'dotnet test'.
+        #test-args: # optional
+        # The build configuration to use (defaults to 'Release').
+        #build-configuration: # optional, default is Release
+        # The path to the project or solution to test (defaults to the current directory).
+        #path: # optional, default is .
+        # Whether or not to skip the build using the '--no-build' flag (defaults to true).
+        skip-build: true # optional, default is true
     - name: Publish
       run: dotnet publish --configuration Release --no-restore
     - name: read JSON property
