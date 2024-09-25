@@ -1,18 +1,18 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.Enums;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.FetchResults;
 
-internal static class GlucoseMath
+public static class GlucoseMath
 {
     private static bool IsCriticalLow(GlucoseResult result, ISettingsProxy currentSettings)
     {
         if (result.MmolValue == 0) // Don't treat a zero / null / default result as critical low.
             return false;
-        return (currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg)
-            || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
+        return currentSettings.GlucoseUnit == GlucoseUnitType.MMOL && result.MmolValue <= currentSettings.CriticalLowBg
+            || currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg;
     }
 
-    internal static void CalculateValues(GlucoseResult result, double value, ISettingsProxy currentSettings)
+    public static void CalculateValues(GlucoseResult result, double value, ISettingsProxy currentSettings)
     {
         if (value == 0)
         {

@@ -1,4 +1,4 @@
-﻿namespace GlucoseTray.Models;
+﻿namespace GlucoseTray.Domain.FetchResults;
 
 /// <summary>
 /// Class that maps to the JSON received from DexCom queries.

@@ -1,4 +1,6 @@
-﻿namespace GlucoseTray.Services;
+﻿using GlucoseTray.Domain.DisplayResults;
+
+namespace GlucoseTray.Domain.FetchResults;
 
 public class DebugService(IUiService uiService)
 {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using GlucoseTray.Domain.Enums;
+using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace GlucoseTray.Settings;

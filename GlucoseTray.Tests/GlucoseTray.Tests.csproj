@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GlucoseTray.Domain\GlucoseTray.Domain.csproj" />
     <ProjectReference Include="..\GlucoseTray\GlucoseTray.csproj" />
   </ItemGroup>
 

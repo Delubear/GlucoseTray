@@ -1,31 +1,23 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Text.Json;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.FetchResults;
 
 public interface INightscoutService
 {
     Task<GlucoseResult> GetLatestReadingAsync();
 }
 
-public class NightscoutService : INightscoutService
+public class NightscoutService(ISettingsProxy options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug) : INightscoutService
 {
-    private readonly ISettingsProxy _options;
-    private readonly ILogger _logger;
-    private readonly UrlAssembler _urlBuilder;
-    private readonly IExternalCommunicationAdapter _externalAdapter;
-    private readonly DebugService _debug;
-
-    public NightscoutService(ISettingsProxy options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
-    {
-        _options = options;
-        _logger = logger;
-        _urlBuilder = urlBuilder;
-        _externalAdapter = externalAdapter;
-        _debug = debug;
-    }
+    private readonly ISettingsProxy _options = options;
+    private readonly ILogger _logger = logger;
+    private readonly UrlAssembler _urlBuilder = urlBuilder;
+    private readonly IExternalCommunicationAdapter _externalAdapter = externalAdapter;
+    private readonly DebugService _debug = debug;
 
     public async Task<GlucoseResult> GetLatestReadingAsync()
     {

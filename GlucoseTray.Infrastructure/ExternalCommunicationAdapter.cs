@@ -1,17 +1,11 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.FetchResults;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace GlucoseTray.Services
+namespace GlucoseTray.Infrastructure
 {
-    public interface IExternalCommunicationAdapter
-    {
-        Task<string> PostApiResponseAsync(string url, string? content = null);
-        Task<string> GetApiResponseAsync(string url, string? content = null);
-    }
-
     public class ExternalCommunicationAdapter : IExternalCommunicationAdapter
     {
         private readonly IHttpClientFactory _httpClientFactory;

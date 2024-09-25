@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace GlucoseTray.Enums;
+namespace GlucoseTray.Domain.Enums;
 
 public enum DexcomServerLocation
 {

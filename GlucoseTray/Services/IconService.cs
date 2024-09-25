@@ -1,4 +1,6 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -6,7 +8,7 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
-public class IconService
+public class IconService : IIconService
 {
     private readonly ILogger<IconService> _logger;
     private readonly ISettingsProxy _options;
@@ -21,9 +23,9 @@ public class IconService
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern bool DestroyIcon(IntPtr handle);
+    private static extern bool DestroyIcon(nint handle);
 
-    public static void DestroyMyIcon(IntPtr handle) => DestroyIcon(handle);
+    public static void DestroyMyIcon(nint handle) => DestroyIcon(handle);
 
     public Brush SetColor(double val)
     {

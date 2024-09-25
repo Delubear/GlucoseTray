@@ -1,6 +1,6 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.Enums;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.DisplayResults;
 
 public class AlertService(ISettingsProxy options, IUiService uiService)
 {

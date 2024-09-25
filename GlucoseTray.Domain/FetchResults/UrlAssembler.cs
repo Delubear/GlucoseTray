@@ -1,15 +1,10 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.Enums;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.FetchResults;
 
-public class UrlAssembler
+public class UrlAssembler(ISettingsProxy options)
 {
-    private readonly ISettingsProxy _options;
-
-    public UrlAssembler(ISettingsProxy options)
-    {
-        _options = options;
-    }
+    private readonly ISettingsProxy _options = options;
 
     public string BuildNightscoutUrl()
     {

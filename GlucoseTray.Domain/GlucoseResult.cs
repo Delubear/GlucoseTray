@@ -1,4 +1,6 @@
-﻿namespace GlucoseTray.Models;
+﻿using GlucoseTray.Domain.Enums;
+
+namespace GlucoseTray.Domain;
 
 public class GlucoseResult
 {

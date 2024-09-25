@@ -1,4 +1,8 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.FetchResults;
+using GlucoseTray.Infrastructure;
+using GlucoseTray.Settings;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,10 +49,10 @@ public class Program
         services.Configure<GlucoseTraySettings>(Configuration)
                 .AddHttpClient()
                 .AddScoped<AppContext, AppContext>()
-                .AddScoped<IconService, IconService>()
+                .AddScoped<IIconService, IconService>()
                 .AddScoped<UrlAssembler, UrlAssembler>()
                 .AddScoped<IUiService, UiService>()
-                .AddScoped<TaskSchedulerService, TaskSchedulerService>()
+                .AddScoped<ITaskSchedulerService, TaskSchedulerService>()
                 .AddScoped<INightscoutService, NightscoutService>()
                 .AddScoped<IDexcomService, DexcomService>()
                 .AddScoped<AlertService, AlertService>()

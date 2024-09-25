@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using GlucoseTray.Domain.Enums;
 using GlucoseTray.Settings;
 
 namespace GlucoseTray.Services;

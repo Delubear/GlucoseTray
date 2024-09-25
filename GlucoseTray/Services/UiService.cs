@@ -1,4 +1,5 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -7,28 +8,19 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
-public interface IUiService
-{
-    void ShowErrorAlert(string messageBoxText, string caption);
-    NotifyIcon InitializeTrayIcon(EventHandler exitEvent);
-    void CreateIcon(GlucoseResult glucoseResult);
-    void ShowAlert(string alertName);
-    void ShowCriticalAlert(string alertText, string alertName);
-}
-
-public class UiService(ISettingsProxy options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService) : IUiService
+public class UiService(ISettingsProxy options, ILogger<UiService> logger, ITaskSchedulerService taskScheduler, IIconService iconService) : IUiService
 {
     private readonly ISettingsProxy _options = options;
     private readonly ILogger<UiService> _logger = logger;
-    private readonly TaskSchedulerService _taskScheduler = taskScheduler;
-    private readonly IconService _iconService = iconService;
+    private readonly ITaskSchedulerService _taskScheduler = taskScheduler;
+    private readonly IIconService _iconService = iconService;
     private bool SettingsFormIsOpen;
     private GlucoseResult _currentGlucoseResult = new();
     private NotifyIcon _trayIcon = new();
 
     public void ShowErrorAlert(string messageBoxText, string caption) => MessageBox.Show(messageBoxText, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-    public NotifyIcon InitializeTrayIcon(EventHandler exitEvent)
+    public void InitializeTrayIcon(EventHandler exitEvent)
     {
         _trayIcon = new NotifyIcon()
         {
@@ -37,7 +29,12 @@ public class UiService(ISettingsProxy options, ILogger<UiService> logger, TaskSc
         };
         PopulateContextMenu(exitEvent);
         _trayIcon.DoubleClick += ShowBalloon;
-        return _trayIcon;
+    }
+
+    public void DisposeTrayIcon()
+    {
+        _trayIcon.Visible = false;
+        _trayIcon.Dispose();
     }
 
     public void CreateIcon(GlucoseResult glucoseResult)

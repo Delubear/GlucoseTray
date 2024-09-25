@@ -1,4 +1,4 @@
-﻿namespace GlucoseTray.Enums;
+﻿namespace GlucoseTray.Domain.Enums;
 
 public enum AlertLevel
 {

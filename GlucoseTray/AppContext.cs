@@ -1,4 +1,6 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.FetchResults;
 using Microsoft.Extensions.Logging;
 using System.Windows.Forms;
 
@@ -9,7 +11,6 @@ public class AppContext : ApplicationContext
     private readonly ILogger<AppContext> _logger;
     private readonly ISettingsProxy _options;
     private readonly IGlucoseFetchService _fetchService;
-    private readonly NotifyIcon _trayIcon;
     private readonly IUiService _uiService;
     private readonly AlertService _alertService;
 
@@ -21,7 +22,7 @@ public class AppContext : ApplicationContext
         _uiService = uiService;
         _alertService = alertService;
 
-        _trayIcon = _uiService.InitializeTrayIcon(new EventHandler(Exit));
+        _uiService.InitializeTrayIcon(new EventHandler(Exit));
         BeginCycle();
     }
 
@@ -43,8 +44,7 @@ public class AppContext : ApplicationContext
             {
                 _uiService.ShowErrorAlert($"ERROR: {e}", "ERROR");
                 _logger.LogError(e, "An error occurred while fetching the latest glucose readings.");
-                _trayIcon.Visible = false;
-                _trayIcon.Dispose();
+                _uiService.DisposeTrayIcon();
                 Environment.Exit(0);
             }
         }
@@ -53,8 +53,7 @@ public class AppContext : ApplicationContext
     private void Exit(object? sender, EventArgs e)
     {
         _logger.LogInformation("Exiting application.");
-        _trayIcon.Visible = false;
-        _trayIcon.Dispose();
+        _uiService.DisposeTrayIcon();
         Application.ExitThread();
         Application.Exit();
     }

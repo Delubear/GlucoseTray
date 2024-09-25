@@ -1,9 +1,10 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Text.Json;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.FetchResults;
 
 public interface IDexcomService
 {
@@ -84,7 +85,7 @@ public class DexcomService : IDexcomService
     {
         var sessionIdRequestJson = JsonSerializer.Serialize(new
         {
-            accountId = accountId,
+            accountId,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
             password = _options.DexcomPassword
         });

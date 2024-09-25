@@ -1,9 +1,9 @@
-﻿using Microsoft.Win32.TaskScheduler;
-using System.IO;
+﻿using GlucoseTray.Domain;
+using Microsoft.Win32.TaskScheduler;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Infrastructure;
 
-public class TaskSchedulerService
+public class TaskSchedulerService : ITaskSchedulerService
 {
     private readonly string ExecutablePath = "\"" + Environment.ProcessPath + "\"";
     private readonly string TaskName = "GlucoseTray-" + Environment.UserName;

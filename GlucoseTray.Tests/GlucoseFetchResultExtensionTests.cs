@@ -1,6 +1,7 @@
-using GlucoseTray.Enums;
-using GlucoseTray.Extensions;
-using GlucoseTray.Models;
+using GlucoseTray.Domain;
+using GlucoseTray.Domain.Enums;
+using GlucoseTray.Domain.FetchResults;
+using GlucoseTray.Domain.DisplayResults;
 
 namespace GlucoseTray.Tests;
 

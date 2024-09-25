@@ -1,7 +1,7 @@
-﻿using GlucoseTray.Settings;
+﻿using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Domain.FetchResults;
 
 public interface IGlucoseFetchService
 {

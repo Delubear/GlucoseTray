@@ -36,7 +36,11 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
-    <PackageReference Include="TaskScheduler" Version="2.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GlucoseTray.Domain\GlucoseTray.Domain.csproj" />
+    <ProjectReference Include="..\GlucoseTray.Infrastructure\GlucoseTray.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

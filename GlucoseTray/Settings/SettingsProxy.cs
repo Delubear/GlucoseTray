@@ -1,4 +1,6 @@
 ﻿
+using GlucoseTray.Domain;
+using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Settings;
