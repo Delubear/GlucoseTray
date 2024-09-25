@@ -13,30 +13,20 @@ public interface IUiService
     NotifyIcon InitializeTrayIcon(EventHandler exitEvent);
     void CreateIcon(GlucoseResult glucoseResult);
     void ShowAlert(string alertName);
+    void ShowCriticalAlert(string alertText, string alertName);
 }
 
-public class UiService : IUiService
+public class UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService) : IUiService
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
-    private readonly ILogger<UiService> _logger;
-    private readonly TaskSchedulerService _taskScheduler;
-    private readonly IconService _iconService;
+    private readonly IOptionsMonitor<GlucoseTraySettings> _options = options;
+    private readonly ILogger<UiService> _logger = logger;
+    private readonly TaskSchedulerService _taskScheduler = taskScheduler;
+    private readonly IconService _iconService = iconService;
     private bool SettingsFormIsOpen;
     private GlucoseResult _currentGlucoseResult = new();
     private NotifyIcon _trayIcon = new();
 
-    public UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService)
-    {
-        _options = options;
-        _logger = logger;
-        _taskScheduler = taskScheduler;
-        _iconService = iconService;
-    }
-
-    public void ShowErrorAlert(string messageBoxText, string caption)
-    {
-        MessageBox.Show(messageBoxText, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-    }
+    public void ShowErrorAlert(string messageBoxText, string caption) => MessageBox.Show(messageBoxText, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
     public NotifyIcon InitializeTrayIcon(EventHandler exitEvent)
     {
@@ -58,6 +48,8 @@ public class UiService : IUiService
     }
 
     public void ShowAlert(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
+
+    public void ShowCriticalAlert(string alertText, string alertName) => MessageBox.Show(alertText, alertName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
 

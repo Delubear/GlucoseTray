@@ -33,7 +33,7 @@ public class AppContext : ApplicationContext
             {
                 Application.DoEvents();
 
-                var currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
+                GlucoseResult currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
                 _uiService.CreateIcon(currentGlucoseResult);
                 _alertService.AlertNotification(currentGlucoseResult);
 
@@ -41,7 +41,7 @@ public class AppContext : ApplicationContext
             }
             catch (Exception e)
             {
-                MessageBox.Show($"ERROR: {e}", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _uiService.ShowErrorAlert($"ERROR: {e}", "ERROR");
                 _logger.LogError(e, "An error occurred while fetching the latest glucose readings.");
                 _trayIcon.Visible = false;
                 _trayIcon.Dispose();

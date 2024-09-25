@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Windows.Forms;
 
 namespace GlucoseTray.Services;
 
@@ -9,9 +8,9 @@ public class AlertService(IOptionsMonitor<GlucoseTraySettings> options, IUiServi
     private readonly IUiService _uiService = uiService;
     private AlertLevel _currentAlertLevel = AlertLevel.None;
 
-    public void AlertNotification(GlucoseResult? currentGlucoseResult)
+    public void AlertNotification(GlucoseResult currentGlucoseResult)
     {
-        if (currentGlucoseResult?.IsStale(_options.CurrentValue.StaleResultsThreshold) != false)
+        if (currentGlucoseResult.IsStale(_options.CurrentValue.StaleResultsThreshold))
             return;
 
         var highAlertTriggered = _options.CurrentValue.HighAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.HighBg, UpDown.Down);
@@ -38,7 +37,7 @@ public class AlertService(IOptionsMonitor<GlucoseTraySettings> options, IUiServi
         if (criticalLowAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.CriticalLow)
-                MessageBox.Show("Critical Low Glucose Alert", "Critical Low Glucose Alert", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                _uiService.ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
             _currentAlertLevel = AlertLevel.CriticalLow;
             return;
         }
