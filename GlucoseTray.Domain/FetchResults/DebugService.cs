@@ -2,10 +2,10 @@
 
 namespace GlucoseTray.Domain.FetchResults;
 
-public class DebugService(IUiService uiService)
+public class DebugService(IDialogService uiService)
 {
     private readonly List<string> DebugText = [];
-    private readonly IUiService _uiService = uiService;
+    private readonly IDialogService _uiService = uiService;
 
     public void AddDebugText(string text) => DebugText.Add(text);
 

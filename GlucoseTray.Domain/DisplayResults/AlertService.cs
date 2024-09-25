@@ -2,10 +2,11 @@
 
 namespace GlucoseTray.Domain.DisplayResults;
 
-public class AlertService(ISettingsProxy options, IUiService uiService)
+public class AlertService(ISettingsProxy options, IIconService iconService, IDialogService dialogService)
 {
     private readonly ISettingsProxy _options = options;
-    private readonly IUiService _uiService = uiService;
+    private readonly IIconService _uiService = iconService;
+    private readonly IDialogService _dialogService = dialogService;
     private AlertLevel _currentAlertLevel = AlertLevel.None;
 
     public void AlertNotification(GlucoseResult currentGlucoseResult)
@@ -37,7 +38,7 @@ public class AlertService(ISettingsProxy options, IUiService uiService)
         if (criticalLowAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.CriticalLow)
-                _uiService.ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
+                _dialogService.ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
             _currentAlertLevel = AlertLevel.CriticalLow;
             return;
         }

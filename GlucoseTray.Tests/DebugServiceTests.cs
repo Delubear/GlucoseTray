@@ -10,7 +10,7 @@ public class DebugServiceTests
     public void AddDebugText_Should_AddText()
     {
         // Arrange
-        var mockUiService = Substitute.For<IUiService>();
+        var mockUiService = Substitute.For<IDialogService>();
         var debugService = new DebugService(mockUiService);
         var text = "Test";
 
@@ -26,7 +26,7 @@ public class DebugServiceTests
     public void ClearDebugText_Should_ClearText()
     {
         // Arrange
-        var mockUiService = Substitute.For<IUiService>();
+        var mockUiService = Substitute.For<IDialogService>();
         var debugService = new DebugService(mockUiService);
         var text = "Test";
 
@@ -43,7 +43,7 @@ public class DebugServiceTests
     public void ShowDebugAlert_Should_ShowAlert()
     {
         // Arrange
-        var mockUiService = Substitute.For<IUiService>();
+        var mockUiService = Substitute.For<IDialogService>();
         var debugService = new DebugService(mockUiService);
 
         // Act

@@ -1,8 +1,5 @@
 ﻿
-using GlucoseTray.Models;
-using GlucoseTray.Services;
 using NSubstitute;
-using GlucoseTray.Settings;
 using GlucoseTray.Domain.Enums;
 using GlucoseTray.Domain;
 using GlucoseTray.Domain.DisplayResults;
@@ -24,8 +21,9 @@ public class AlertServiceTests
         options.HighBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = mgValue,
@@ -37,7 +35,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.Received().ShowAlert("High Glucose Alert");
+        iconService.Received().ShowAlert("High Glucose Alert");
     }
 
     [Test]
@@ -53,8 +51,9 @@ public class AlertServiceTests
         options.WarningHighBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = mgValue,
@@ -66,7 +65,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.Received().ShowAlert("Warning High Glucose Alert");
+        iconService.Received().ShowAlert("Warning High Glucose Alert");
     }
 
     [Test]
@@ -82,8 +81,9 @@ public class AlertServiceTests
         options.CriticalLowBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = mgValue,
@@ -95,7 +95,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.Received().ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
+        dialogService.Received().ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
     }
 
     [Test]
@@ -112,8 +112,9 @@ public class AlertServiceTests
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
 
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = mgValue,
@@ -125,7 +126,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.Received().ShowAlert("Low Glucose Alert");
+        iconService.Received().ShowAlert("Low Glucose Alert");
     }
 
     [Test]
@@ -141,8 +142,9 @@ public class AlertServiceTests
         options.WarningLowBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = mgValue,
@@ -154,7 +156,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.Received().ShowAlert("Warning Low Glucose Alert");
+        iconService.Received().ShowAlert("Warning Low Glucose Alert");
     }
 
     [Test]
@@ -166,8 +168,9 @@ public class AlertServiceTests
         options.HighBg.Returns(200);
         options.GlucoseUnit.Returns(GlucoseUnitType.MG);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = 100,
@@ -179,8 +182,8 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.DidNotReceive().ShowAlert(Arg.Any<string>());
-        uiService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
+        iconService.DidNotReceive().ShowAlert(Arg.Any<string>());
+        dialogService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
     }
 
     [Test]
@@ -192,8 +195,9 @@ public class AlertServiceTests
         options.HighBg.Returns(200);
         options.GlucoseUnit.Returns(GlucoseUnitType.MG);
         options.StaleResultsThreshold.Returns(15);
-        var uiService = Substitute.For<IUiService>();
-        var alertService = new AlertService(options, uiService);
+        var dialogService = Substitute.For<IDialogService>();
+        var iconService = Substitute.For<IIconService>();
+        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = new GlucoseResult
         {
             MgValue = 400,
@@ -205,7 +209,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        uiService.DidNotReceive().ShowAlert(Arg.Any<string>());
-        uiService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
+        iconService.DidNotReceive().ShowAlert(Arg.Any<string>());
+        dialogService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
     }
 }
