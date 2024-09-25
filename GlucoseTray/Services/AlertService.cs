@@ -1,23 +1,23 @@
-﻿using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
 
 namespace GlucoseTray.Services;
 
-public class AlertService(IOptionsMonitor<GlucoseTraySettings> options, IUiService uiService)
+public class AlertService(ISettingsProxy options, IUiService uiService)
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options = options;
+    private readonly ISettingsProxy _options = options;
     private readonly IUiService _uiService = uiService;
     private AlertLevel _currentAlertLevel = AlertLevel.None;
 
     public void AlertNotification(GlucoseResult currentGlucoseResult)
     {
-        if (currentGlucoseResult.IsStale(_options.CurrentValue.StaleResultsThreshold))
+        if (currentGlucoseResult.IsStale(_options.StaleResultsThreshold))
             return;
 
-        var highAlertTriggered = _options.CurrentValue.HighAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.HighBg, UpDown.Down);
-        var warningHighAlertTriggered = _options.CurrentValue.WarningHighAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.WarningHighBg, UpDown.Down);
-        var warningLowAlertTriggered = _options.CurrentValue.WarningLowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.WarningLowBg, UpDown.Up);
-        var lowAlertTriggered = _options.CurrentValue.LowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.LowBg, UpDown.Up);
-        var criticalLowAlertTriggered = _options.CurrentValue.CriticallyLowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CurrentValue.CriticalLowBg, UpDown.Up);
+        var highAlertTriggered = _options.HighAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.HighBg, UpDown.Down);
+        var warningHighAlertTriggered = _options.WarningHighAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.WarningHighBg, UpDown.Down);
+        var warningLowAlertTriggered = _options.WarningLowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.WarningLowBg, UpDown.Up);
+        var lowAlertTriggered = _options.LowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.LowBg, UpDown.Up);
+        var criticalLowAlertTriggered = _options.CriticalLowAlert && IsAlertTriggered(currentGlucoseResult.MgValue, currentGlucoseResult.MmolValue, _options.CriticalLowBg, UpDown.Up);
 
         // Order matters. We need to show the most severe alert while avoid multiple alerts. (High > warning high.  Critical > low > warning low)
         if (highAlertTriggered)
@@ -62,7 +62,7 @@ public class AlertService(IOptionsMonitor<GlucoseTraySettings> options, IUiServi
     {
         if (glucoseValueMMOL == 0) // If a null / default result is returned, do not trigger alerts.
             return false;
-        if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG)
+        if (_options.GlucoseUnit == GlucoseUnitType.MG)
         {
             if (directionGlucoseShouldBeToNotAlert == UpDown.Down)
                 return glucoseValueMG >= alertThreshold;

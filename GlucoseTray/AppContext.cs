@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 using System.Windows.Forms;
 
 namespace GlucoseTray;
@@ -7,13 +7,13 @@ namespace GlucoseTray;
 public class AppContext : ApplicationContext
 {
     private readonly ILogger<AppContext> _logger;
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
     private readonly IGlucoseFetchService _fetchService;
     private readonly NotifyIcon _trayIcon;
     private readonly IUiService _uiService;
     private readonly AlertService _alertService;
 
-    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, IOptionsMonitor<GlucoseTraySettings> options, IUiService uiService, AlertService alertService)
+    public AppContext(ILogger<AppContext> logger, IGlucoseFetchService fetchService, ISettingsProxy options, IUiService uiService, AlertService alertService)
     {
         _logger = logger;
         _fetchService = fetchService;
@@ -37,7 +37,7 @@ public class AppContext : ApplicationContext
                 _uiService.CreateIcon(currentGlucoseResult);
                 _alertService.AlertNotification(currentGlucoseResult);
 
-                await Task.Delay(_options.CurrentValue.PollingThresholdTimeSpan);
+                await Task.Delay(_options.PollingThresholdTimeSpan);
             }
             catch (Exception e)
             {

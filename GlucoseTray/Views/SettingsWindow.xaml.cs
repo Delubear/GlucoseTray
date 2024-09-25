@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GlucoseTray.Settings;
 
 namespace GlucoseTray.Views.Settings;
 

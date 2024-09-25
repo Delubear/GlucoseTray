@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Text.Json;
 
@@ -12,13 +12,13 @@ public interface INightscoutService
 
 public class NightscoutService : INightscoutService
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
     private readonly ILogger _logger;
     private readonly UrlAssembler _urlBuilder;
     private readonly IExternalCommunicationAdapter _externalAdapter;
     private readonly DebugService _debug;
 
-    public NightscoutService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
+    public NightscoutService(ISettingsProxy options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
     {
         _options = options;
         _logger = logger;
@@ -31,7 +31,7 @@ public class NightscoutService : INightscoutService
     {
         _debug.ClearDebugText();
         _debug.AddDebugText("Starting Nightscout Fetch");
-        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? "Using access token." : "No access token.");
+        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_options.AccessToken) ? "Using access token." : "No access token.");
 
         GlucoseResult result = new();
 
@@ -48,7 +48,7 @@ public class NightscoutService : INightscoutService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
-            if (_options.CurrentValue.IsDebugMode)
+            if (_options.IsDebugMode)
                 _debug.ShowDebugAlert(ex, "Nightscout result fetch");
         }
 
@@ -64,7 +64,7 @@ public class NightscoutService : INightscoutService
             Trend = data.Direction.GetTrend()
         };
 
-        GlucoseMath.CalculateValues(result, data.Sgv, _options.CurrentValue);
+        GlucoseMath.CalculateValues(result, data.Sgv, _options);
 
         if (result.Trend == TrendResult.Unknown)
             _logger.LogWarning("Un-expected value for direction/Trend {Direction}", data.Direction);

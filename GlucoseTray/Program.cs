@@ -1,4 +1,5 @@
-﻿using GlucoseTray.Views.Settings;
+﻿using GlucoseTray.Settings;
+using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -54,6 +55,7 @@ public class Program
                 .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddScoped<DebugService, DebugService>()
                 .AddScoped<ISettingsWindowService, SettingsWindowService>()
+                .AddScoped<ISettingsProxy, SettingsProxy>()
                 .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
     }
 

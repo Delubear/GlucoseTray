@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Text.Json;
 
@@ -12,13 +12,13 @@ public interface IDexcomService
 
 public class DexcomService : IDexcomService
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
     private readonly ILogger _logger;
     private readonly UrlAssembler _urlBuilder;
     private readonly IExternalCommunicationAdapter _externalAdapter;
     private readonly DebugService _debug;
 
-    public DexcomService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
+    public DexcomService(ISettingsProxy options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
     {
         _options = options;
         _logger = logger;
@@ -50,7 +50,7 @@ public class DexcomService : IDexcomService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
-            if (_options.CurrentValue.IsDebugMode)
+            if (_options.IsDebugMode)
                 _debug.ShowDebugAlert(ex, "Dexcom result fetch");
 
             glucoseResult = GlucoseResult.Default;
@@ -66,7 +66,7 @@ public class DexcomService : IDexcomService
         var unixTime = string.Join("", data.ST.Where(char.IsDigit));
         var trend = data.Trend;
 
-        GlucoseMath.CalculateValues(result, data.Value, _options.CurrentValue);
+        GlucoseMath.CalculateValues(result, data.Value, _options);
         result.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
         result.Trend = trend.GetTrend();
         result.Source = FetchMethod.DexcomShare;
@@ -86,7 +86,7 @@ public class DexcomService : IDexcomService
         {
             accountId = accountId,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = _options.CurrentValue.DexcomPassword
+            password = _options.DexcomPassword
         });
 
         var sessionUrl = _urlBuilder.BuildDexComSessionUrl();
@@ -109,9 +109,9 @@ public class DexcomService : IDexcomService
     {
         var accountIdRequestJson = JsonSerializer.Serialize(new
         {
-            accountName = _options.CurrentValue.DexcomUsername,
+            accountName = _options.DexcomUsername,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = _options.CurrentValue.DexcomPassword
+            password = _options.DexcomPassword
         });
 
         var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();

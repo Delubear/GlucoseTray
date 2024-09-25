@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace GlucoseTray;
+namespace GlucoseTray.Settings;
 
 public class GlucoseTraySettings : INotifyPropertyChanged
 {
@@ -145,7 +145,6 @@ public class GlucoseTraySettings : INotifyPropertyChanged
         get => isServerDataUnitTypeMmol; set { isServerDataUnitTypeMmol = value; OnPropertyChanged(nameof(IsServerDataUnitTypeMmol)); }
     }
 
-
     private bool isDebugMode;
     public bool IsDebugMode
     {
@@ -160,16 +159,4 @@ public class GlucoseTraySettings : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-}
-
-public class AppSettings
-{
-    public string Version { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
-}
-
-public class AppSettingsContainer
-{
-    [JsonPropertyName("appsettings")]
-    public AppSettings AppSettings { get; set; } = new AppSettings();
 }

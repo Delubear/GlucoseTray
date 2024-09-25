@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,9 +17,9 @@ namespace GlucoseTray.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly DebugService _debug;
         private readonly ILogger _logger;
-        private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+        private readonly ISettingsProxy _options;
 
-        public ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger, IOptionsMonitor<GlucoseTraySettings> options, DebugService debug)
+        public ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger, ISettingsProxy options, DebugService debug)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
@@ -71,7 +71,7 @@ namespace GlucoseTray.Services
             {
                 _logger.LogError(ex, "Invalid external response.");
                 _debug.AddDebugText("Error with external communication: " + ex.Message);
-                if (_options.CurrentValue.IsDebugMode)
+                if (_options.IsDebugMode)
                     _debug.ShowDebugAlert(ex, "External result fetch");
                 throw;
             }

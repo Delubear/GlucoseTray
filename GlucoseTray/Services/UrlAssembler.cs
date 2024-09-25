@@ -1,24 +1,24 @@
-﻿using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
 
 namespace GlucoseTray.Services;
 
 public class UrlAssembler
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
 
-    public UrlAssembler(IOptionsMonitor<GlucoseTraySettings> options)
+    public UrlAssembler(ISettingsProxy options)
     {
         _options = options;
     }
 
     public string BuildNightscoutUrl()
     {
-        var url = $"{_options.CurrentValue.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
-        url += !string.IsNullOrWhiteSpace(_options.CurrentValue.AccessToken) ? $"&token={_options.CurrentValue.AccessToken}" : string.Empty;
+        var url = $"{_options.NightscoutUrl?.TrimEnd('/')}/api/v1/entries/sgv?count=1";
+        url += !string.IsNullOrWhiteSpace(_options.AccessToken) ? $"&token={_options.AccessToken}" : string.Empty;
         return url;
     }
 
-    public string GetDexComServer() => _options.CurrentValue.DexcomServer switch
+    public string GetDexComServer() => _options.DexcomServer switch
     {
         DexcomServerLocation.DexcomShare1 => "share1.dexcom.com",
         DexcomServerLocation.DexcomShare2 => "share2.dexcom.com",

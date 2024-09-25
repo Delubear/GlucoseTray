@@ -1,8 +1,10 @@
-﻿namespace GlucoseTray.Services;
+﻿using GlucoseTray.Settings;
+
+namespace GlucoseTray.Services;
 
 internal static class GlucoseMath
 {
-    private static bool IsCriticalLow(GlucoseResult result, GlucoseTraySettings currentSettings)
+    private static bool IsCriticalLow(GlucoseResult result, ISettingsProxy currentSettings)
     {
         if (result.MmolValue == 0) // Don't treat a zero / null / default result as critical low.
             return false;
@@ -10,7 +12,7 @@ internal static class GlucoseMath
             || (currentSettings.GlucoseUnit == GlucoseUnitType.MG && result.MgValue <= currentSettings.CriticalLowBg);
     }
 
-    internal static void CalculateValues(GlucoseResult result, double value, GlucoseTraySettings currentSettings)
+    internal static void CalculateValues(GlucoseResult result, double value, ISettingsProxy currentSettings)
     {
         if (value == 0)
         {

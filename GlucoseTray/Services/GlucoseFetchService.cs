@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 
 namespace GlucoseTray.Services;
 
@@ -10,12 +10,12 @@ public interface IGlucoseFetchService
 
 public class GlucoseFetchService : IGlucoseFetchService
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
     private readonly ILogger<GlucoseFetchService> _logger;
     private readonly IDexcomService _dexcomService;
     private readonly INightscoutService _nightscoutService;
 
-    public GlucoseFetchService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<GlucoseFetchService> logger, IDexcomService dexcomService, INightscoutService nightscoutService)
+    public GlucoseFetchService(ISettingsProxy options, ILogger<GlucoseFetchService> logger, IDexcomService dexcomService, INightscoutService nightscoutService)
     {
         _logger = logger;
         _options = options;
@@ -28,7 +28,7 @@ public class GlucoseFetchService : IGlucoseFetchService
         var fetchResult = new GlucoseResult();
         try
         {
-            switch (_options.CurrentValue.FetchMethod)
+            switch (_options.FetchMethod)
             {
                 case FetchMethod.DexcomShare:
                     fetchResult = await _dexcomService.GetLatestReadingAsync();

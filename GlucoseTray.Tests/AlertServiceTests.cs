@@ -2,8 +2,8 @@
 using GlucoseTray.Models;
 using GlucoseTray.Enums;
 using GlucoseTray.Services;
-using Microsoft.Extensions.Options;
 using NSubstitute;
+using GlucoseTray.Settings;
 
 namespace GlucoseTray.Tests;
 
@@ -17,14 +17,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenHighAlertTriggered_ShouldShowHighAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            HighAlert = true,
-            HighBg = alertValue,
-            GlucoseUnit = unitType,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.HighAlert.Returns(true);
+        options.HighBg.Returns(alertValue);
+        options.GlucoseUnit.Returns(unitType);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -49,14 +46,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenWarningHighAlertTriggered_ShouldShowWarningHighAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            WarningHighAlert = true,
-            WarningHighBg = alertValue,
-            GlucoseUnit = unitType,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.WarningHighAlert.Returns(true);
+        options.WarningHighBg.Returns(alertValue);
+        options.GlucoseUnit.Returns(unitType);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -81,14 +75,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenCriticalLowAlertTriggered_ShouldShowCriticalLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            CriticallyLowAlert = true,
-            CriticalLowBg = alertValue,
-            GlucoseUnit = unitType,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.CriticalLowAlert.Returns(true);
+        options.CriticalLowBg.Returns(alertValue);
+        options.GlucoseUnit.Returns(unitType);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -113,14 +104,12 @@ public class AlertServiceTests
     public void AlertNotification_WhenLowAlertTriggered_ShouldShowLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            LowAlert = true,
-            LowBg = alertValue,
-            GlucoseUnit = unitType,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.LowAlert.Returns(true);
+        options.LowBg.Returns(alertValue);
+        options.GlucoseUnit.Returns(unitType);
+        options.StaleResultsThreshold.Returns(15);
+
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -145,14 +134,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenWarningLowAlertTriggered_ShouldShowWarningLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            WarningLowAlert = true,
-            WarningLowBg = alertValue,
-            GlucoseUnit = unitType,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.WarningLowAlert.Returns(true);
+        options.WarningLowBg.Returns(alertValue);
+        options.GlucoseUnit.Returns(unitType);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -173,14 +159,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenNoAlertTriggered_ShouldNotShowAlert()
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            HighAlert = true,
-            HighBg = 200,
-            GlucoseUnit = GlucoseUnitType.MG,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.HighAlert.Returns(true);
+        options.HighBg.Returns(200);
+        options.GlucoseUnit.Returns(GlucoseUnitType.MG);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult
@@ -202,14 +185,11 @@ public class AlertServiceTests
     public void AlertNotification_WhenStale_ShouldNotShowAlert()
     {
         // Arrange
-        var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
-        options.CurrentValue.Returns(new GlucoseTraySettings
-        {
-            HighAlert = true,
-            HighBg = 200,
-            GlucoseUnit = GlucoseUnitType.MG,
-            StaleResultsThreshold = 15,
-        });
+        var options = Substitute.For<ISettingsProxy>();
+        options.HighAlert.Returns(true);
+        options.HighBg.Returns(200);
+        options.GlucoseUnit.Returns(GlucoseUnitType.MG);
+        options.StaleResultsThreshold.Returns(15);
         var uiService = Substitute.For<IUiService>();
         var alertService = new AlertService(options, uiService);
         var glucoseResult = new GlucoseResult

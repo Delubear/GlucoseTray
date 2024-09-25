@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Settings;
+using Microsoft.Extensions.Logging;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,12 +9,12 @@ namespace GlucoseTray.Services;
 public class IconService
 {
     private readonly ILogger<IconService> _logger;
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options;
+    private readonly ISettingsProxy _options;
     private readonly float _standardOffset = -10f;
     private readonly int _defaultFontSize = 40;
     private readonly int _smallerFontSize = 38;
 
-    public IconService(ILogger<IconService> logger, IOptionsMonitor<GlucoseTraySettings> options)
+    public IconService(ILogger<IconService> logger, ISettingsProxy options)
     {
         _logger = logger;
         _options = options;
@@ -27,16 +27,16 @@ public class IconService
 
     public Brush SetColor(double val)
     {
-        if (_options.CurrentValue.IsDarkMode)
+        if (_options.IsDarkMode)
         {
             return val switch
             {
-                double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.White),
-                double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.Yellow),
-                double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.Yellow),
-                double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                double n when n < _options.WarningHighBg && n > _options.WarningLowBg => new SolidBrush(Color.White),
+                double n when n >= _options.WarningHighBg && n < _options.HighBg => new SolidBrush(Color.Yellow),
+                double n when n >= _options.HighBg => new SolidBrush(Color.Red),
+                double n when n <= _options.WarningLowBg && n > _options.LowBg => new SolidBrush(Color.Yellow),
+                double n when n <= _options.LowBg && n > _options.CriticalLowBg => new SolidBrush(Color.Red),
+                double n when n <= _options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
                 _ => new SolidBrush(Color.White),
             };
         }
@@ -46,12 +46,12 @@ public class IconService
             // Need to investigate if it's possible to have a double-wide icon, feasibility of multiple icons, or some other method of making this clearer.
             return val switch
             {
-                double n when n < _options.CurrentValue.WarningHighBg && n > _options.CurrentValue.WarningLowBg => new SolidBrush(Color.Black),
-                double n when n >= _options.CurrentValue.WarningHighBg && n < _options.CurrentValue.HighBg => new SolidBrush(Color.DarkGoldenrod),
-                double n when n >= _options.CurrentValue.HighBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CurrentValue.WarningLowBg && n > _options.CurrentValue.LowBg => new SolidBrush(Color.DarkGoldenrod),
-                double n when n <= _options.CurrentValue.LowBg && n > _options.CurrentValue.CriticalLowBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CurrentValue.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                double n when n < _options.WarningHighBg && n > _options.WarningLowBg => new SolidBrush(Color.Black),
+                double n when n >= _options.WarningHighBg && n < _options.HighBg => new SolidBrush(Color.DarkGoldenrod),
+                double n when n >= _options.HighBg => new SolidBrush(Color.Red),
+                double n when n <= _options.WarningLowBg && n > _options.LowBg => new SolidBrush(Color.DarkGoldenrod),
+                double n when n <= _options.LowBg && n > _options.CriticalLowBg => new SolidBrush(Color.Red),
+                double n when n <= _options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
                 _ => new SolidBrush(Color.Black),
             };
         }
@@ -59,9 +59,9 @@ public class IconService
 
     public void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
     {
-        var glucoseValue = result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
+        var glucoseValue = result.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
-        var isStale = result.IsStale(_options.CurrentValue.StaleResultsThreshold);
+        var isStale = result.IsStale(_options.StaleResultsThreshold);
 
         if (glucoseValue == "0")
         {
@@ -80,7 +80,7 @@ public class IconService
         var bitmapText = new Bitmap(64, 64);
         var g = Graphics.FromImage(bitmapText);
         g.Clear(Color.Transparent);
-        g.DrawString(glucoseValue, font, SetColor(_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
+        g.DrawString(glucoseValue, font, SetColor(_options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
         var hIcon = bitmapText.GetHicon();
         var myIcon = Icon.FromHandle(hIcon);
         trayIcon.Icon = myIcon;
@@ -93,8 +93,8 @@ public class IconService
 
     private int CalculateFontSize(GlucoseResult result)
     {
-        var value = _options.CurrentValue.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
-        if (_options.CurrentValue.GlucoseUnit == GlucoseUnitType.MMOL && value > 9.9) // Need to use smaller font size to accommodate 3 numbers + a decimal point
+        var value = _options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
+        if (_options.GlucoseUnit == GlucoseUnitType.MMOL && value > 9.9) // Need to use smaller font size to accommodate 3 numbers + a decimal point
             return _smallerFontSize;
         return _defaultFontSize;
     }

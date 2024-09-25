@@ -1,6 +1,6 @@
-﻿using GlucoseTray.Views.Settings;
+﻿using GlucoseTray.Settings;
+using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -16,9 +16,9 @@ public interface IUiService
     void ShowCriticalAlert(string alertText, string alertName);
 }
 
-public class UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService) : IUiService
+public class UiService(ISettingsProxy options, ILogger<UiService> logger, TaskSchedulerService taskScheduler, IconService iconService) : IUiService
 {
-    private readonly IOptionsMonitor<GlucoseTraySettings> _options = options;
+    private readonly ISettingsProxy _options = options;
     private readonly ILogger<UiService> _logger = logger;
     private readonly TaskSchedulerService _taskScheduler = taskScheduler;
     private readonly IconService _iconService = iconService;
@@ -53,19 +53,19 @@ public class UiService(IOptionsMonitor<GlucoseTraySettings> options, ILogger<UiS
 
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
 
-    private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.CurrentValue.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.CurrentValue.StaleResultsThreshold)}";
+    private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.StaleResultsThreshold)}";
 
     private void PopulateContextMenu(EventHandler exitEvent)
     {
         _trayIcon.ContextMenuStrip?.Items.Clear(); // Remove all existing items
 
-        if (!string.IsNullOrWhiteSpace(_options.CurrentValue.NightscoutUrl)) // Add Nightscout website shortcut
+        if (!string.IsNullOrWhiteSpace(_options.NightscoutUrl)) // Add Nightscout website shortcut
         {
             _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
 
             var process = new Process();
             process.StartInfo.UseShellExecute = true;
-            process.StartInfo.FileName = _options.CurrentValue.NightscoutUrl;
+            process.StartInfo.FileName = _options.NightscoutUrl;
             _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
         }
 
