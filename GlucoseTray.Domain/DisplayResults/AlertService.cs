@@ -24,14 +24,14 @@ public class AlertService(ISettingsProxy options, IIconService iconService, IDia
         if (highAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.High)
-                _uiService.ShowAlert("High Glucose Alert");
+                _uiService.ShowTrayNotification("High Glucose Alert");
             _currentAlertLevel = AlertLevel.High;
             return;
         }
         if (warningHighAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.High && _currentAlertLevel != AlertLevel.WarningHigh)
-                _uiService.ShowAlert("Warning High Glucose Alert");
+                _uiService.ShowTrayNotification("Warning High Glucose Alert");
             _currentAlertLevel = AlertLevel.WarningHigh;
             return;
         }
@@ -45,14 +45,14 @@ public class AlertService(ISettingsProxy options, IIconService iconService, IDia
         if (lowAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.CriticalLow && _currentAlertLevel != AlertLevel.Low)
-                _uiService.ShowAlert("Low Glucose Alert");
+                _uiService.ShowTrayNotification("Low Glucose Alert");
             _currentAlertLevel = AlertLevel.Low;
             return;
         }
         if (warningLowAlertTriggered)
         {
             if (_currentAlertLevel != AlertLevel.CriticalLow && _currentAlertLevel != AlertLevel.Low && _currentAlertLevel != AlertLevel.WarningLow)
-                _uiService.ShowAlert("Warning Low Glucose Alert");
+                _uiService.ShowTrayNotification("Warning Low Glucose Alert");
             _currentAlertLevel = AlertLevel.WarningLow;
             return;
         }

@@ -34,7 +34,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
         _trayIcon.DoubleClick += ShowBalloon;
     }
 
-    public void ShowAlert(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
+    public void ShowTrayNotification(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
 
     public void DisposeTrayIcon()

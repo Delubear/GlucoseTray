@@ -35,7 +35,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.Received().ShowAlert("High Glucose Alert");
+        iconService.Received().ShowTrayNotification("High Glucose Alert");
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.Received().ShowAlert("Warning High Glucose Alert");
+        iconService.Received().ShowTrayNotification("Warning High Glucose Alert");
     }
 
     [Test]
@@ -126,7 +126,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.Received().ShowAlert("Low Glucose Alert");
+        iconService.Received().ShowTrayNotification("Low Glucose Alert");
     }
 
     [Test]
@@ -156,7 +156,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.Received().ShowAlert("Warning Low Glucose Alert");
+        iconService.Received().ShowTrayNotification("Warning Low Glucose Alert");
     }
 
     [Test]
@@ -182,7 +182,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.DidNotReceive().ShowAlert(Arg.Any<string>());
+        iconService.DidNotReceive().ShowTrayNotification(Arg.Any<string>());
         dialogService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
     }
 
@@ -209,7 +209,7 @@ public class AlertServiceTests
         alertService.AlertNotification(glucoseResult);
 
         // Assert
-        iconService.DidNotReceive().ShowAlert(Arg.Any<string>());
+        iconService.DidNotReceive().ShowTrayNotification(Arg.Any<string>());
         dialogService.DidNotReceive().ShowCriticalAlert(Arg.Any<string>(), Arg.Any<string>());
     }
 }

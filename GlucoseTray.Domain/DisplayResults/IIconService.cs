@@ -5,6 +5,6 @@
         void InitializeTrayIcon(EventHandler exitEvent);
         void DisposeTrayIcon();
         void CreateIcon(GlucoseResult glucoseResult);
-        void ShowAlert(string alertName);
+        void ShowTrayNotification(string alertName);
     }
 }
