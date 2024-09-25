@@ -68,7 +68,8 @@ public class Program
     {
         Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
         SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
-        if (!File.Exists(SettingsFile) || SettingsService.ValidateSettings().Count != 0)
+        var setttingsService = new SettingsService();
+        if (!File.Exists(SettingsFile) || setttingsService.ValidateSettings().Count != 0)
         {
             var settingsWindow = new SettingsWindow(new SettingsWindowService());
             if (settingsWindow.ShowDialog() != true) // Did not want to setup application.

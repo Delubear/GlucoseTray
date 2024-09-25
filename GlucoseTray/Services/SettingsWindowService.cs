@@ -21,12 +21,14 @@ public class SettingsWindowService : ISettingsWindowService
 {
     public void Save(GlucoseTraySettings settings)
     {
-        FileService<GlucoseTraySettings>.WriteModelToJsonFile(settings, Program.SettingsFile);
+        var fileService = new FileService<GlucoseTraySettings>();
+        fileService.WriteModelToJsonFile(settings, Program.SettingsFile);
     }
 
     public (bool IsValid, IEnumerable<string> Errors) IsValid(GlucoseTraySettings settings)
     {
-        var errors = SettingsService.ValidateSettings(settings);
+        var setttingsService = new SettingsService();
+        var errors = setttingsService.ValidateSettings(settings);
         if (errors.Any())
             return (false, errors);
         return (true, errors);
@@ -92,7 +94,8 @@ public class SettingsWindowService : ISettingsWindowService
         {
             try
             {
-                model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+                var fileService = new FileService<GlucoseTraySettings>();
+                model = fileService.ReadModelFromFile(Program.SettingsFile);
 
                 if (model is null)
                     MessageBox.Show("Unable to load existing settings due to a bad file.");

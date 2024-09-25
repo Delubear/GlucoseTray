@@ -3,9 +3,9 @@ using System.Text.Json;
 
 namespace GlucoseTray.Services;
 
-public static class FileService<T>
+public class FileService<T>
 {
-    public static void WriteModelToJsonFile(T model, string file)
+    public void WriteModelToJsonFile(T model, string file)
     {
         using var sw = File.CreateText(file);
         var options = new JsonSerializerOptions { WriteIndented = true };
@@ -13,7 +13,7 @@ public static class FileService<T>
         sw.Write(json);
     }
 
-    public static T? ReadModelFromFile(string file)
+    public T? ReadModelFromFile(string file)
     {
         T? model = default;
         try

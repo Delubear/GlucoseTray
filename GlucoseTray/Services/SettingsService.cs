@@ -4,19 +4,20 @@ using System.Text.Json;
 
 namespace GlucoseTray.Services;
 
-public static class SettingsService
+public class SettingsService
 {
     /// <summary>
     /// If model is null, will validate from stored settings file.
     /// </summary>
     /// <param name="model"></param>
-    public static List<string> ValidateSettings(GlucoseTraySettings? model = null)
+    public List<string> ValidateSettings(GlucoseTraySettings? model = null)
     {
         var errors = new List<string>();
 
         if (model is null)
         {
-            model = FileService<GlucoseTraySettings>.ReadModelFromFile(Program.SettingsFile);
+            var fileService = new FileService<GlucoseTraySettings>();
+            model = fileService.ReadModelFromFile(Program.SettingsFile);
             if (model is null)
             {
                 errors.Add("File is Invalid");
@@ -44,7 +45,7 @@ public static class SettingsService
         return errors;
     }
 
-    private static string ValidateNightScout(GlucoseTraySettings model)
+    private string ValidateNightScout(GlucoseTraySettings model)
     {
         if (string.IsNullOrWhiteSpace(model.NightscoutUrl))
             return "Nightscout Url is missing";
