@@ -52,20 +52,20 @@ public class SettingsProxy(IOptionsMonitor<GlucoseTraySettings> options) : ISett
 
     public double WarningHighBg
     {
-        get => _options.CurrentValue.WarningLowBg;
-        set => _options.CurrentValue.WarningLowBg = value;
+        get => _options.CurrentValue.WarningHighBg;
+        set => _options.CurrentValue.WarningHighBg = value;
     }
 
     public double HighBg
     {
-        get => _options.CurrentValue.LowBg;
-        set => _options.CurrentValue.LowBg = value;
+        get => _options.CurrentValue.HighBg;
+        set => _options.CurrentValue.HighBg = value;
     }
 
     public double WarningLowBg
     {
-        get => _options.CurrentValue.CriticalLowBg;
-        set => _options.CurrentValue.CriticalLowBg = value;
+        get => _options.CurrentValue.WarningLowBg;
+        set => _options.CurrentValue.WarningLowBg = value;
     }
 
     public double LowBg
