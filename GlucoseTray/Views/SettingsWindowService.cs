@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.Settings;
+using GlucoseTray.GlucoseSettings;
+using GlucoseTray.Infrastructure;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Views;
 
 public interface ISettingsWindowService
 {
@@ -19,18 +20,16 @@ public interface ISettingsWindowService
     void Save(GlucoseTraySettings settings);
 }
 
-public class SettingsWindowService : ISettingsWindowService
+public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService, ISettingsService settingsService) : ISettingsWindowService
 {
     public void Save(GlucoseTraySettings settings)
     {
-        var fileService = new FileService<GlucoseTraySettings>();
         fileService.WriteModelToJsonFile(settings, Program.SettingsFile);
     }
 
     public (bool IsValid, IEnumerable<string> Errors) IsValid(GlucoseTraySettings settings)
     {
-        var setttingsService = new SettingsService();
-        var errors = setttingsService.ValidateSettings(settings);
+        var errors = settingsService.ValidateSettings(settings);
         if (errors.Any())
             return (false, errors);
         return (true, errors);
@@ -96,7 +95,6 @@ public class SettingsWindowService : ISettingsWindowService
         {
             try
             {
-                var fileService = new FileService<GlucoseTraySettings>();
                 model = fileService.ReadModelFromFile(Program.SettingsFile);
 
                 if (model is null)

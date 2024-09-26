@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Domain;
 using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
+using GlucoseTray.Views;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -9,13 +10,14 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.DisplayResults;
 
-public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler) : IIconService
+public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService) : IIconService
 {
     private readonly ILogger<IconService> _logger = logger;
     private readonly ISettingsProxy _options = options;
     private readonly ITaskSchedulerService _taskScheduler = taskScheduler;
+    private readonly ISettingsWindowService _settingsWindowService = settingsWindowService;
     private readonly float _standardOffset = -10f;
     private readonly int _defaultFontSize = 40;
     private readonly int _smallerFontSize = 38;
@@ -95,7 +97,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
     {
         if (!SettingsFormIsOpen)
         {
-            var settingsWindow = new SettingsWindow(new SettingsWindowService());
+            var settingsWindow = new SettingsWindow(_settingsWindowService);
             SettingsFormIsOpen = true;
             settingsWindow.ShowDialog();
             SettingsFormIsOpen = false;
@@ -105,9 +107,9 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern bool DestroyIcon(nint handle);
 
-    public static void DestroyMyIcon(nint handle) => DestroyIcon(handle);
+    private static void DestroyMyIcon(nint handle) => DestroyIcon(handle);
 
-    public Brush SetColor(double val)
+    private Brush SetColor(double val)
     {
         if (_options.IsDarkMode)
         {

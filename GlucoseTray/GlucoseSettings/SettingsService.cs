@@ -2,11 +2,16 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.Settings;
+using GlucoseTray.Infrastructure;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.GlucoseSettings;
 
-public class SettingsService
+public interface ISettingsService
+{
+    List<string> ValidateSettings(GlucoseTraySettings? model = null);
+}
+
+public class SettingsService(IFileService<GlucoseTraySettings> fileService) : ISettingsService
 {
     /// <summary>
     /// If model is null, will validate from stored settings file.
@@ -18,7 +23,6 @@ public class SettingsService
 
         if (model is null)
         {
-            var fileService = new FileService<GlucoseTraySettings>();
             model = fileService.ReadModelFromFile(Program.SettingsFile);
             if (model is null)
             {

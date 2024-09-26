@@ -1,8 +1,11 @@
-﻿using GlucoseTray.Domain;
+﻿using GlucoseTray.DisplayResults;
+using GlucoseTray.Domain;
 using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.FetchResults;
+using GlucoseTray.GlucoseSettings;
 using GlucoseTray.Infrastructure;
 using GlucoseTray.Settings;
+using GlucoseTray.Views;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,17 +53,14 @@ public class Program
                 .AddHttpClient()
                 .AddScoped<AppContext, AppContext>()
                 .AddScoped<IIconService, IconService>()
-                .AddScoped<UrlAssembler, UrlAssembler>()
-                .AddScoped<IDialogService, UiService>()
+                .AddScoped<IDialogService, DialogService>()
                 .AddScoped<ITaskSchedulerService, TaskSchedulerService>()
-                .AddScoped<INightscoutService, NightscoutService>()
-                .AddScoped<IDexcomService, DexcomService>()
-                .AddScoped<AlertService, AlertService>()
                 .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
-                .AddScoped<DebugService, DebugService>()
                 .AddScoped<ISettingsWindowService, SettingsWindowService>()
                 .AddScoped<ISettingsProxy, SettingsProxy>()
-                .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
+                .AddScoped<ISettingsService, SettingsService>()
+                .AddScoped<IFileService<GlucoseTraySettings>, FileService<GlucoseTraySettings>>()
+                .RegisterDomainServices();
     }
 
     private static AppSettings GetAppSettings()
@@ -74,10 +74,12 @@ public class Program
     {
         Environment.SetEnvironmentVariable("windir", Environment.GetEnvironmentVariable("SystemRoot"), EnvironmentVariableTarget.User);
         SettingsFile = Application.UserAppDataPath + @"\glucose_tray_settings.json";
-        var setttingsService = new SettingsService();
-        if (!File.Exists(SettingsFile) || setttingsService.ValidateSettings().Count != 0)
+        var fileService = new FileService<GlucoseTraySettings>();
+        var settingsService = new SettingsService(fileService);
+        if (!File.Exists(SettingsFile) || settingsService.ValidateSettings().Count != 0)
         {
-            var settingsWindow = new SettingsWindow(new SettingsWindowService());
+            var settingsWindowService = new SettingsWindowService(fileService, settingsService);
+            var settingsWindow = new SettingsWindow(settingsWindowService);
             if (settingsWindow.ShowDialog() != true) // Did not want to setup application.
             {
                 Application.Exit();

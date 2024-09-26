@@ -1,9 +1,14 @@
-﻿using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 
-namespace GlucoseTray.Services;
+namespace GlucoseTray.Infrastructure;
 
-public class FileService<T>
+public interface IFileService<T> where T : class
+{
+    void WriteModelToJsonFile(T model, string file);
+    T? ReadModelFromFile(string file);
+}
+
+public class FileService<T> : IFileService<T> where T : class
 {
     public void WriteModelToJsonFile(T model, string file)
     {

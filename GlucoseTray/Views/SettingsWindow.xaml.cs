@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.Settings;
+using GlucoseTray.GlucoseSettings;
 
 namespace GlucoseTray.Views.Settings;
 
