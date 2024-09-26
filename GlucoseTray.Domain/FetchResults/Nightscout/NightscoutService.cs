@@ -1,19 +1,18 @@
 ﻿using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Text.Json;
 
-namespace GlucoseTray.Domain.FetchResults;
+namespace GlucoseTray.Domain.FetchResults.Nightscout;
 
 public interface INightscoutService
 {
     Task<GlucoseResult> GetLatestReadingAsync();
 }
 
-public class NightscoutService(ISettingsProxy options, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug) : INightscoutService
+public class NightscoutService(ISettingsProxy settings, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug) : INightscoutService
 {
-    private readonly ISettingsProxy _options = options;
+    private readonly ISettingsProxy _settings = settings;
     private readonly ILogger _logger = logger;
     private readonly UrlAssembler _urlBuilder = urlBuilder;
     private readonly IExternalCommunicationAdapter _externalAdapter = externalAdapter;
@@ -23,7 +22,7 @@ public class NightscoutService(ISettingsProxy options, ILogger<NightscoutService
     {
         _debug.ClearDebugText();
         _debug.AddDebugText("Starting Nightscout Fetch");
-        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_options.AccessToken) ? "Using access token." : "No access token.");
+        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_settings.AccessToken) ? "Using access token." : "No access token.");
 
         GlucoseResult result = new();
 
@@ -40,7 +39,7 @@ public class NightscoutService(ISettingsProxy options, ILogger<NightscoutService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
-            if (_options.IsDebugMode)
+            if (_settings.IsDebugMode)
                 _debug.ShowDebugAlert(ex, "Nightscout result fetch");
         }
 
@@ -49,14 +48,11 @@ public class NightscoutService(ISettingsProxy options, ILogger<NightscoutService
 
     private GlucoseResult MapToResult(NightScoutResult data)
     {
-        GlucoseResult result = new()
-        {
-            Source = FetchMethod.NightscoutApi,
-            DateTimeUTC = !string.IsNullOrEmpty(data.DateString) ? DateTime.Parse(data.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(data.Date).UtcDateTime,
-            Trend = data.Direction.GetTrend()
-        };
+        GlucoseResult result = new();
 
-        GlucoseMath.CalculateValues(result, data.Sgv, _options);
+        result.SetDateTimeUtc(!string.IsNullOrEmpty(data.DateString) ? DateTime.Parse(data.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(data.Date).UtcDateTime);
+        result.SetTrend(data.Direction.GetTrend());
+        result.SetGlucoseValues(data.Sgv, _settings);
 
         if (result.Trend == TrendResult.Unknown)
             _logger.LogWarning("Un-expected value for direction/Trend {Direction}", data.Direction);

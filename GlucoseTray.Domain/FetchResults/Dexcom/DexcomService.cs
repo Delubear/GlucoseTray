@@ -1,32 +1,21 @@
 ﻿using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.Enums;
 using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Text.Json;
 
-namespace GlucoseTray.Domain.FetchResults;
+namespace GlucoseTray.Domain.FetchResults.Dexcom;
 
 public interface IDexcomService
 {
     Task<GlucoseResult> GetLatestReadingAsync();
 }
 
-public class DexcomService : IDexcomService
+public class DexcomService(ISettingsProxy settings, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug) : IDexcomService
 {
-    private readonly ISettingsProxy _options;
-    private readonly ILogger _logger;
-    private readonly UrlAssembler _urlBuilder;
-    private readonly IExternalCommunicationAdapter _externalAdapter;
-    private readonly DebugService _debug;
-
-    public DexcomService(ISettingsProxy options, ILogger<DexcomService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug)
-    {
-        _options = options;
-        _logger = logger;
-        _urlBuilder = urlBuilder;
-        _externalAdapter = externalAdapter;
-        _debug = debug;
-    }
+    private readonly ISettingsProxy _settings = settings;
+    private readonly ILogger _logger = logger;
+    private readonly UrlAssembler _urlBuilder = urlBuilder;
+    private readonly IExternalCommunicationAdapter _externalAdapter = externalAdapter;
+    private readonly DebugService _debug = debug;
 
     public async Task<GlucoseResult> GetLatestReadingAsync()
     {
@@ -51,7 +40,7 @@ public class DexcomService : IDexcomService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Dexcom fetching failed or received incorrect format.");
-            if (_options.IsDebugMode)
+            if (_settings.IsDebugMode)
                 _debug.ShowDebugAlert(ex, "Dexcom result fetch");
 
             glucoseResult = GlucoseResult.Default;
@@ -62,16 +51,16 @@ public class DexcomService : IDexcomService
 
     private GlucoseResult MapToResult(DexcomResult data)
     {
-        GlucoseResult result = new();
+        GlucoseResult glucoseResult = new();
 
         var unixTime = string.Join("", data.ST.Where(char.IsDigit));
         var trend = data.Trend;
 
-        GlucoseMath.CalculateValues(result, data.Value, _options);
-        result.DateTimeUTC = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue;
-        result.Trend = trend.GetTrend();
-        result.Source = FetchMethod.DexcomShare;
-        return result;
+        glucoseResult.SetGlucoseValues(data.Value, _settings);
+        glucoseResult.SetDateTimeUtc(!string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue);
+        glucoseResult.SetTrend(trend.GetTrend());
+
+        return glucoseResult;
     }
 
     private async Task<string> GetApiResponse(string sessionId)
@@ -87,7 +76,7 @@ public class DexcomService : IDexcomService
         {
             accountId,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = _options.DexcomPassword
+            password = _settings.DexcomPassword
         });
 
         var sessionUrl = _urlBuilder.BuildDexComSessionUrl();
@@ -110,9 +99,9 @@ public class DexcomService : IDexcomService
     {
         var accountIdRequestJson = JsonSerializer.Serialize(new
         {
-            accountName = _options.DexcomUsername,
+            accountName = _settings.DexcomUsername,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = _options.DexcomPassword
+            password = _settings.DexcomPassword
         });
 
         var accountUrl = _urlBuilder.BuildDexComAccountIdUrl();

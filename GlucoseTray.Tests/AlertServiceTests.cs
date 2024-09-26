@@ -8,12 +8,20 @@ namespace GlucoseTray.Tests;
 
 public class AlertServiceTests
 {
+    private GlucoseResult GetGlucoseResult(ISettingsProxy settingsProxy, double value, DateTime dateTimeUtc)
+    {
+        var glucoseResult = new GlucoseResult();
+        glucoseResult.SetGlucoseValues(value, settingsProxy);
+        glucoseResult.SetDateTimeUtc(dateTimeUtc);
+        return glucoseResult;
+    }
+
     [Test]
-    [TestCase(GlucoseUnitType.MG, 101, 1, 100)]
-    [TestCase(GlucoseUnitType.MG, 100, 1, 100)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 10.1, 10)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 10, 10)]
-    public void AlertNotification_WhenHighAlertTriggered_ShouldShowHighAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
+    [TestCase(GlucoseUnitType.MG, 101, 100)]
+    [TestCase(GlucoseUnitType.MG, 100, 100)]
+    [TestCase(GlucoseUnitType.MMOL, 10.1, 10)]
+    [TestCase(GlucoseUnitType.MMOL, 10, 10)]
+    public void AlertNotification_WhenHighAlertTriggered_ShouldShowHighAlert(GlucoseUnitType unitType, double value, double alertValue)
     {
         // Arrange
         var options = Substitute.For<ISettingsProxy>();
@@ -21,15 +29,11 @@ public class AlertServiceTests
         options.HighBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = mgValue,
-            MmolValue = mmolValue,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -39,11 +43,11 @@ public class AlertServiceTests
     }
 
     [Test]
-    [TestCase(GlucoseUnitType.MG, 101, 1, 100)]
-    [TestCase(GlucoseUnitType.MG, 100, 1, 100)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 10.1, 10)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 10, 10)]
-    public void AlertNotification_WhenWarningHighAlertTriggered_ShouldShowWarningHighAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
+    [TestCase(GlucoseUnitType.MG, 101, 100)]
+    [TestCase(GlucoseUnitType.MG, 100, 100)]
+    [TestCase(GlucoseUnitType.MMOL, 10.1, 10)]
+    [TestCase(GlucoseUnitType.MMOL, 10, 10)]
+    public void AlertNotification_WhenWarningHighAlertTriggered_ShouldShowWarningHighAlert(GlucoseUnitType unitType, double value, double alertValue)
     {
         // Arrange
         var options = Substitute.For<ISettingsProxy>();
@@ -51,15 +55,11 @@ public class AlertServiceTests
         options.WarningHighBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = mgValue,
-            MmolValue = mmolValue,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -69,11 +69,11 @@ public class AlertServiceTests
     }
 
     [Test]
-    [TestCase(GlucoseUnitType.MG, 55, 1, 55)]
-    [TestCase(GlucoseUnitType.MG, 54, 1, 55)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 4, 4)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 3.9, 4)]
-    public void AlertNotification_WhenCriticalLowAlertTriggered_ShouldShowCriticalLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
+    [TestCase(GlucoseUnitType.MG, 55, 55)]
+    [TestCase(GlucoseUnitType.MG, 54, 55)]
+    [TestCase(GlucoseUnitType.MMOL, 4, 4)]
+    [TestCase(GlucoseUnitType.MMOL, 3.9, 4)]
+    public void AlertNotification_WhenCriticalLowAlertTriggered_ShouldShowCriticalLowAlert(GlucoseUnitType unitType, double value, double alertValue)
     {
         // Arrange
         var options = Substitute.For<ISettingsProxy>();
@@ -81,15 +81,11 @@ public class AlertServiceTests
         options.CriticalLowBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = mgValue,
-            MmolValue = mmolValue,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -99,11 +95,11 @@ public class AlertServiceTests
     }
 
     [Test]
-    [TestCase(GlucoseUnitType.MG, 55, 1, 55)]
-    [TestCase(GlucoseUnitType.MG, 54, 1, 55)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 4, 4)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 3.9, 4)]
-    public void AlertNotification_WhenLowAlertTriggered_ShouldShowLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
+    [TestCase(GlucoseUnitType.MG, 55, 55)]
+    [TestCase(GlucoseUnitType.MG, 54, 55)]
+    [TestCase(GlucoseUnitType.MMOL, 4, 4)]
+    [TestCase(GlucoseUnitType.MMOL, 3.9, 4)]
+    public void AlertNotification_WhenLowAlertTriggered_ShouldShowLowAlert(GlucoseUnitType unitType, double value, double alertValue)
     {
         // Arrange
         var options = Substitute.For<ISettingsProxy>();
@@ -111,16 +107,11 @@ public class AlertServiceTests
         options.LowBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
-
+        options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = mgValue,
-            MmolValue = mmolValue,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -130,11 +121,11 @@ public class AlertServiceTests
     }
 
     [Test]
-    [TestCase(GlucoseUnitType.MG, 55, 1, 55)]
-    [TestCase(GlucoseUnitType.MG, 54, 1, 55)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 4, 4)]
-    [TestCase(GlucoseUnitType.MMOL, 1, 3.9, 4)]
-    public void AlertNotification_WhenWarningLowAlertTriggered_ShouldShowWarningLowAlert(GlucoseUnitType unitType, int mgValue, double mmolValue, double alertValue)
+    [TestCase(GlucoseUnitType.MG, 55, 55)]
+    [TestCase(GlucoseUnitType.MG, 54, 55)]
+    [TestCase(GlucoseUnitType.MMOL, 4, 4)]
+    [TestCase(GlucoseUnitType.MMOL, 3.9, 4)]
+    public void AlertNotification_WhenWarningLowAlertTriggered_ShouldShowWarningLowAlert(GlucoseUnitType unitType, double value, double alertValue)
     {
         // Arrange
         var options = Substitute.For<ISettingsProxy>();
@@ -142,15 +133,11 @@ public class AlertServiceTests
         options.WarningLowBg.Returns(alertValue);
         options.GlucoseUnit.Returns(unitType);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = mgValue,
-            MmolValue = mmolValue,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -168,15 +155,11 @@ public class AlertServiceTests
         options.HighBg.Returns(200);
         options.GlucoseUnit.Returns(GlucoseUnitType.MG);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(false);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = 100,
-            MmolValue = 5,
-            DateTimeUTC = DateTime.UtcNow,
-        };
+        var glucoseResult = GetGlucoseResult(options, 100, DateTime.UtcNow);
 
         // Act
         alertService.AlertNotification(glucoseResult);
@@ -195,15 +178,11 @@ public class AlertServiceTests
         options.HighBg.Returns(200);
         options.GlucoseUnit.Returns(GlucoseUnitType.MG);
         options.StaleResultsThreshold.Returns(15);
+        options.IsServerDataUnitTypeMmol.Returns(false);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
         var alertService = new AlertService(options, iconService, dialogService);
-        var glucoseResult = new GlucoseResult
-        {
-            MgValue = 400,
-            MmolValue = 40,
-            DateTimeUTC = DateTime.UtcNow.AddMinutes(-30),
-        };
+        var glucoseResult = GetGlucoseResult(options, 500, DateTime.UtcNow.AddMinutes(-30));
 
         // Act
         alertService.AlertNotification(glucoseResult);

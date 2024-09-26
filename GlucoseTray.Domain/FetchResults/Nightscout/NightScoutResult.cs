@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace GlucoseTray.Domain.FetchResults;
+namespace GlucoseTray.Domain.FetchResults.Nightscout;
 
 /// <summary>
 /// Class that maps to the JSON from NightScout queries.

@@ -1,12 +1,20 @@
 using GlucoseTray.Domain;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain.FetchResults;
 using GlucoseTray.Domain.DisplayResults;
+using NSubstitute;
 
 namespace GlucoseTray.Tests;
 
 public class GlucoseFetchResultExtensionTests
 {
+    private GlucoseResult GetGlucoseResult(ISettingsProxy settingsProxy, double value, DateTime dateTimeUtc)
+    {
+        var glucoseResult = new GlucoseResult();
+        glucoseResult.SetGlucoseValues(value, settingsProxy);
+        glucoseResult.SetDateTimeUtc(dateTimeUtc);
+        return glucoseResult;
+    }
+
     [Test]
     [TestCase(GlucoseUnitType.MG, 1, "1")]
     [TestCase(GlucoseUnitType.MG, 100, "100")]
@@ -17,11 +25,9 @@ public class GlucoseFetchResultExtensionTests
     public void GetFormattedStringValue_Should_ReturnCorrectValue(GlucoseUnitType unitType, double value, string expected)
     {
         // Arrange
-        var fetchResult = new GlucoseResult
-        {
-            MgValue = (int)value,
-            MmolValue = value,
-        };
+        var settings = Substitute.For<ISettingsProxy>();
+        settings.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
+        var fetchResult = GetGlucoseResult(settings, value, DateTime.UtcNow);
 
         // Act
         var result = fetchResult.GetFormattedStringValue(unitType);
@@ -33,13 +39,9 @@ public class GlucoseFetchResultExtensionTests
     [Test]
     public void IsStale_Should_ReturnTrueWhenTooOld()
     {
-        var now = DateTime.UtcNow;
-
         // Arrange
-        var fetchResult = new GlucoseResult
-        {
-            DateTimeUTC = now.AddMinutes(-30)
-        };
+        var now = DateTime.UtcNow;
+        var fetchResult = GetGlucoseResult(Substitute.For<ISettingsProxy>(), 100, now.AddMinutes(-30));
 
         // Act
         var result = fetchResult.IsStale(15);
@@ -51,13 +53,9 @@ public class GlucoseFetchResultExtensionTests
     [Test]
     public void IsStale_Should_ReturnFalseWhenNotTooOld()
     {
-        var now = DateTime.UtcNow;
-
         // Arrange
-        var fetchResult = new GlucoseResult
-        {
-            DateTimeUTC = now.AddMinutes(-10)
-        };
+        var now = DateTime.UtcNow;
+        var fetchResult = GetGlucoseResult(Substitute.For<ISettingsProxy>(), 100, now.AddMinutes(-10));
 
         // Act
         var result = fetchResult.IsStale(15);
@@ -69,13 +67,9 @@ public class GlucoseFetchResultExtensionTests
     [Test]
     public void StaleMessage_Should_ReturnCorrectMessageWhenTooOld()
     {
-        var now = DateTime.UtcNow;
-
         // Arrange
-        var fetchResult = new GlucoseResult
-        {
-            DateTimeUTC = now.AddMinutes(-30)
-        };
+        var now = DateTime.UtcNow;
+        var fetchResult = GetGlucoseResult(Substitute.For<ISettingsProxy>(), 100, now.AddMinutes(-30));
 
         // Act
         var result = fetchResult.StaleMessage(15);
@@ -87,13 +81,9 @@ public class GlucoseFetchResultExtensionTests
     [Test]
     public void StaleMessage_Should_ReturnEmptyStringWhenNotTooOld()
     {
-        var now = DateTime.UtcNow;
-
         // Arrange
-        var fetchResult = new GlucoseResult
-        {
-            DateTimeUTC = now.AddMinutes(-10)
-        };
+        var now = DateTime.UtcNow;
+        var fetchResult = GetGlucoseResult(Substitute.For<ISettingsProxy>(), 100, now.AddMinutes(-10));
 
         // Act
         var result = fetchResult.StaleMessage(15);

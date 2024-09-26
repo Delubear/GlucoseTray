@@ -1,5 +1,7 @@
 ﻿using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.FetchResults;
+using GlucoseTray.Domain.FetchResults.Dexcom;
+using GlucoseTray.Domain.FetchResults.Nightscout;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GlucoseTray.Domain;
