@@ -3,6 +3,7 @@ using NSubstitute;
 using GlucoseTray.Domain.Enums;
 using GlucoseTray.Domain;
 using GlucoseTray.Domain.DisplayResults;
+using GlucoseTray.Domain.GlucoseSettings;
 
 namespace GlucoseTray.Tests;
 

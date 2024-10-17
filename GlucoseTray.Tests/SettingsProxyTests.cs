@@ -1,4 +1,5 @@
 ﻿using GlucoseTray.Domain.Enums;
+using GlucoseTray.Domain.GlucoseSettings;
 using GlucoseTray.GlucoseSettings;
 using Microsoft.Extensions.Options;
 using NSubstitute;

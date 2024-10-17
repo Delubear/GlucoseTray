@@ -1,5 +1,6 @@
 ﻿using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
+using GlucoseTray.Domain.GlucoseSettings;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 

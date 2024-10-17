@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace GlucoseTray.GlucoseSettings;
+namespace GlucoseTray.Domain.GlucoseSettings;
 
 public class GlucoseTraySettings : INotifyPropertyChanged
 {

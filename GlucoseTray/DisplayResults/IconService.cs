@@ -1,7 +1,7 @@
 ﻿using GlucoseTray.Domain;
 using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.Views;
+using GlucoseTray.Domain.GlucoseSettings;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.DisplayResults;
 
-public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService) : IIconService
+public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService, IDialogService dialogService) : IIconService
 {
     private readonly ILogger<IconService> _logger = logger;
     private readonly ISettingsProxy _options = options;
@@ -97,7 +97,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
     {
         if (!SettingsFormIsOpen)
         {
-            var settingsWindow = new SettingsWindow(_settingsWindowService);
+            var settingsWindow = new SettingsWindow(_settingsWindowService, dialogService);
             SettingsFormIsOpen = true;
             settingsWindow.ShowDialog();
             SettingsFormIsOpen = false;

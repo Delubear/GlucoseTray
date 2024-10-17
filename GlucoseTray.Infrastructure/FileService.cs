@@ -6,6 +6,7 @@ public interface IFileService<T> where T : class
 {
     void WriteModelToJsonFile(T model, string file);
     T? ReadModelFromFile(string file);
+    bool DoesFileExist(string filePath);
 }
 
 public class FileService<T> : IFileService<T> where T : class
@@ -31,5 +32,10 @@ public class FileService<T> : IFileService<T> where T : class
         }
 
         return model;
+    }
+
+    public bool DoesFileExist(string filePath)
+    {
+        return File.Exists(filePath);
     }
 }

@@ -1,26 +1,13 @@
 ﻿using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Windows;
+using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.GlucoseSettings;
+using GlucoseTray.Domain.GlucoseSettings;
 using GlucoseTray.Infrastructure;
 
-namespace GlucoseTray.Views;
+namespace GlucoseTray.GlucoseSettings;
 
-public interface ISettingsWindowService
-{
-    GlucoseTraySettings GetDefaultSettings();
-    IEnumerable<string> GetDexComServerLocationDescriptions();
-    GlucoseTraySettings? GetSettingsFromFile();
-    void UpdateValuesFromMMoLToMG(GlucoseTraySettings settings);
-    void UpdateValuesFromMGToMMoL(GlucoseTraySettings _settings);
-    void UpdateServerDetails(GlucoseTraySettings settings, FetchMethod fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken);
-    (bool IsValid, IEnumerable<string> Errors) IsValid(GlucoseTraySettings settings);
-    void Save(GlucoseTraySettings settings);
-}
-
-public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService, ISettingsService settingsService) : ISettingsWindowService
+public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService, ISettingsService settingsService, IDialogService dialogService) : ISettingsWindowService
 {
     public void Save(GlucoseTraySettings settings)
     {
@@ -91,19 +78,12 @@ public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService
     public GlucoseTraySettings? GetSettingsFromFile()
     {
         GlucoseTraySettings? model = null;
-        if (File.Exists(Program.SettingsFile))
+        if (fileService.DoesFileExist(Program.SettingsFile))
         {
-            try
-            {
-                model = fileService.ReadModelFromFile(Program.SettingsFile);
+            model = fileService.ReadModelFromFile(Program.SettingsFile);
 
-                if (model is null)
-                    MessageBox.Show("Unable to load existing settings due to a bad file.");
-            }
-            catch (Exception e) // Catch serialization errors due to a bad file
-            {
-                MessageBox.Show("Unable to load existing settings due to a bad file.  " + e.Message + e.InnerException?.Message);
-            }
+            if (model is null)
+                dialogService.ShowErrorAlert("Unable to load existing settings due to a bad file.", "Error");
         }
 
         return model;

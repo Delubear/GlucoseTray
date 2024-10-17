@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Domain.Enums;
 using GlucoseTray.Domain.FetchResults.Dexcom;
 using GlucoseTray.Domain.FetchResults.Nightscout;
+using GlucoseTray.Domain.GlucoseSettings;
 using Microsoft.Extensions.Logging;
 
 namespace GlucoseTray.Domain.FetchResults;

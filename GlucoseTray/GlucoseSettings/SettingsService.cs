@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using GlucoseTray.Domain.Enums;
+using GlucoseTray.Domain.GlucoseSettings;
 using GlucoseTray.Infrastructure;
 
 namespace GlucoseTray.GlucoseSettings;

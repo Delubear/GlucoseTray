@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
-using GlucoseTray.GlucoseSettings;
+using GlucoseTray.Domain.GlucoseSettings;
 
 namespace GlucoseTray.Views.Settings;
 
@@ -10,12 +11,14 @@ namespace GlucoseTray.Views.Settings;
 public partial class SettingsWindow : Window
 {
     private readonly ISettingsWindowService _service;
+    private readonly IDialogService _dialogService;
     private GlucoseTraySettings _settings;
     private bool HaveBypassedInitialModification;
 
-    public SettingsWindow(ISettingsWindowService service)
+    public SettingsWindow(ISettingsWindowService service, IDialogService dialogService)
     {
         _service = service;
+        _dialogService = dialogService;
         _settings = _service.GetDefaultSettings();
 
         InitializeComponent();
@@ -112,7 +115,7 @@ public partial class SettingsWindow : Window
         var isValidResult = _service.IsValid(_settings);
         if (isValidResult.IsValid == false)
         {
-            MessageBox.Show("Settings are not valid.  Please fix before continuing.\r\n\r\n" + string.Join("\r\n", isValidResult.Errors));
+            _dialogService.ShowErrorAlert("Settings are not valid.  Please fix before continuing.", string.Join("\r\n", isValidResult.Errors));
             return;
         }
 

@@ -1,6 +1,6 @@
 ﻿using GlucoseTray.Domain.Enums;
 
-namespace GlucoseTray.Domain
+namespace GlucoseTray.Domain.GlucoseSettings
 {
     public interface ISettingsProxy
     {

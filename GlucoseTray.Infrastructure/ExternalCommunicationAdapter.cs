@@ -1,5 +1,5 @@
-﻿using GlucoseTray.Domain;
-using GlucoseTray.Domain.FetchResults;
+﻿using GlucoseTray.Domain.FetchResults;
+using GlucoseTray.Domain.GlucoseSettings;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Headers;
 using System.Text;

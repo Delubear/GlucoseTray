@@ -1,4 +1,5 @@
 ﻿using GlucoseTray.Domain;
+using GlucoseTray.Domain.GlucoseSettings;
 using Microsoft.Extensions.Logging;
 using System.Windows.Forms;
 
@@ -16,10 +17,10 @@ public class AppContext : ApplicationContext
         _runner = runner;
         _options = options;
 
-        BeginCycle();
+        RunUntilFailureAsync();
     }
 
-    private async void BeginCycle()
+    private async void RunUntilFailureAsync()
     {
         _runner.Initialize(new EventHandler(Exit));
 
