@@ -11,26 +11,29 @@ public class GlucoseResult
     public TrendResult Trend { get; private set; }
     public bool IsCriticalLow { get; private set; }
 
-    public static GlucoseResult Default => new()
+    private readonly ISettingsProxy _settings;
+
+    public GlucoseResult(ISettingsProxy settings) => _settings = settings;
+
+    public void SetDefault()
     {
-        MmolValue = 0,
-        MgValue = 0,
-        DateTimeUTC = DateTime.UtcNow,
-        Trend = TrendResult.Unknown,
-    };
+        SetTrend(TrendResult.Unknown);
+        SetDateTimeUtc(DateTime.UtcNow);
+        SetGlucoseValues(0);
+    }
 
     public void SetTrend(TrendResult trend) => Trend = trend;
 
     public void SetDateTimeUtc(DateTime dateTimeUtc) => DateTimeUTC = dateTimeUtc;
 
-    public void SetGlucoseValues(double value, ISettingsProxy currentSettings)
+    public void SetGlucoseValues(double value)
     {
         if (value == 0)
         {
             MmolValue = 0;
             MgValue = 0;
         }
-        else if (currentSettings.IsServerDataUnitTypeMmol)
+        else if (_settings.IsServerDataUnitTypeMmol)
         {
             MmolValue = value;
             MgValue = Convert.ToInt32(value * 18);
@@ -40,7 +43,7 @@ public class GlucoseResult
             MmolValue = value / 18;
             MgValue = Convert.ToInt32(value);
         }
-        IsCriticalLow = IsCriticalLowCalculation(currentSettings);
+        IsCriticalLow = IsCriticalLowCalculation(_settings);
     }
 
     private bool IsCriticalLowCalculation(ISettingsProxy currentSettings)

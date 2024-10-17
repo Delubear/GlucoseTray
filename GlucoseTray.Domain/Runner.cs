@@ -21,9 +21,9 @@ public class Runner(IGlucoseFetchService fetchService, IIconService uiService, A
 
     public async Task DoWorkAsync()
     {
-        GlucoseResult currentGlucoseResult = await _fetchService.GetLatestReadingsAsync();
-        _iconService.CreateIcon(currentGlucoseResult);
-        _alertService.AlertNotification(currentGlucoseResult);
+        await _fetchService.GetLatestReadingsAsync();
+        _iconService.CreateIcon();
+        _alertService.AlertNotification();
     }
 
     public void HandleShutdown(Exception? e = null)

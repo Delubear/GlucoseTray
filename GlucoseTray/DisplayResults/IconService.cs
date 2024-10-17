@@ -12,18 +12,13 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.DisplayResults;
 
-public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService, IDialogService dialogService) : IIconService
+public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService, IDialogService dialogService, GlucoseResult glucoseResult) : IIconService
 {
-    private readonly ILogger<IconService> _logger = logger;
-    private readonly ISettingsProxy _options = options;
-    private readonly ITaskSchedulerService _taskScheduler = taskScheduler;
-    private readonly ISettingsWindowService _settingsWindowService = settingsWindowService;
     private readonly float _standardOffset = -10f;
     private readonly int _defaultFontSize = 40;
     private readonly int _smallerFontSize = 38;
     private NotifyIcon _trayIcon = new();
     private bool SettingsFormIsOpen;
-    private GlucoseResult _currentGlucoseResult = new();
 
     public void InitializeTrayIcon(EventHandler exitEvent)
     {
@@ -37,7 +32,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
     }
 
     public void ShowTrayNotification(string alertName) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertName, ToolTipIcon.Warning);
-    private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(_currentGlucoseResult), ToolTipIcon.Info);
+    private void ShowBalloon(object? sender, EventArgs e) => _trayIcon.ShowBalloonTip(2000, "Glucose", GetGlucoseMessage(), ToolTipIcon.Info);
 
     public void DisposeTrayIcon()
     {
@@ -45,30 +40,29 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
         _trayIcon.Dispose();
     }
 
-    public void CreateIcon(GlucoseResult glucoseResult)
+    public void CreateIcon()
     {
-        _currentGlucoseResult = glucoseResult;
-        _trayIcon.Text = GetGlucoseMessage(_currentGlucoseResult);
-        CreateTextIcon(_currentGlucoseResult, _trayIcon);
+        _trayIcon.Text = GetGlucoseMessage();
+        CreateTextIcon(_trayIcon);
     }
 
-    private string GetGlucoseMessage(GlucoseResult result) => $"{result.GetFormattedStringValue(_options.GlucoseUnit)}   {result.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {result.Trend.GetTrendArrow()}{result.StaleMessage(_options.StaleResultsThreshold)}";
+    private string GetGlucoseMessage() => $"{glucoseResult.GetFormattedStringValue(options.GlucoseUnit)}   {glucoseResult.DateTimeUTC.ToLocalTime().ToLongTimeString()}  {glucoseResult.Trend.GetTrendArrow()}{glucoseResult.StaleMessage(options.StaleResultsThreshold)}";
 
     private void PopulateContextMenu(EventHandler exitEvent)
     {
         _trayIcon.ContextMenuStrip?.Items.Clear(); // Remove all existing items
 
-        if (!string.IsNullOrWhiteSpace(_options.NightscoutUrl)) // Add Nightscout website shortcut
+        if (!string.IsNullOrWhiteSpace(options.NightscoutUrl)) // Add Nightscout website shortcut
         {
-            _logger.LogDebug("Nightscout url supplied, adding option to context menu.");
+            logger.LogDebug("Nightscout url supplied, adding option to context menu.");
 
             var process = new Process();
             process.StartInfo.UseShellExecute = true;
-            process.StartInfo.FileName = _options.NightscoutUrl;
+            process.StartInfo.FileName = options.NightscoutUrl;
             _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
         }
 
-        var taskEnabled = _taskScheduler.HasTaskEnabled();
+        var taskEnabled = taskScheduler.HasTaskEnabled();
         _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem(taskEnabled ? "Disable Run on startup" : "Run on startup", null, (obj, e) => ToggleTask(!taskEnabled, exitEvent)));
         _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Change Settings", null, new EventHandler(ChangeSettings)));
         _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("About", null, new EventHandler(About)));
@@ -77,7 +71,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
 
     private void ToggleTask(bool enable, EventHandler exitEvent)
     {
-        _taskScheduler.ToggleTask(enable);
+        taskScheduler.ToggleTask(enable);
         PopulateContextMenu(exitEvent);
     }
 
@@ -97,7 +91,7 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
     {
         if (!SettingsFormIsOpen)
         {
-            var settingsWindow = new SettingsWindow(_settingsWindowService, dialogService);
+            var settingsWindow = new SettingsWindow(settingsWindowService, dialogService);
             SettingsFormIsOpen = true;
             settingsWindow.ShowDialog();
             SettingsFormIsOpen = false;
@@ -111,16 +105,16 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
 
     private Brush SetColor(double val)
     {
-        if (_options.IsDarkMode)
+        if (options.IsDarkMode)
         {
             return val switch
             {
-                double n when n < _options.WarningHighBg && n > _options.WarningLowBg => new SolidBrush(Color.White),
-                double n when n >= _options.WarningHighBg && n < _options.HighBg => new SolidBrush(Color.Yellow),
-                double n when n >= _options.HighBg => new SolidBrush(Color.Red),
-                double n when n <= _options.WarningLowBg && n > _options.LowBg => new SolidBrush(Color.Yellow),
-                double n when n <= _options.LowBg && n > _options.CriticalLowBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                double n when n < options.WarningHighBg && n > options.WarningLowBg => new SolidBrush(Color.White),
+                double n when n >= options.WarningHighBg && n < options.HighBg => new SolidBrush(Color.Yellow),
+                double n when n >= options.HighBg => new SolidBrush(Color.Red),
+                double n when n <= options.WarningLowBg && n > options.LowBg => new SolidBrush(Color.Yellow),
+                double n when n <= options.LowBg && n > options.CriticalLowBg => new SolidBrush(Color.Red),
+                double n when n <= options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
                 _ => new SolidBrush(Color.White),
             };
         }
@@ -130,41 +124,41 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
             // Need to investigate if it's possible to have a double-wide icon, feasibility of multiple icons, or some other method of making this clearer.
             return val switch
             {
-                double n when n < _options.WarningHighBg && n > _options.WarningLowBg => new SolidBrush(Color.Black),
-                double n when n >= _options.WarningHighBg && n < _options.HighBg => new SolidBrush(Color.DarkGoldenrod),
-                double n when n >= _options.HighBg => new SolidBrush(Color.Red),
-                double n when n <= _options.WarningLowBg && n > _options.LowBg => new SolidBrush(Color.DarkGoldenrod),
-                double n when n <= _options.LowBg && n > _options.CriticalLowBg => new SolidBrush(Color.Red),
-                double n when n <= _options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
+                double n when n < options.WarningHighBg && n > options.WarningLowBg => new SolidBrush(Color.Black),
+                double n when n >= options.WarningHighBg && n < options.HighBg => new SolidBrush(Color.DarkGoldenrod),
+                double n when n >= options.HighBg => new SolidBrush(Color.Red),
+                double n when n <= options.WarningLowBg && n > options.LowBg => new SolidBrush(Color.DarkGoldenrod),
+                double n when n <= options.LowBg && n > options.CriticalLowBg => new SolidBrush(Color.Red),
+                double n when n <= options.CriticalLowBg && n > 0 => new SolidBrush(Color.Red),
                 _ => new SolidBrush(Color.Black),
             };
         }
     }
 
-    private void CreateTextIcon(GlucoseResult result, NotifyIcon trayIcon)
+    private void CreateTextIcon(NotifyIcon trayIcon)
     {
-        var glucoseValue = result.GetFormattedStringValue(_options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
+        var glucoseValue = glucoseResult.GetFormattedStringValue(options.GlucoseUnit).Replace('.', '\''); // Use ' instead of . since it is narrower and allows a better display of a two digit number + decimal place.
 
-        var isStale = result.IsStale(_options.StaleResultsThreshold);
+        var isStale = glucoseResult.IsStale(options.StaleResultsThreshold);
 
         if (glucoseValue == "0")
         {
-            _logger.LogWarning("Empty glucose result received.");
+            logger.LogWarning("Empty glucose result received.");
             glucoseValue = "NUL";
         }
-        else if (result.IsCriticalLow)
+        else if (glucoseResult.IsCriticalLow)
         {
-            _logger.LogInformation("Critical low glucose read.");
+            logger.LogInformation("Critical low glucose read.");
             glucoseValue = "DAN";
         }
 
-        var fontSize = CalculateFontSize(result);
+        var fontSize = CalculateFontSize(glucoseResult);
         var font = new Font("Roboto", fontSize, isStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
 
         var bitmapText = new Bitmap(64, 64);
         var g = Graphics.FromImage(bitmapText);
         g.Clear(Color.Transparent);
-        g.DrawString(glucoseValue, font, SetColor(_options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue), _standardOffset, 0f);
+        g.DrawString(glucoseValue, font, SetColor(options.GlucoseUnit == GlucoseUnitType.MG ? glucoseResult.MgValue : glucoseResult.MmolValue), _standardOffset, 0f);
         var hIcon = bitmapText.GetHicon();
         var myIcon = Icon.FromHandle(hIcon);
         trayIcon.Icon = myIcon;
@@ -177,8 +171,8 @@ public class IconService(ILogger<IconService> logger, ISettingsProxy options, IT
 
     private int CalculateFontSize(GlucoseResult result)
     {
-        var value = _options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
-        if (_options.GlucoseUnit == GlucoseUnitType.MMOL && value > 9.9) // Need to use smaller font size to accommodate 3 numbers + a decimal point
+        var value = options.GlucoseUnit == GlucoseUnitType.MG ? result.MgValue : result.MmolValue;
+        if (options.GlucoseUnit == GlucoseUnitType.MMOL && value > 9.9) // Need to use smaller font size to accommodate 3 numbers + a decimal point
             return _smallerFontSize;
         return _defaultFontSize;
     }

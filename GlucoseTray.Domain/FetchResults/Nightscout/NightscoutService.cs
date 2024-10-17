@@ -8,63 +8,51 @@ namespace GlucoseTray.Domain.FetchResults.Nightscout;
 
 public interface INightscoutService
 {
-    Task<GlucoseResult> GetLatestReadingAsync();
+    Task GetLatestReadingAsync();
 }
 
-public class NightscoutService(ISettingsProxy settings, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug) : INightscoutService
+public class NightscoutService(ISettingsProxy settings, ILogger<NightscoutService> logger, UrlAssembler urlBuilder, IExternalCommunicationAdapter externalAdapter, DebugService debug, GlucoseResult glucoseResult) : INightscoutService
 {
-    private readonly ISettingsProxy _settings = settings;
-    private readonly ILogger _logger = logger;
-    private readonly UrlAssembler _urlBuilder = urlBuilder;
-    private readonly IExternalCommunicationAdapter _externalAdapter = externalAdapter;
-    private readonly DebugService _debug = debug;
-
-    public async Task<GlucoseResult> GetLatestReadingAsync()
+    public async Task GetLatestReadingAsync()
     {
-        _debug.ClearDebugText();
-        _debug.AddDebugText("Starting Nightscout Fetch");
-        _debug.AddDebugText(!string.IsNullOrWhiteSpace(_settings.AccessToken) ? "Using access token." : "No access token.");
-
-        GlucoseResult result = new();
+        debug.ClearDebugText();
+        debug.AddDebugText("Starting Nightscout Fetch");
+        debug.AddDebugText(!string.IsNullOrWhiteSpace(settings.AccessToken) ? "Using access token." : "No access token.");
 
         try
         {
             var response = await GetApiResponse();
 
-            _debug.AddDebugText("Attempting to deserialize");
+            debug.AddDebugText("Attempting to deserialize");
             var record = JsonSerializer.Deserialize<List<NightScoutResult>>(response)!.Last();
-            _debug.AddDebugText("Deserialized.");
+            debug.AddDebugText("Deserialized.");
 
-            result = MapToResult(record);
+            MapToResult(record);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
-            if (_settings.IsDebugMode)
-                _debug.ShowDebugAlert(ex, "Nightscout result fetch");
-        }
+            logger.LogError(ex, "Nightscout fetching failed or received incorrect format.");
+            if (settings.IsDebugMode)
+                debug.ShowDebugAlert(ex, "Nightscout result fetch");
 
-        return result;
+            glucoseResult.SetDefault();
+        }
     }
 
-    private GlucoseResult MapToResult(NightScoutResult data)
+    private void MapToResult(NightScoutResult data)
     {
-        GlucoseResult result = new();
+        glucoseResult.SetDateTimeUtc(!string.IsNullOrEmpty(data.DateString) ? DateTime.Parse(data.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(data.Date).UtcDateTime);
+        glucoseResult.SetTrend(data.Direction.GetTrend());
+        glucoseResult.SetGlucoseValues(data.Sgv);
 
-        result.SetDateTimeUtc(!string.IsNullOrEmpty(data.DateString) ? DateTime.Parse(data.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(data.Date).UtcDateTime);
-        result.SetTrend(data.Direction.GetTrend());
-        result.SetGlucoseValues(data.Sgv, _settings);
-
-        if (result.Trend == TrendResult.Unknown)
-            _logger.LogWarning("Un-expected value for direction/Trend {Direction}", data.Direction);
-
-        return result;
+        if (glucoseResult.Trend == TrendResult.Unknown)
+            logger.LogWarning("Un-expected value for direction/Trend {Direction}", data.Direction);
     }
 
     private async Task<string> GetApiResponse()
     {
-        var url = _urlBuilder.BuildNightscoutUrl();
-        var result = await _externalAdapter.GetApiResponseAsync(url);
+        var url = urlBuilder.BuildNightscoutUrl();
+        var result = await externalAdapter.GetApiResponseAsync(url);
         return result;
     }
 }

@@ -8,7 +8,7 @@ namespace GlucoseTray.Domain.FetchResults;
 
 public interface IGlucoseFetchService
 {
-    Task<GlucoseResult> GetLatestReadingsAsync();
+    Task GetLatestReadingsAsync();
 }
 
 public class GlucoseFetchService : IGlucoseFetchService
@@ -26,18 +26,17 @@ public class GlucoseFetchService : IGlucoseFetchService
         _nightscoutService = nightscoutService;
     }
 
-    public async Task<GlucoseResult> GetLatestReadingsAsync()
+    public async Task GetLatestReadingsAsync()
     {
-        var fetchResult = new GlucoseResult();
         try
         {
             switch (_options.FetchMethod)
             {
                 case FetchMethod.DexcomShare:
-                    fetchResult = await _dexcomService.GetLatestReadingAsync();
+                    await _dexcomService.GetLatestReadingAsync();
                     break;
                 case FetchMethod.NightscoutApi:
-                    fetchResult = await _nightscoutService.GetLatestReadingAsync();
+                    await _nightscoutService.GetLatestReadingAsync();
                     break;
                 default:
                     _logger.LogError("Invalid fetch method specified.");
@@ -48,7 +47,5 @@ public class GlucoseFetchService : IGlucoseFetchService
         {
             _logger.LogError(ex, "Failed to get data.");
         }
-
-        return fetchResult;
     }
 }

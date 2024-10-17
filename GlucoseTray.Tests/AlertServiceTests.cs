@@ -11,8 +11,8 @@ public class AlertServiceTests
 {
     private GlucoseResult GetGlucoseResult(ISettingsProxy settingsProxy, double value, DateTime dateTimeUtc)
     {
-        var glucoseResult = new GlucoseResult();
-        glucoseResult.SetGlucoseValues(value, settingsProxy);
+        var glucoseResult = new GlucoseResult(settingsProxy);
+        glucoseResult.SetGlucoseValues(value);
         glucoseResult.SetDateTimeUtc(dateTimeUtc);
         return glucoseResult;
     }
@@ -33,11 +33,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.Received().ShowTrayNotification("High Glucose Alert");
@@ -59,11 +59,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.Received().ShowTrayNotification("Warning High Glucose Alert");
@@ -85,11 +85,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         dialogService.Received().ShowCriticalAlert("Critical Low Glucose Alert", "Critical Low Glucose Alert");
@@ -111,11 +111,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.Received().ShowTrayNotification("Low Glucose Alert");
@@ -137,11 +137,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(unitType == GlucoseUnitType.MMOL);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, value, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.Received().ShowTrayNotification("Warning Low Glucose Alert");
@@ -159,11 +159,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(false);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, 100, DateTime.UtcNow);
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.DidNotReceive().ShowTrayNotification(Arg.Any<string>());
@@ -182,11 +182,11 @@ public class AlertServiceTests
         options.IsServerDataUnitTypeMmol.Returns(false);
         var dialogService = Substitute.For<IDialogService>();
         var iconService = Substitute.For<IIconService>();
-        var alertService = new AlertService(options, iconService, dialogService);
         var glucoseResult = GetGlucoseResult(options, 500, DateTime.UtcNow.AddMinutes(-30));
+        var alertService = new AlertService(options, iconService, dialogService, glucoseResult);
 
         // Act
-        alertService.AlertNotification(glucoseResult);
+        alertService.AlertNotification();
 
         // Assert
         iconService.DidNotReceive().ShowTrayNotification(Arg.Any<string>());

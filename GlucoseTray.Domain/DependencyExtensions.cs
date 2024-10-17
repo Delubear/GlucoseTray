@@ -16,6 +16,7 @@ public static class DependencyExtensions
                 .AddScoped<INightscoutService, NightscoutService>()
                 .AddScoped<IDexcomService, DexcomService>()
                 .AddScoped<UrlAssembler, UrlAssembler>()
+                .AddScoped<GlucoseResult, GlucoseResult>()
                 .AddScoped<IGlucoseFetchService, GlucoseFetchService>();
 
         return services;

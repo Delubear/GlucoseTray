@@ -10,8 +10,8 @@ public class GlucoseFetchResultExtensionTests
 {
     private GlucoseResult GetGlucoseResult(ISettingsProxy settingsProxy, double value, DateTime dateTimeUtc)
     {
-        var glucoseResult = new GlucoseResult();
-        glucoseResult.SetGlucoseValues(value, settingsProxy);
+        var glucoseResult = new GlucoseResult(settingsProxy);
+        glucoseResult.SetGlucoseValues(value);
         glucoseResult.SetDateTimeUtc(dateTimeUtc);
         return glucoseResult;
     }
