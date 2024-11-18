@@ -51,12 +51,12 @@ public class Program
                 .AddScoped<AppContext, AppContext>()
                 .AddScoped<IIconService, IconService>()
                 .AddScoped<IDialogService, DialogService>()
-                .AddScoped<ITaskSchedulerService, TaskSchedulerService>()
+                .AddScoped<ISchedulingAdapter, TaskSchedulerService>()
                 .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddScoped<ISettingsWindowService, SettingsWindowService>()
                 .AddScoped<ISettingsProxy, SettingsProxy>()
                 .AddScoped<ISettingsService, SettingsService>()
-                .AddScoped<IFileService<GlucoseTraySettings>, FileService<GlucoseTraySettings>>()
+                .AddScoped<ILocalFileAdapter<GlucoseTraySettings>, FileService<GlucoseTraySettings>>()
                 .RegisterDomainServices();
     }
 

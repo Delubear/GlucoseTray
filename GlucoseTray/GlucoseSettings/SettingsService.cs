@@ -12,7 +12,7 @@ public interface ISettingsService
     List<string> ValidateSettings(GlucoseTraySettings? model = null);
 }
 
-public class SettingsService(IFileService<GlucoseTraySettings> fileService) : ISettingsService
+public class SettingsService(ILocalFileAdapter<GlucoseTraySettings> fileService) : ISettingsService
 {
     /// <summary>
     /// If model is null, will validate from stored settings file.

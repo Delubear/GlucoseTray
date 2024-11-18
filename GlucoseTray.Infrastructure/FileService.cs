@@ -2,14 +2,14 @@
 
 namespace GlucoseTray.Infrastructure;
 
-public interface IFileService<T> where T : class
+public interface ILocalFileAdapter<T> where T : class
 {
     void WriteModelToJsonFile(T model, string file);
     T? ReadModelFromFile(string file);
     bool DoesFileExist(string filePath);
 }
 
-public class FileService<T> : IFileService<T> where T : class
+public class FileService<T> : ILocalFileAdapter<T> where T : class
 {
     public void WriteModelToJsonFile(T model, string file)
     {

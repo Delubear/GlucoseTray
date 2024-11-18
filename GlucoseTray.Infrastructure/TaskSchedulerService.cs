@@ -3,7 +3,7 @@ using Microsoft.Win32.TaskScheduler;
 
 namespace GlucoseTray.Infrastructure;
 
-public class TaskSchedulerService : ITaskSchedulerService
+public class TaskSchedulerService : ISchedulingAdapter
 {
     private readonly string ExecutablePath = "\"" + Environment.ProcessPath + "\"";
     private readonly string TaskName = "GlucoseTray-" + Environment.UserName;

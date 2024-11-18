@@ -22,9 +22,8 @@ public partial class SettingsWindow : Window
 
         InitializeComponent();
 
-        var model = _service.GetSettingsFromFile();
-        if (model is not null)
-            MapToViewModel(model);
+        var model = _service.GetSettingsFromFile() ?? _service.GetDefaultSettings();
+        MapToViewModel(model);
     }
 
     private void MapToViewModel(GlucoseTraySettings settings)
@@ -65,7 +64,8 @@ public partial class SettingsWindow : Window
             return;
         }
 
-        //_service.UpdateValuesFromMMoLToMG(_settings);
+        var viewModel = GetViewModel();
+        _service.UpdateValuesFromMMoLToMG(viewModel);
     }
 
     private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
@@ -76,21 +76,22 @@ public partial class SettingsWindow : Window
             return;
         }
 
-        //_service.UpdateValuesFromMGToMMoL(_settings);
+        var viewModel = GetViewModel();
+        _service.UpdateValuesFromMGToMMoL(viewModel);
     }
 
     private void Button_Save_Click(object sender, RoutedEventArgs e)
     {
         var viewModel = GetViewModel();
-        //_service.UpdateServerDetails(_settings, fetchMethod, glucoseUnit, dexcomServer, dexcomUsername, dexcomPassword, nightscoutAccessToken);
-        //var isValidResult = _service.IsValid(_settings);
-        //if (isValidResult.IsValid == false)
-        //{
-        //    _dialogService.ShowErrorAlert("Settings are not valid.  Please fix before continuing.", string.Join("\r\n", isValidResult.Errors));
-        //    return;
-        //}
+        var settings = MapToSettings(viewModel);
+        var isValidResult = _service.IsValid(settings);
+        if (isValidResult.IsValid == false)
+        {
+            _dialogService.ShowErrorAlert("Settings are not valid.  Please fix before continuing.", string.Join("\r\n", isValidResult.Errors));
+            return;
+        }
 
-        //_service.Save(_settings);
+        _service.Save(settings);
 
         DialogResult = true;
         Close();
@@ -98,11 +99,41 @@ public partial class SettingsWindow : Window
 
     private void txt_dexcom_password_PasswordChanged(object sender, RoutedEventArgs e)
     {
-        var password = txt_dexcom_password.Password;
+        //var password = txt_dexcom_password.Password;
     }
 
     private void txt_nightscout_token_PasswordChanged(object sender, RoutedEventArgs e)
     {
-        var password = txt_nightscout_token.Password;
+        //var password = txt_nightscout_token.Password;
+    }
+
+    private GlucoseTraySettings MapToSettings(GlucoseTraySettingsViewModel viewModel)
+    {
+        var settings = new GlucoseTraySettings
+        {
+            DataSource = viewModel.DataSource,
+            GlucoseUnit = viewModel.UnitType,
+            NightscoutUrl = viewModel.NightscoutUrl,
+            DexcomServer = viewModel.DexcomServer,
+            DexcomUsername = viewModel.DexcomUsername,
+            WarningHighBg = viewModel.WarningHighBg,
+            HighBg = viewModel.HighBg,
+            WarningLowBg = viewModel.WarningLowBg,
+            LowBg = viewModel.LowBg,
+            CriticalLowBg = viewModel.CriticalLowBg,
+            PollingThreshold = viewModel.PollingThreshold,
+            StaleResultsThreshold = viewModel.StaleResultsThreshold,
+            HighAlert = viewModel.HighAlert,
+            WarningHighAlert = viewModel.WarningHighAlert,
+            WarningLowAlert = viewModel.WarningLowAlert,
+            LowAlert = viewModel.LowAlert,
+            CriticallyLowAlert = viewModel.CriticallyLowAlert,
+            IsServerDataUnitTypeMmol = viewModel.IsServerDataUnitTypeMmol,
+            IsDebugMode = viewModel.IsDebugMode,
+            IsDarkMode = viewModel.IsDarkMode,
+            DexcomPassword = txt_dexcom_password.Password,
+            AccessToken = txt_nightscout_token.Password,
+        };
+        return settings;
     }
 }

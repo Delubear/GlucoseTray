@@ -2,6 +2,7 @@
 using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.Enums;
 using GlucoseTray.Domain.GlucoseSettings;
+using GlucoseTray.GlucoseSettings;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace GlucoseTray.DisplayResults;
 
-public class IconService(ILogger<IconService> logger, ISettingsProxy options, ITaskSchedulerService taskScheduler, ISettingsWindowService settingsWindowService, IDialogService dialogService, GlucoseResult glucoseResult) : IIconService
+public class IconService(ILogger<IconService> logger, ISettingsProxy options, ISchedulingAdapter taskScheduler, ISettingsWindowService settingsWindowService, IDialogService dialogService, GlucoseResult glucoseResult) : IIconService
 {
     private readonly float _standardOffset = -10f;
     private readonly int _defaultFontSize = 40;

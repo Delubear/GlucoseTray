@@ -1,53 +1,35 @@
-﻿using System.ComponentModel;
-using System.Linq;
-using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.Enums;
+﻿using GlucoseTray.Domain.DisplayResults;
 using GlucoseTray.Domain.GlucoseSettings;
 using GlucoseTray.Infrastructure;
 
 namespace GlucoseTray.GlucoseSettings;
 
-public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService, ISettingsService settingsService, IDialogService dialogService) : ISettingsWindowService
+public class SettingsWindowService(ILocalFileAdapter<GlucoseTraySettings> fileService, ISettingsService settingsService, IDialogService dialogService) : ISettingsWindowService
 {
-    public void Save(GlucoseTraySettings settings)
-    {
-        fileService.WriteModelToJsonFile(settings, Program.SettingsFile);
-    }
+    public void Save(GlucoseTraySettings settings) => fileService.WriteModelToJsonFile(settings, Program.SettingsFile);
 
     public (bool IsValid, IEnumerable<string> Errors) IsValid(GlucoseTraySettings settings)
     {
         var errors = settingsService.ValidateSettings(settings);
-        if (errors.Any())
-            return (false, errors);
-        return (true, errors);
+        return (errors.Count == 0, errors);
     }
 
-    public void UpdateServerDetails(GlucoseTraySettings settings, DataSource fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken)
+    public void UpdateValuesFromMGToMMoL(GlucoseTraySettingsViewModel viewModel)
     {
-        settings.DataSource = fetchMethod;
-        settings.GlucoseUnit = unitType;
-        settings.DexcomServer = dexcomServerLocation;
-        settings.DexcomUsername = dexcomUsername;
-        settings.DexcomPassword = dexcomPassword;
-        settings.AccessToken = nightscoutAccessToken;
+        viewModel.HighBg = Math.Round(viewModel.HighBg /= 18, 1);
+        viewModel.WarningHighBg = Math.Round(viewModel.WarningHighBg /= 18, 1);
+        viewModel.WarningLowBg = Math.Round(viewModel.WarningLowBg /= 18, 1);
+        viewModel.LowBg = Math.Round(viewModel.LowBg /= 18, 1);
+        viewModel.CriticalLowBg = Math.Round(viewModel.CriticalLowBg /= 18, 1);
     }
 
-    public void UpdateValuesFromMGToMMoL(GlucoseTraySettings settings)
+    public void UpdateValuesFromMMoLToMG(GlucoseTraySettingsViewModel viewModel)
     {
-        settings.HighBg = Math.Round(settings.HighBg /= 18, 1);
-        settings.WarningHighBg = Math.Round(settings.WarningHighBg /= 18, 1);
-        settings.WarningLowBg = Math.Round(settings.WarningLowBg /= 18, 1);
-        settings.LowBg = Math.Round(settings.LowBg /= 18, 1);
-        settings.CriticalLowBg = Math.Round(settings.CriticalLowBg /= 18, 1);
-    }
-
-    public void UpdateValuesFromMMoLToMG(GlucoseTraySettings settings)
-    {
-        settings.HighBg = Math.Round(settings.HighBg *= 18);
-        settings.WarningHighBg = Math.Round(settings.WarningHighBg *= 18);
-        settings.WarningLowBg = Math.Round(settings.WarningLowBg *= 18);
-        settings.LowBg = Math.Round(settings.LowBg *= 18);
-        settings.CriticalLowBg = Math.Round(settings.CriticalLowBg *= 18);
+        viewModel.HighBg = Math.Round(viewModel.HighBg *= 18);
+        viewModel.WarningHighBg = Math.Round(viewModel.WarningHighBg *= 18);
+        viewModel.WarningLowBg = Math.Round(viewModel.WarningLowBg *= 18);
+        viewModel.LowBg = Math.Round(viewModel.LowBg *= 18);
+        viewModel.CriticalLowBg = Math.Round(viewModel.CriticalLowBg *= 18);
     }
 
     public GlucoseTraySettings GetDefaultSettings()
@@ -66,13 +48,7 @@ public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService
             IsServerDataUnitTypeMmol = false,
             IsDebugMode = false,
             IsDarkMode = true,
-            // Appears we will need to manually bind radios, dropdowns, and password fields for now.
         };
-    }
-
-    public IEnumerable<string> GetDexComServerLocationDescriptions()
-    {
-        return typeof(DexcomServerLocation).GetFields().Select(x => (DescriptionAttribute[])x.GetCustomAttributes(typeof(DescriptionAttribute), false)).SelectMany(x => x).Select(x => x.Description);
     }
 
     public GlucoseTraySettings? GetSettingsFromFile()
