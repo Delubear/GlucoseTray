@@ -13,7 +13,7 @@ public class SettingsProxyTests
     {
         var settings = new GlucoseTraySettings
         {
-            FetchMethod = DataSource.NightscoutApi,
+            DataSource = DataSource.NightscoutApi,
         };
         var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
         options.CurrentValue.Returns(settings);

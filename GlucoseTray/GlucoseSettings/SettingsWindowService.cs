@@ -24,7 +24,7 @@ public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService
 
     public void UpdateServerDetails(GlucoseTraySettings settings, DataSource fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken)
     {
-        settings.FetchMethod = fetchMethod;
+        settings.DataSource = fetchMethod;
         settings.GlucoseUnit = unitType;
         settings.DexcomServer = dexcomServerLocation;
         settings.DexcomUsername = dexcomUsername;

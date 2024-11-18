@@ -65,8 +65,10 @@
         <TextBox TabIndex="3" x:Name="txt_nightscoutUrl" Grid.Column="3" Grid.Row="1" TextWrapping="Wrap" Width="184" Margin="7,4,0,3" HorizontalAlignment="Left" 
                  Visibility="{Binding Path=ShowNightscoutFields, Converter={StaticResource BoolToVis}}" Text="{Binding NightscoutUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"/>
 
-        <PasswordBox TabIndex="4" x:Name="txt_dexcom_password" Grid.Column="4" Grid.Row="1" Width="140" Margin="5,4,0,3" HorizontalAlignment="Left" Visibility="{Binding Path=ShowDexcomFields, Converter={StaticResource BoolToVis}}" />
-        <PasswordBox TabIndex="4" x:Name="txt_nightscout_token" Grid.Column="4" Grid.Row="1" Width="190" Margin="50,4,5,3" HorizontalAlignment="Left" Visibility="{Binding Path=ShowNightscoutFields, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="2"/>
+        <PasswordBox TabIndex="4" x:Name="txt_dexcom_password" Grid.Column="4" Grid.Row="1" Width="140" Margin="5,4,0,3" HorizontalAlignment="Left" 
+                     Visibility="{Binding Path=ShowDexcomFields, Converter={StaticResource BoolToVis}}" PasswordChanged="txt_dexcom_password_PasswordChanged" />
+        <PasswordBox TabIndex="4" x:Name="txt_nightscout_token" Grid.Column="4" Grid.Row="1" Width="190" Margin="50,4,5,3" HorizontalAlignment="Left" 
+                     Visibility="{Binding Path=ShowNightscoutFields, Converter={StaticResource BoolToVis}}" Grid.ColumnSpan="2" PasswordChanged="txt_nightscout_token_PasswordChanged"/>
 
         <Label Content="Glucose Unit" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Top" Height="26" Width="100" Margin="10,0,0,0" Grid.ColumnSpan="2"/>
         <Label x:Name="label_dexcom_server" Content="Dexcom Server" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="25" Width="95" Grid.ColumnSpan="2" Margin="62,0,0,0" 

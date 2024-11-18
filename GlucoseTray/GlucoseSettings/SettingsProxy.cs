@@ -10,8 +10,8 @@ public class SettingsProxy(IOptionsMonitor<GlucoseTraySettings> options) : ISett
 
     public DataSource FetchMethod
     {
-        get => _options.CurrentValue.FetchMethod;
-        set => _options.CurrentValue.FetchMethod = value;
+        get => _options.CurrentValue.DataSource;
+        set => _options.CurrentValue.DataSource = value;
     }
 
     public string NightscoutUrl

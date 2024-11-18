@@ -1,15 +1,10 @@
 ﻿using GlucoseTray.Domain.Enums;
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 
 namespace GlucoseTray.GlucoseSettings;
 
 public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
 {
-    [JsonIgnore]
-    private const string EncryptionKey = "i_can_probably_be_improved";
-
-
     public event PropertyChangedEventHandler? PropertyChanged;
     protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     private void UpdateAllDataSourceFields()
@@ -22,8 +17,6 @@ public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
         OnPropertyChanged(nameof(NightscoutUrl));
         OnPropertyChanged(nameof(DexcomServer));
         OnPropertyChanged(nameof(DexcomUsername));
-        OnPropertyChanged(nameof(DexcomPassword));
-        OnPropertyChanged(nameof(AccessToken));
     }
     private void UpdateAllUnitTypeFields()
     {
@@ -109,34 +102,13 @@ public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
     private string dexcomUsername = string.Empty;
     public string DexcomUsername
     {
-        get => string.IsNullOrWhiteSpace(dexcomUsername) ? dexcomUsername : StringEncryptionService.DecryptString(dexcomUsername, EncryptionKey);
+        get => dexcomUsername;
         set
         {
-            dexcomUsername = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey);
+            dexcomUsername = value;
             UpdateAllDataSourceFields();
         }
     }
-
-    private string dexcomPassword = string.Empty;
-    public string DexcomPassword
-    {
-        get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
-        set
-        {
-            dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); UpdateAllDataSourceFields();
-        }
-    }
-
-    private string accessToken = string.Empty;
-    public string AccessToken
-    {
-        get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
-        set
-        {
-            accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); UpdateAllDataSourceFields();
-        }
-    }
-
 
     private double warningHighBg;
     public double WarningHighBg
@@ -173,9 +145,6 @@ public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
     {
         get => pollingThreshold; set { pollingThreshold = value; OnPropertyChanged(nameof(PollingThreshold)); }
     }
-
-    [JsonIgnore]
-    public TimeSpan PollingThresholdTimeSpan => TimeSpan.FromSeconds(PollingThreshold);
 
     private int staleResultsThreshold;
     public int StaleResultsThreshold

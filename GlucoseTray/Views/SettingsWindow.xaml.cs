@@ -1,7 +1,8 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.Enums;
 using GlucoseTray.Domain.GlucoseSettings;
+using GlucoseTray.GlucoseSettings;
 
 namespace GlucoseTray.Views.Settings;
 
@@ -12,116 +13,96 @@ public partial class SettingsWindow : Window
 {
     private readonly ISettingsWindowService _service;
     private readonly IDialogService _dialogService;
-    private GlucoseTraySettings _settings;
     private bool HaveBypassedInitialModification;
 
     public SettingsWindow(ISettingsWindowService service, IDialogService dialogService)
     {
         _service = service;
         _dialogService = dialogService;
-        //_settings = _service.GetDefaultSettings();
 
         InitializeComponent();
 
-        //combobox_dexcom_server.ItemsSource = _service.GetDexComServerLocationDescriptions();
-
-        //var model = _service.GetSettingsFromFile();
-        //if (model is not null)
-        //{
-        //    txt_dexcom_password.Password = model.DexcomPassword;
-        //    txt_nightscout_token.Password = model.AccessToken;
-        //    if (model.FetchMethod == DataSource.DexcomShare)
-        //        radio_source_dexcom.IsChecked = true;
-        //    else
-        //        radio_source_nightscout.IsChecked = true;
-
-        //    if (model.GlucoseUnit == GlucoseUnitType.MG)
-        //        radio_unit_mg.IsChecked = true;
-        //    else
-        //        radio_unit_mmol.IsChecked = true;
-
-        //    combobox_dexcom_server.SelectedIndex = (int)model.DexcomServer;
-        //    _settings = model;
-        //}
-
-        //DataContext = _settings;
+        var model = _service.GetSettingsFromFile();
+        if (model is not null)
+            MapToViewModel(model);
     }
 
-    //private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
-    //{
-    //    if (!HaveBypassedInitialModification)
-    //    {
-    //        HaveBypassedInitialModification = true;
-    //        return;
-    //    }
-
-    //    _service.UpdateValuesFromMMoLToMG(_settings);
-    //}
-
-    //private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
-    //{
-    //    if (!HaveBypassedInitialModification)
-    //    {
-    //        HaveBypassedInitialModification = true;
-    //        return;
-    //    }
-
-    //    _service.UpdateValuesFromMGToMMoL(_settings);
-    //}
-
-    //private void ShowNightscoutBlock(object sender, RoutedEventArgs e)
-    //{
-    //    if (label_dexcom_username == null)
-    //        return;
-    //    label_dexcom_username.Visibility = Visibility.Hidden;
-    //    label_dexcom_password.Visibility = Visibility.Hidden;
-    //    txt_dexcom_password.Visibility = Visibility.Hidden;
-    //    txt_dexcom_username.Visibility = Visibility.Hidden;
-    //    label_dexcom_server.Visibility = Visibility.Hidden;
-    //    combobox_dexcom_server.Visibility = Visibility.Hidden;
-
-    //    label_nightscoutUrl.Visibility = Visibility.Visible;
-    //    label_nightscout_token.Visibility = Visibility.Visible;
-    //    txt_nightscout_token.Visibility = Visibility.Visible;
-    //    txt_nightscoutUrl.Visibility = Visibility.Visible;
-    //}
-
-    //private void ShowDexcomBlock(object sender, RoutedEventArgs e)
-    //{
-    //    if (label_nightscoutUrl == null)
-    //        return;
-    //    label_nightscoutUrl.Visibility = Visibility.Hidden;
-    //    label_nightscout_token.Visibility = Visibility.Hidden;
-    //    txt_nightscout_token.Visibility = Visibility.Hidden;
-    //    txt_nightscoutUrl.Visibility = Visibility.Hidden;
-
-    //    label_dexcom_username.Visibility = Visibility.Visible;
-    //    label_dexcom_password.Visibility = Visibility.Visible;
-    //    txt_dexcom_password.Visibility = Visibility.Visible;
-    //    txt_dexcom_username.Visibility = Visibility.Visible;
-    //    label_dexcom_server.Visibility = Visibility.Visible;
-    //    combobox_dexcom_server.Visibility = Visibility.Visible;
-    //}
-
-    private void Button_Save_Click(object sender, RoutedEventArgs e)
+    private void MapToViewModel(GlucoseTraySettings settings)
     {
-        var fetchMethod = radio_source_dexcom.IsChecked == true ? DataSource.DexcomShare : DataSource.NightscoutApi;
-        var glucoseUnit = radio_unit_mg.IsChecked == true ? GlucoseUnitType.MG : GlucoseUnitType.MMOL;
-        var dexcomServer = (DexcomServerLocation)combobox_dexcom_server.SelectedIndex;
-        var dexcomUsername = txt_dexcom_username.Text;
-        var dexcomPassword = txt_dexcom_password.Password;
-        var nightscoutAccessToken = txt_nightscout_token.Password;
-        _service.UpdateServerDetails(_settings, fetchMethod, glucoseUnit, dexcomServer, dexcomUsername, dexcomPassword, nightscoutAccessToken);
-        var isValidResult = _service.IsValid(_settings);
-        if (isValidResult.IsValid == false)
+        var viewModel = GetViewModel();
+        viewModel.DataSource = settings.DataSource;
+        viewModel.UnitType = settings.GlucoseUnit;
+        viewModel.NightscoutUrl = settings.NightscoutUrl;
+        viewModel.DexcomServer = settings.DexcomServer;
+        viewModel.DexcomUsername = settings.DexcomUsername;
+        viewModel.WarningHighBg = settings.WarningHighBg;
+        viewModel.HighBg = settings.HighBg;
+        viewModel.WarningLowBg = settings.WarningLowBg;
+        viewModel.LowBg = settings.LowBg;
+        viewModel.CriticalLowBg = settings.CriticalLowBg;
+        viewModel.PollingThreshold = settings.PollingThreshold;
+        viewModel.StaleResultsThreshold = settings.StaleResultsThreshold;
+        viewModel.HighAlert = settings.HighAlert;
+        viewModel.WarningHighAlert = settings.WarningHighAlert;
+        viewModel.WarningLowAlert = settings.WarningLowAlert;
+        viewModel.LowAlert = settings.LowAlert;
+        viewModel.CriticallyLowAlert = settings.CriticallyLowAlert;
+        viewModel.IsServerDataUnitTypeMmol = settings.IsServerDataUnitTypeMmol;
+        viewModel.IsDebugMode = settings.IsDebugMode;
+        viewModel.IsDarkMode = settings.IsDarkMode;
+
+        txt_dexcom_password.Password = settings.DexcomPassword;
+        txt_nightscout_token.Password = settings.AccessToken;
+    }
+
+    private GlucoseTraySettingsViewModel GetViewModel() => Resources.Values.OfType<GlucoseTraySettingsViewModel>().First();
+
+    private void UpdateValuesFromMMoLToMG(object sender, RoutedEventArgs e)
+    {
+        if (!HaveBypassedInitialModification)
         {
-            _dialogService.ShowErrorAlert("Settings are not valid.  Please fix before continuing.", string.Join("\r\n", isValidResult.Errors));
+            HaveBypassedInitialModification = true;
             return;
         }
 
-        _service.Save(_settings);
+        //_service.UpdateValuesFromMMoLToMG(_settings);
+    }
+
+    private void UpdateValuesFromMGToMMoL(object sender, RoutedEventArgs e)
+    {
+        if (!HaveBypassedInitialModification)
+        {
+            HaveBypassedInitialModification = true;
+            return;
+        }
+
+        //_service.UpdateValuesFromMGToMMoL(_settings);
+    }
+
+    private void Button_Save_Click(object sender, RoutedEventArgs e)
+    {
+        var viewModel = GetViewModel();
+        //_service.UpdateServerDetails(_settings, fetchMethod, glucoseUnit, dexcomServer, dexcomUsername, dexcomPassword, nightscoutAccessToken);
+        //var isValidResult = _service.IsValid(_settings);
+        //if (isValidResult.IsValid == false)
+        //{
+        //    _dialogService.ShowErrorAlert("Settings are not valid.  Please fix before continuing.", string.Join("\r\n", isValidResult.Errors));
+        //    return;
+        //}
+
+        //_service.Save(_settings);
 
         DialogResult = true;
         Close();
+    }
+
+    private void txt_dexcom_password_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        var password = txt_dexcom_password.Password;
+    }
+
+    private void txt_nightscout_token_PasswordChanged(object sender, RoutedEventArgs e)
+    {
+        var password = txt_nightscout_token.Password;
     }
 }
