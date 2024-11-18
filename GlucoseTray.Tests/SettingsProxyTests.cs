@@ -13,13 +13,13 @@ public class SettingsProxyTests
     {
         var settings = new GlucoseTraySettings
         {
-            FetchMethod = FetchMethod.NightscoutApi,
+            FetchMethod = DataSource.NightscoutApi,
         };
         var options = Substitute.For<IOptionsMonitor<GlucoseTraySettings>>();
         options.CurrentValue.Returns(settings);
         var settingsProxy = new SettingsProxy(options);
 
-        Assert.That(settingsProxy.FetchMethod, Is.EqualTo(FetchMethod.NightscoutApi));
+        Assert.That(settingsProxy.FetchMethod, Is.EqualTo(DataSource.NightscoutApi));
     }
 
     [Test]
@@ -30,8 +30,8 @@ public class SettingsProxyTests
         options.CurrentValue.Returns(settings);
         var settingsProxy = new SettingsProxy(options);
 
-        settingsProxy.FetchMethod = FetchMethod.NightscoutApi;
-        Assert.That(settingsProxy.FetchMethod, Is.EqualTo(FetchMethod.NightscoutApi));
+        settingsProxy.FetchMethod = DataSource.NightscoutApi;
+        Assert.That(settingsProxy.FetchMethod, Is.EqualTo(DataSource.NightscoutApi));
     }
 
     [Test]

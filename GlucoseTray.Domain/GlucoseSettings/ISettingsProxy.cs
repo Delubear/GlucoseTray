@@ -10,7 +10,7 @@ namespace GlucoseTray.Domain.GlucoseSettings
         string DexcomPassword { get; set; }
         DexcomServerLocation DexcomServer { get; set; }
         string DexcomUsername { get; set; }
-        FetchMethod FetchMethod { get; set; }
+        DataSource FetchMethod { get; set; }
         GlucoseUnitType GlucoseUnit { get; set; }
         bool HighAlert { get; set; }
         double HighBg { get; set; }

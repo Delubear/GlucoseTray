@@ -9,7 +9,7 @@ public interface ISettingsWindowService
     GlucoseTraySettings? GetSettingsFromFile();
     void UpdateValuesFromMMoLToMG(GlucoseTraySettings settings);
     void UpdateValuesFromMGToMMoL(GlucoseTraySettings _settings);
-    void UpdateServerDetails(GlucoseTraySettings settings, FetchMethod fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken);
+    void UpdateServerDetails(GlucoseTraySettings settings, DataSource fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken);
     (bool IsValid, IEnumerable<string> Errors) IsValid(GlucoseTraySettings settings);
     void Save(GlucoseTraySettings settings);
 }

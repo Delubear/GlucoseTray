@@ -8,7 +8,7 @@ public class SettingsProxy(IOptionsMonitor<GlucoseTraySettings> options) : ISett
 {
     private readonly IOptionsMonitor<GlucoseTraySettings> _options = options;
 
-    public FetchMethod FetchMethod
+    public DataSource FetchMethod
     {
         get => _options.CurrentValue.FetchMethod;
         set => _options.CurrentValue.FetchMethod = value;

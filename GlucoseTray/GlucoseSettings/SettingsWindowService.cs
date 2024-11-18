@@ -22,7 +22,7 @@ public class SettingsWindowService(IFileService<GlucoseTraySettings> fileService
         return (true, errors);
     }
 
-    public void UpdateServerDetails(GlucoseTraySettings settings, FetchMethod fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken)
+    public void UpdateServerDetails(GlucoseTraySettings settings, DataSource fetchMethod, GlucoseUnitType unitType, DexcomServerLocation dexcomServerLocation, string dexcomUsername, string dexcomPassword, string nightscoutAccessToken)
     {
         settings.FetchMethod = fetchMethod;
         settings.GlucoseUnit = unitType;

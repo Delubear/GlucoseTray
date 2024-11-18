@@ -32,10 +32,10 @@ public class GlucoseFetchService : IGlucoseFetchService
         {
             switch (_options.FetchMethod)
             {
-                case FetchMethod.DexcomShare:
+                case DataSource.DexcomShare:
                     await _dexcomService.GetLatestReadingAsync();
                     break;
-                case FetchMethod.NightscoutApi:
+                case DataSource.NightscoutApi:
                     await _nightscoutService.GetLatestReadingAsync();
                     break;
                 default:

@@ -32,7 +32,7 @@ public class SettingsService(IFileService<GlucoseTraySettings> fileService) : IS
             }
         }
 
-        if (model.FetchMethod == FetchMethod.DexcomShare)
+        if (model.FetchMethod == DataSource.DexcomShare)
         {
             if (string.IsNullOrWhiteSpace(model.DexcomUsername))
                 errors.Add("Dexcom Username is missing");

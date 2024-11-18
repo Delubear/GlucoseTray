@@ -2,17 +2,88 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace GlucoseTray.Domain.GlucoseSettings;
+namespace GlucoseTray.GlucoseSettings;
 
-public class GlucoseTraySettings : INotifyPropertyChanged
+public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
 {
     [JsonIgnore]
     private const string EncryptionKey = "i_can_probably_be_improved";
 
-    private DataSource fetchMethod;
-    public DataSource FetchMethod
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    private void UpdateAllDataSourceFields()
     {
-        get => fetchMethod; set { fetchMethod = value; OnPropertyChanged(nameof(FetchMethod)); }
+        OnPropertyChanged(nameof(ShowDexcomFields));
+        OnPropertyChanged(nameof(ShowNightscoutFields));
+        OnPropertyChanged(nameof(DataSource));
+        OnPropertyChanged(nameof(IsDexcomDataSource));
+        OnPropertyChanged(nameof(IsNightscoutDataSource));
+        OnPropertyChanged(nameof(NightscoutUrl));
+        OnPropertyChanged(nameof(DexcomServer));
+        OnPropertyChanged(nameof(DexcomUsername));
+        OnPropertyChanged(nameof(DexcomPassword));
+        OnPropertyChanged(nameof(AccessToken));
+    }
+    private void UpdateAllUnitTypeFields()
+    {
+        OnPropertyChanged(nameof(UnitType));
+        OnPropertyChanged(nameof(IsMgUnitType));
+    }
+
+    private DataSource dataSource;
+    public DataSource DataSource
+    {
+        get => dataSource; set { dataSource = value; UpdateAllDataSourceFields(); }
+    }
+    public bool IsDexcomDataSource
+    {
+        get => DataSource == DataSource.DexcomShare;
+        set
+        {
+            if (value)
+                DataSource = DataSource.DexcomShare;
+            UpdateAllDataSourceFields();
+        }
+    }
+    public bool IsNightscoutDataSource
+    {
+        get => DataSource == DataSource.NightscoutApi;
+        set
+        {
+            if (value)
+                DataSource = DataSource.NightscoutApi;
+            UpdateAllDataSourceFields();
+        }
+    }
+
+    public bool ShowDexcomFields => DataSource == DataSource.DexcomShare;
+    public bool ShowNightscoutFields => DataSource == DataSource.NightscoutApi;
+
+    private GlucoseUnitType unitType;
+    public GlucoseUnitType UnitType
+    {
+        get => unitType; set { unitType = value; OnPropertyChanged(nameof(UnitType)); }
+    }
+    public bool IsMgUnitType
+    {
+        get => UnitType == GlucoseUnitType.MG;
+        set
+        {
+            if (value)
+                UnitType = GlucoseUnitType.MG;
+            UpdateAllUnitTypeFields();
+        }
+    }
+    public bool IsMmolUnitType
+    {
+        get => UnitType == GlucoseUnitType.MMOL;
+        set
+        {
+            if (value)
+                UnitType = GlucoseUnitType.MMOL;
+            UpdateAllUnitTypeFields();
+        }
     }
 
     private string nightscoutUrl = string.Empty;
@@ -22,17 +93,18 @@ public class GlucoseTraySettings : INotifyPropertyChanged
         set
         {
             nightscoutUrl = value;
-            if (nightscoutUrl.EndsWith("/"))
+            if (nightscoutUrl.EndsWith('/'))
                 nightscoutUrl = nightscoutUrl.Remove(nightscoutUrl.Length - 1);
-            OnPropertyChanged(nameof(NightscoutUrl));
+            UpdateAllDataSourceFields();
         }
     }
 
     private DexcomServerLocation dexcomServer;
     public DexcomServerLocation DexcomServer
     {
-        get => dexcomServer; set { dexcomServer = value; OnPropertyChanged(nameof(DexcomServer)); }
+        get => dexcomServer; set { dexcomServer = value; UpdateAllDataSourceFields(); }
     }
+    public DexcomServerLocation[] DexcomServerLocations => Enum.GetValues<DexcomServerLocation>();
 
     private string dexcomUsername = string.Empty;
     public string DexcomUsername
@@ -41,7 +113,7 @@ public class GlucoseTraySettings : INotifyPropertyChanged
         set
         {
             dexcomUsername = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey);
-            OnPropertyChanged(nameof(DexcomUsername));
+            UpdateAllDataSourceFields();
         }
     }
 
@@ -49,21 +121,22 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     public string DexcomPassword
     {
         get => string.IsNullOrWhiteSpace(dexcomPassword) ? dexcomPassword : StringEncryptionService.DecryptString(dexcomPassword, EncryptionKey);
-        set { dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(DexcomPassword)); }
+        set
+        {
+            dexcomPassword = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); UpdateAllDataSourceFields();
+        }
     }
 
     private string accessToken = string.Empty;
     public string AccessToken
     {
         get => string.IsNullOrWhiteSpace(accessToken) ? accessToken : StringEncryptionService.DecryptString(accessToken, EncryptionKey);
-        set { accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); OnPropertyChanged(nameof(AccessToken)); }
+        set
+        {
+            accessToken = string.IsNullOrWhiteSpace(value) ? string.Empty : StringEncryptionService.IsEncrypted(value, EncryptionKey) ? value : StringEncryptionService.EncryptString(value, EncryptionKey); UpdateAllDataSourceFields();
+        }
     }
 
-    private GlucoseUnitType glucoseUnit;
-    public GlucoseUnitType GlucoseUnit
-    {
-        get => glucoseUnit; set { glucoseUnit = value; OnPropertyChanged(nameof(GlucoseUnit)); }
-    }
 
     private double warningHighBg;
     public double WarningHighBg
@@ -157,7 +230,4 @@ public class GlucoseTraySettings : INotifyPropertyChanged
     {
         get => isDarkMode; set { isDarkMode = value; OnPropertyChanged(nameof(IsDarkMode)); }
     }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
