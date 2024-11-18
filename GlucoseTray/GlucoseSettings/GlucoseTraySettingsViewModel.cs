@@ -22,6 +22,12 @@ public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
     {
         OnPropertyChanged(nameof(UnitType));
         OnPropertyChanged(nameof(IsMgUnitType));
+        OnPropertyChanged(nameof(IsMmolUnitType));
+        OnPropertyChanged(nameof(WarningHighBg));
+        OnPropertyChanged(nameof(HighBg));
+        OnPropertyChanged(nameof(WarningLowBg));
+        OnPropertyChanged(nameof(LowBg));
+        OnPropertyChanged(nameof(CriticalLowBg));
     }
 
     private DataSource dataSource;

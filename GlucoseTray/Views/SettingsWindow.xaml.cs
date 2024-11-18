@@ -6,9 +6,6 @@ using GlucoseTray.GlucoseSettings;
 
 namespace GlucoseTray.Views.Settings;
 
-/// <summary>
-/// Interaction logic for Settings.xaml
-/// </summary>
 public partial class SettingsWindow : Window
 {
     private readonly ISettingsWindowService _service;
@@ -24,34 +21,6 @@ public partial class SettingsWindow : Window
 
         var model = _service.GetSettingsFromFile() ?? _service.GetDefaultSettings();
         MapToViewModel(model);
-    }
-
-    private void MapToViewModel(GlucoseTraySettings settings)
-    {
-        var viewModel = GetViewModel();
-        viewModel.DataSource = settings.DataSource;
-        viewModel.UnitType = settings.GlucoseUnit;
-        viewModel.NightscoutUrl = settings.NightscoutUrl;
-        viewModel.DexcomServer = settings.DexcomServer;
-        viewModel.DexcomUsername = settings.DexcomUsername;
-        viewModel.WarningHighBg = settings.WarningHighBg;
-        viewModel.HighBg = settings.HighBg;
-        viewModel.WarningLowBg = settings.WarningLowBg;
-        viewModel.LowBg = settings.LowBg;
-        viewModel.CriticalLowBg = settings.CriticalLowBg;
-        viewModel.PollingThreshold = settings.PollingThreshold;
-        viewModel.StaleResultsThreshold = settings.StaleResultsThreshold;
-        viewModel.HighAlert = settings.HighAlert;
-        viewModel.WarningHighAlert = settings.WarningHighAlert;
-        viewModel.WarningLowAlert = settings.WarningLowAlert;
-        viewModel.LowAlert = settings.LowAlert;
-        viewModel.CriticallyLowAlert = settings.CriticallyLowAlert;
-        viewModel.IsServerDataUnitTypeMmol = settings.IsServerDataUnitTypeMmol;
-        viewModel.IsDebugMode = settings.IsDebugMode;
-        viewModel.IsDarkMode = settings.IsDarkMode;
-
-        txt_dexcom_password.Password = settings.DexcomPassword;
-        txt_nightscout_token.Password = settings.AccessToken;
     }
 
     private GlucoseTraySettingsViewModel GetViewModel() => Resources.Values.OfType<GlucoseTraySettingsViewModel>().First();
@@ -97,14 +66,32 @@ public partial class SettingsWindow : Window
         Close();
     }
 
-    private void txt_dexcom_password_PasswordChanged(object sender, RoutedEventArgs e)
+    private void MapToViewModel(GlucoseTraySettings settings)
     {
-        //var password = txt_dexcom_password.Password;
-    }
+        var viewModel = GetViewModel();
+        viewModel.DataSource = settings.DataSource;
+        viewModel.UnitType = settings.GlucoseUnit;
+        viewModel.NightscoutUrl = settings.NightscoutUrl;
+        viewModel.DexcomServer = settings.DexcomServer;
+        viewModel.DexcomUsername = settings.DexcomUsername;
+        viewModel.WarningHighBg = settings.WarningHighBg;
+        viewModel.HighBg = settings.HighBg;
+        viewModel.WarningLowBg = settings.WarningLowBg;
+        viewModel.LowBg = settings.LowBg;
+        viewModel.CriticalLowBg = settings.CriticalLowBg;
+        viewModel.PollingThreshold = settings.PollingThreshold;
+        viewModel.StaleResultsThreshold = settings.StaleResultsThreshold;
+        viewModel.HighAlert = settings.HighAlert;
+        viewModel.WarningHighAlert = settings.WarningHighAlert;
+        viewModel.WarningLowAlert = settings.WarningLowAlert;
+        viewModel.LowAlert = settings.LowAlert;
+        viewModel.CriticallyLowAlert = settings.CriticallyLowAlert;
+        viewModel.IsServerDataUnitTypeMmol = settings.IsServerDataUnitTypeMmol;
+        viewModel.IsDebugMode = settings.IsDebugMode;
+        viewModel.IsDarkMode = settings.IsDarkMode;
 
-    private void txt_nightscout_token_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        //var password = txt_nightscout_token.Password;
+        txt_dexcom_password.Password = settings.DexcomPassword;
+        txt_nightscout_token.Password = settings.AccessToken;
     }
 
     private GlucoseTraySettings MapToSettings(GlucoseTraySettingsViewModel viewModel)

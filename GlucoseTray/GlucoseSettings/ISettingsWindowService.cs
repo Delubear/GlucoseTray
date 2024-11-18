@@ -1,5 +1,4 @@
-﻿using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain.GlucoseSettings;
+﻿using GlucoseTray.Domain.GlucoseSettings;
 
 namespace GlucoseTray.GlucoseSettings;
 
