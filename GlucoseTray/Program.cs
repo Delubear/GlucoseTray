@@ -1,10 +1,6 @@
 ﻿using GlucoseTray.DisplayResults;
-using GlucoseTray.Domain;
-using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.FetchResults;
-using GlucoseTray.Domain.GlucoseSettings;
+using GlucoseTray.FetchResults;
 using GlucoseTray.GlucoseSettings;
-using GlucoseTray.Infrastructure;
 using GlucoseTray.Settings;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Configuration;
@@ -49,15 +45,11 @@ public class Program
         services.Configure<GlucoseTraySettings>(configuration)
                 .AddHttpClient()
                 .AddScoped<AppContext, AppContext>()
-                .AddScoped<IIconService, IconService>()
-                .AddScoped<IDialogService, DialogService>()
-                .AddScoped<ISchedulingAdapter, TaskSchedulerService>()
-                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
-                .AddScoped<ISettingsWindowService, SettingsWindowService>()
-                .AddScoped<ISettingsProxy, SettingsProxy>()
-                .AddScoped<ISettingsService, SettingsService>()
-                .AddScoped<ILocalFileAdapter<GlucoseTraySettings>, FileService<GlucoseTraySettings>>()
-                .RegisterDomainServices();
+                .AddScoped<IRunner, Runner>()
+                .AddScoped<GlucoseResult, GlucoseResult>()
+                .RegisterGlucoseSettingsServices()
+                .RegisterDisplayResultServices()
+                .RegisterFetchResultsServices();
     }
 
     private static AppSettings GetAppSettings()

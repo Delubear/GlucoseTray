@@ -1,4 +1,4 @@
-﻿using GlucoseTray.Domain.DisplayResults;
+﻿using GlucoseTray.DisplayResults.Contracts;
 using System.Windows.Forms;
 
 namespace GlucoseTray.DisplayResults;

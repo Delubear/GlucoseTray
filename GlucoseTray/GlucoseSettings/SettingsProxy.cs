@@ -1,5 +1,5 @@
-﻿using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain.GlucoseSettings;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.GlucoseSettings.Contracts;
 using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.GlucoseSettings;

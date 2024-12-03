@@ -1,8 +1,7 @@
-﻿using GlucoseTray.Domain;
-using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain.GlucoseSettings;
-using GlucoseTray.GlucoseSettings;
+﻿using GlucoseTray.DisplayResults.Contracts;
+using GlucoseTray.DisplayResults.Extensions;
+using GlucoseTray.Enums;
+using GlucoseTray.GlucoseSettings.Contracts;
 using GlucoseTray.Views.Settings;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;

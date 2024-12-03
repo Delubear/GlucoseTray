@@ -1,6 +1,5 @@
-﻿using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.GlucoseSettings;
-using GlucoseTray.Infrastructure;
+﻿using GlucoseTray.DisplayResults.Contracts;
+using GlucoseTray.GlucoseSettings.Contracts;
 
 namespace GlucoseTray.GlucoseSettings;
 

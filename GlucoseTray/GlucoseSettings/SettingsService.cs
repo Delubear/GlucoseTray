@@ -1,16 +1,10 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain.GlucoseSettings;
-using GlucoseTray.Infrastructure;
+using GlucoseTray.Enums;
+using GlucoseTray.GlucoseSettings.Contracts;
 
 namespace GlucoseTray.GlucoseSettings;
-
-public interface ISettingsService
-{
-    List<string> ValidateSettings(GlucoseTraySettings? model = null);
-}
 
 public class SettingsService(ILocalFileAdapter<GlucoseTraySettings> fileService) : ISettingsService
 {

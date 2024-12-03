@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Windows;
-using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.GlucoseSettings;
+using GlucoseTray.DisplayResults.Contracts;
 using GlucoseTray.GlucoseSettings;
+using GlucoseTray.GlucoseSettings.Contracts;
 
 namespace GlucoseTray.Views.Settings;
 

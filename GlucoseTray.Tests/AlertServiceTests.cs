@@ -1,9 +1,9 @@
 ﻿
 using NSubstitute;
-using GlucoseTray.Domain.Enums;
-using GlucoseTray.Domain;
-using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.GlucoseSettings;
+using GlucoseTray.Enums;
+using GlucoseTray.DisplayResults;
+using GlucoseTray.DisplayResults.Contracts;
+using GlucoseTray.GlucoseSettings.Contracts;
 
 namespace GlucoseTray.Tests;
 

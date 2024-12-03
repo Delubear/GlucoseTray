@@ -1,5 +1,5 @@
-﻿using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.Enums;
+﻿using GlucoseTray.DisplayResults.Extensions;
+using GlucoseTray.Enums;
 
 namespace GlucoseTray.Tests
 {

@@ -1,5 +1,4 @@
-﻿using GlucoseTray.Domain;
-using GlucoseTray.Domain.GlucoseSettings;
+﻿using GlucoseTray.GlucoseSettings.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Windows.Forms;
 

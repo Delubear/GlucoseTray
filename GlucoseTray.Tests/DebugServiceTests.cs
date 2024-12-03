@@ -1,5 +1,5 @@
-﻿using GlucoseTray.Domain.DisplayResults;
-using GlucoseTray.Domain.FetchResults;
+﻿using GlucoseTray.DisplayResults.Contracts;
+using GlucoseTray.FetchResults;
 using NSubstitute;
 
 namespace GlucoseTray.Tests;

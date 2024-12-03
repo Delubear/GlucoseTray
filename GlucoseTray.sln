@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray", "GlucoseTray\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray.Tests", "GlucoseTray.Tests\GlucoseTray.Tests.csproj", "{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray.Infrastructure", "GlucoseTray.Infrastructure\GlucoseTray.Infrastructure.csproj", "{85E701C4-C9D5-4BA7-B5A0-BDA687F6A07A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray.Domain", "GlucoseTray.Domain\GlucoseTray.Domain.csproj", "{8341109F-EF71-4EA1-9277-FF612A577929}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{85E701C4-C9D5-4BA7-B5A0-BDA687F6A07A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{85E701C4-C9D5-4BA7-B5A0-BDA687F6A07A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{85E701C4-C9D5-4BA7-B5A0-BDA687F6A07A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{85E701C4-C9D5-4BA7-B5A0-BDA687F6A07A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8341109F-EF71-4EA1-9277-FF612A577929}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8341109F-EF71-4EA1-9277-FF612A577929}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8341109F-EF71-4EA1-9277-FF612A577929}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8341109F-EF71-4EA1-9277-FF612A577929}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
