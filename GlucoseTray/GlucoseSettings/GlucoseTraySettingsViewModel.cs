@@ -62,7 +62,7 @@ public class GlucoseTraySettingsViewModel : INotifyPropertyChanged
     private GlucoseUnitType unitType;
     public GlucoseUnitType UnitType
     {
-        get => unitType; set { unitType = value; OnPropertyChanged(nameof(UnitType)); }
+        get => unitType; set { unitType = value; UpdateAllUnitTypeFields(); }
     }
     public bool IsMgUnitType
     {
