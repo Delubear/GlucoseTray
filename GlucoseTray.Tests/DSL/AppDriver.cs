@@ -60,7 +60,7 @@ internal class AppDriver
     {
         _settings.MinutesUntilStale = 15;
         _provider.Options.CurrentValue.Returns(_settings);
-        _reading.Timestamp = DateTime.Now.AddMinutes(-30);
+        _reading.TimestampUtc = DateTime.Now.AddMinutes(-30);
         return this;
     }
 
