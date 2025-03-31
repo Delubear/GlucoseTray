@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GlucoseTray\GlucoseTray.csproj" />
+    <ProjectReference Include="..\GlucoseTray\GlucoseTray2.csproj" />
   </ItemGroup>
 
   <ItemGroup>

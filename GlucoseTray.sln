@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray", "GlucoseTray\GlucoseTray.csproj", "{0A0B15BE-CA2F-4B32-A338-C8B2DF04060E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray2", "GlucoseTray2\GlucoseTray2.csproj", "{0A0B15BE-CA2F-4B32-A338-C8B2DF04060E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray.Tests", "GlucoseTray.Tests\GlucoseTray.Tests.csproj", "{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray2.Tests", "GlucoseTray2.Tests\GlucoseTray2.Tests.csproj", "{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
