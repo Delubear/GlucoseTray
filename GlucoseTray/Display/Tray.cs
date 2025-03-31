@@ -1,9 +1,8 @@
-﻿
-namespace GlucoseTray;
+﻿namespace GlucoseTray.Display;
 
 public interface ITray
 {
-    void Refresh(GlucoseResult result);
+    void Refresh(GlucoseReading result);
     //void Initialize(EventHandler exitHandler);
     //void ShowBalloon(string alertName);
     //void Dispose();
@@ -12,11 +11,13 @@ public interface ITray
 
 public class Tray : ITray
 {
-    private ITrayIcon _icon;
+    private readonly ITrayIcon _icon;
+    private readonly IGlucoseDisplayMapper _mapper;
 
-    public Tray(ITrayIcon icon)
+    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper)
     {
         _icon = icon;
+        _mapper = mapper;
 
         _icon.AddExitMenu();
     }
@@ -42,9 +43,9 @@ public class Tray : ITray
         //_trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, exitHandler));
     }
 
-    public void Refresh(GlucoseResult result)
+    public void Refresh(GlucoseReading result)
     {
-        var display = new GlucoseDisplay() { DisplayValue = result.MgValue.ToString(), Color = GlucoseColor.White, FontSize = 10 };
+        var display = _mapper.Map(result);
         _icon.RefreshIcon(display);
     }
 }

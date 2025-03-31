@@ -1,18 +1,17 @@
-﻿
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace GlucoseTray;
+namespace GlucoseTray.Display;
 
 public interface ITrayIcon
 {
     void AddExitMenu();
-    void RefreshIcon(GlucoseDisplay result);
+    void RefreshIcon(GlucoseDisplay display);
 }
 
 public class NotificationIcon : ITrayIcon
 {
-    private NotifyIcon _trayIcon;
+    private readonly NotifyIcon _trayIcon;
 
     public NotificationIcon()
     {
@@ -35,17 +34,17 @@ public class NotificationIcon : ITrayIcon
         Application.Exit();
     }
 
-    public void RefreshIcon(GlucoseDisplay result) => CreateTextIcon(result);
+    public void RefreshIcon(GlucoseDisplay display) => CreateTextIcon(display);
 
-    private void CreateTextIcon(GlucoseDisplay result)
+    private void CreateTextIcon(GlucoseDisplay display)
     {
         var bitmapText = new Bitmap(64, 64);
         var g = Graphics.FromImage(bitmapText);
         g.Clear(Color.Transparent);
 
-        var font = new Font("Roboto", result.FontSize, result.IsStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
+        var font = new Font("Roboto", display.FontSize, display.IsStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
         var offset = -10f;
-        g.DrawString(result.DisplayValue, font, new SolidBrush(Convert(result.Color)), offset, 0f);
+        g.DrawString(display.DisplayValue, font, new SolidBrush(Convert(display.Color)), offset, 0f);
         var hIcon = bitmapText.GetHicon();
         var myIcon = Icon.FromHandle(hIcon);
         _trayIcon.Icon = myIcon;
@@ -62,13 +61,13 @@ public class NotificationIcon : ITrayIcon
 
     private static void DestroyMyIcon(nint handle) => DestroyIcon(handle);
 
-    private static Color Convert(GlucoseColor color) => color switch
+    private static Color Convert(IconTextColor color) => color switch
     {
-        GlucoseColor.White => Color.White,
-        GlucoseColor.Black => Color.Black,
-        GlucoseColor.Yellow => Color.Yellow,
-        GlucoseColor.Gold => Color.DarkGoldenrod,
-        GlucoseColor.Red => Color.Red,
+        IconTextColor.White => Color.White,
+        IconTextColor.Black => Color.Black,
+        IconTextColor.Yellow => Color.Yellow,
+        IconTextColor.Gold => Color.DarkGoldenrod,
+        IconTextColor.Red => Color.Red,
         _ => Color.Black,
     };
 }

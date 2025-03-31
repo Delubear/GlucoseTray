@@ -1,9 +1,17 @@
-﻿namespace GlucoseTray;
+﻿using GlucoseTray.Display;
+using Microsoft.Extensions.Options;
 
-public class AppRunner(ITray tray, IGlucoseReader reader)
+namespace GlucoseTray;
+
+public class AppRunner(IOptionsMonitor<AppSettings> settings, ITray tray, IGlucoseReader reader)
 {
     public async Task Start()
     {
+        if (settings.CurrentValue == null)
+        {
+            throw new Exception("Settings not found");
+        }
+
         while (true)
         {
             try

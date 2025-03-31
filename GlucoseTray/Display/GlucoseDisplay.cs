@@ -1,15 +1,14 @@
-﻿
-namespace GlucoseTray;
+﻿namespace GlucoseTray.Display;
 
 public class GlucoseDisplay
 {
     public string DisplayValue { get; set; } = string.Empty;
     public bool IsStale { get; set; }
     public int FontSize { get; set; }
-    public GlucoseColor Color { get; set; } = GlucoseColor.White;
+    public IconTextColor Color { get; set; } = IconTextColor.White;
 }
 
-public enum GlucoseColor
+public enum IconTextColor
 {
     White,
     Black,

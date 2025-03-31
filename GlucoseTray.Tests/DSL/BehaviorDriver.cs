@@ -6,17 +6,17 @@ namespace GlucoseTray.Tests.DSL;
 internal class BehaviorDriver
 {
     private readonly DslProvider _provider;
-    private readonly GlucoseResult _glucoseResult;
+    private readonly GlucoseReading _reading;
 
-    public BehaviorDriver(DslProvider provider, GlucoseResult glucoseResult)
+    public BehaviorDriver(DslProvider provider, GlucoseReading glucoseResult)
     {
         _provider = provider;
-        _glucoseResult = glucoseResult;
+        _reading = glucoseResult;
     }
 
     public BehaviorDriver RefreshingIcon()
     {
-        _provider.Reader.GetLatestGlucoseAsync().Returns(_glucoseResult);
+        _provider.Reader.GetLatestGlucoseAsync().Returns(_reading);
         _provider.Runner.Process().Wait();
         return this;
     }

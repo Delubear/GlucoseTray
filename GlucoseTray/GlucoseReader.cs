@@ -3,13 +3,13 @@ namespace GlucoseTray;
 
 public interface IGlucoseReader
 {
-    Task<GlucoseResult> GetLatestGlucoseAsync();
+    Task<GlucoseReading> GetLatestGlucoseAsync();
 }
 
 internal class GlucoseReader : IGlucoseReader
 {
-    public async Task<GlucoseResult> GetLatestGlucoseAsync()
+    public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
-        return new GlucoseResult { MgValue = 100 };
+        return new GlucoseReading { MgValue = 100 };
     }
 }
