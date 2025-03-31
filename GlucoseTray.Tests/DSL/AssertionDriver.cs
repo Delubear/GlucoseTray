@@ -30,4 +30,10 @@ internal class AssertionDriver
         _provider.Icon.Received().RefreshIcon(Arg.Is<GlucoseDisplay>(x => x.IsStale));
         return this;
     }
+
+    public AssertionDriver ShouldBeRefreshedWithFontSize(int fontSize)
+    {
+        _provider.Icon.Received().RefreshIcon(Arg.Is<GlucoseDisplay>(x => x.FontSize == fontSize));
+        return this;
+    }
 }

@@ -189,4 +189,36 @@ public class DisplayTests
               .When.RefreshingIcon()
               .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
     }
+
+    [Test]
+    public void ShouldUseDefaultFontSizeForAllMgReadings()
+    {
+        var driver = new AppDriver();
+        driver.GivenAGlucoseReading()
+              .WithMgValue(100)
+              .When.RefreshingIcon()
+              .Then.ShouldBeRefreshedWithFontSize(40);
+    }
+
+    [Test]
+    public void ShouldUseDefaultFontSizeForMmolReadingsBelow10()
+    {
+        var driver = new AppDriver();
+        driver.GivenAGlucoseReading()
+              .WithMmolDisplay()
+              .WithMmolValue(5.5f)
+              .When.RefreshingIcon()
+              .Then.ShouldBeRefreshedWithFontSize(40);
+    }
+
+    [Test]
+    public void ShouldUseSmallerFontSizeForMmolReadings10AndAbove()
+    {
+        var driver = new AppDriver();
+        driver.GivenAGlucoseReading()
+              .WithMmolDisplay()
+              .WithMmolValue(15.5f)
+              .When.RefreshingIcon()
+              .Then.ShouldBeRefreshedWithFontSize(38);
+    }
 }

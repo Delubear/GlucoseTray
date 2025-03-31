@@ -15,9 +15,17 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
         {
             DisplayValue = GetDisplayValue(reading),
             Color = options.CurrentValue.DisplayUnitType == GlucoseUnitType.Mg ? GetColor(reading.MgValue) : GetColor(reading.MmolValue),
-            FontSize = 10,
+            FontSize = GetFontSize(reading),
             IsStale = reading.Timestamp < DateTime.Now.AddMinutes(-options.CurrentValue.MinutesUntilStale),
         };
+    }
+
+    private int GetFontSize(GlucoseReading reading)
+    {
+        var defaultFontSize = 40;
+        var smallerFontSize = 38;
+
+        return options.CurrentValue.DisplayUnitType == GlucoseUnitType.Mmol && reading.MmolValue >= 10 ? smallerFontSize : defaultFontSize;
     }
 
     private string GetDisplayValue(GlucoseReading reading)
