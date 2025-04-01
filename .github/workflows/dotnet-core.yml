@@ -10,9 +10,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4.1.7
+    - uses: actions/checkout@v4.1.2
     - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4.0.1
+      uses: actions/setup-dotnet@v4.3.1
       with:
         dotnet-version: 9.x
     - name: Install dependencies
@@ -22,7 +22,7 @@ jobs:
     - name: Dotnet Tests
       # You may pin to the exact commit or the version.
       # uses: EasyDesk/action-dotnet-test@228a60327933ff6200594e89a6fa906a69e5f1e6
-      uses: EasyDesk/action-dotnet-test@v1.0.0
+      uses: EasyDesk/action-dotnet-test@v1.3.0
       with:
         # Additional arguments to pass to 'dotnet test'.
         #test-args: # optional
@@ -45,7 +45,7 @@ jobs:
         # which property to read
         prop_path: appsettings.Version
     - name: Create Release
-      uses: ncipollo/release-action@v1.14.0
+      uses: ncipollo/release-action@v1.16.0
       with:
         # An optional flag which indicates if we should update a release if it already exists. Defaults to false.
         allowUpdates: true
