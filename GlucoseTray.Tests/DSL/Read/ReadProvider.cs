@@ -19,6 +19,6 @@ internal class ReadProvider
     {
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
         Reader = new GlucoseReader(Options, ExternalCommunicationAdapter, GlucoseReadingMapper);
-        Runner = new AppRunner(Tray, Reader);
+        Runner = new AppRunner(Tray, Reader, Options);
     }
 }

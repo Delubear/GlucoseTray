@@ -12,6 +12,7 @@ public interface ITrayIcon
     void AddSettingsMenu();
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
+    void ShowNotification(string alertText);
 }
 
 public class NotificationIcon : ITrayIcon
@@ -29,6 +30,7 @@ public class NotificationIcon : ITrayIcon
         _trayIcon.DoubleClick += ShowBalloon;
     }
 
+    public void ShowNotification(string alertText) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertText, ToolTipIcon.Warning);
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon?.ShowBalloonTip(2000, "Glucose", _latestGlucose?.GetDisplayMessage(DateTime.UtcNow) ?? "error", ToolTipIcon.Info);
 
     public void ClearMenu() => _trayIcon?.ContextMenuStrip?.Items.Clear();

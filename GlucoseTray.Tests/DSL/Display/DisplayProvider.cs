@@ -11,6 +11,8 @@ internal class DisplayProvider
     public readonly ITray Tray;
     public readonly IGlucoseDisplayMapper GlucoseDisplayMapper;
     public readonly IGlucoseReadingMapper GlucoseReadingMapper;
+    public readonly IAlertService AlertService;
+    public readonly IScheduler Scheduler = Substitute.For<IScheduler>();
     public readonly ITrayIcon Icon = Substitute.For<ITrayIcon>();
     public readonly IGlucoseReader Reader = Substitute.For<IGlucoseReader>();
     public readonly IOptionsMonitor<AppSettings> Options = Substitute.For<IOptionsMonitor<AppSettings>>();
@@ -20,7 +22,8 @@ internal class DisplayProvider
     {
         GlucoseDisplayMapper = new GlucoseDisplayMapper(Options);
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
-        Tray = new Tray(Icon, GlucoseDisplayMapper);
-        Runner = new AppRunner(Tray, Reader);
+        AlertService = new AlertService(Options);
+        Tray = new Tray(Icon, GlucoseDisplayMapper, Scheduler, AlertService);
+        Runner = new AppRunner(Tray, Reader, Options);
     }
 }

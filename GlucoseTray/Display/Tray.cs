@@ -10,12 +10,14 @@ public class Tray : ITray
     private readonly ITrayIcon _icon;
     private readonly IGlucoseDisplayMapper _mapper;
     private readonly IScheduler _scheduler;
+    private readonly IAlertService _alertService;
 
-    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler)
+    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler, IAlertService alertService)
     {
         _icon = icon;
         _mapper = mapper;
         _scheduler = scheduler;
+        _alertService = alertService;
 
         RebuildContextMenu();
     }
@@ -38,5 +40,9 @@ public class Tray : ITray
     {
         var display = _mapper.Map(result);
         _icon.RefreshIcon(display);
+
+        var alert = _alertService.GetAlertMessage(result.MgValue, result.MmolValue, display.IsStale);
+        if (string.IsNullOrWhiteSpace(alert))
+            _icon.ShowNotification(alert);
     }
 }
