@@ -11,7 +11,7 @@ public interface IGlucoseReadingMapper
     GlucoseReading Map(NightScoutResult result);
 }
 
-internal class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGlucoseReadingMapper
+public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGlucoseReadingMapper
 {
     public GlucoseReading Map(DexcomResult input)
     {

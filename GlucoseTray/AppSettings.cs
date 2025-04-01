@@ -6,7 +6,9 @@ public class AppSettings
     public bool IsDarkMode { get; set; } = false;
     public int MinutesUntilStale { get; set; } = 15;
 
+    public string DATA_SOURCE_OPTIONS = "Dexcom,Nightscout";
     public GlucoseSource DataSource { get; set; } = GlucoseSource.Dexcom;
+    public string DEXCOM_SERVER_OPTIONS = "DexcomShare1,DexcomShare2,DexcomInternational";
     public DexcomServer DexcomServer { get; set; } = DexcomServer.DexcomShare1;
 
     public string DexcomUsername { get; set; } = string.Empty;
@@ -15,7 +17,9 @@ public class AppSettings
     public string NightscoutUrl { get; set; } = string.Empty;
     public string NightscoutToken { get; set; } = string.Empty;
 
+    public string DISPLAY_UNIT_TYPE_OPTIONS = "Mg,Mmol";
     public GlucoseUnitType DisplayUnitType { get; set; }
+    public string SERVER_UNIT_TYPE_OPTIONS = "Mg,Mmol";
     public GlucoseUnitType ServerUnitType { get; set; }
 
     public int CriticalLowMgThreshold { get; set; } = 55;

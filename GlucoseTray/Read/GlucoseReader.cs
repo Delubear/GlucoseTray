@@ -9,7 +9,7 @@ public interface IGlucoseReader
     Task<GlucoseReading> GetLatestGlucoseAsync();
 }
 
-internal class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IGlucoseReader
+public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IGlucoseReader
 {
     public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
