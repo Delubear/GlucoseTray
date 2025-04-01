@@ -10,14 +10,8 @@ public interface IExternalCommunicationAdapter
     Task<string> GetApiResponseAsync(string url, string? content = null);
 }
 
-public class ExternalCommunicationAdapter : IExternalCommunicationAdapter
+public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) : IExternalCommunicationAdapter
 {
-    private readonly IHttpClientFactory _clientFactory;
-    public ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory)
-    {
-        _clientFactory = httpClientFactory;
-    }
-
     public async Task<string> PostApiResponseAsync(string url, string? content = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -48,7 +42,7 @@ public class ExternalCommunicationAdapter : IExternalCommunicationAdapter
         HttpResponseMessage? response = null;
         try
         {
-            var client = _clientFactory.CreateClient();
+            var client = httpClientFactory.CreateClient();
 
             response = await client.SendAsync(request);
             var result = await response.Content.ReadAsStringAsync();

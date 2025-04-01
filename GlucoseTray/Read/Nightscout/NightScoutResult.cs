@@ -1,7 +1,6 @@
-﻿
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace GlucoseTray.Read;
+namespace GlucoseTray.Read.Nightscout;
 
 /// <summary>
 /// Class that maps to the JSON from NightScout queries.

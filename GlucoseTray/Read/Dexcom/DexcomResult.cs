@@ -1,5 +1,4 @@
-﻿
-namespace GlucoseTray.Read;
+﻿namespace GlucoseTray.Read.Dexcom;
 
 /// <summary>
 /// Class that maps to the JSON received from DexCom queries.

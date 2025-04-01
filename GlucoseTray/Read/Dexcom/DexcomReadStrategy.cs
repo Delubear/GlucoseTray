@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace GlucoseTray.Read;
+namespace GlucoseTray.Read.Dexcom;
 
 internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IReadStrategy
 {

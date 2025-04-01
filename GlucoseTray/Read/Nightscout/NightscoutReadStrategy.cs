@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace GlucoseTray.Read;
+namespace GlucoseTray.Read.Nightscout;
 
 internal class NightscoutReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IReadStrategy
 {
