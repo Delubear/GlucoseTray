@@ -3,8 +3,9 @@
 public enum AlertLevel
 {
     None,
-    CriticalLow,
-    Low,
     High,
-    CriticalHigh,
+    WarningHigh,
+    WarningLow,
+    Low,
+    CriticalLow
 }

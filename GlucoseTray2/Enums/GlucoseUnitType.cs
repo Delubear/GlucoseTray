@@ -2,6 +2,6 @@
 
 public enum GlucoseUnitType
 {
-    Mg,
-    Mmol
+    MG = 0,
+    MMOL = 1
 }

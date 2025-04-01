@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray", "GlucoseTray\GlucoseTray.csproj", "{0A0B15BE-CA2F-4B32-A338-C8B2DF04060E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray2", "GlucoseTray2\GlucoseTray2.csproj", "{0A0B15BE-CA2F-4B32-A338-C8B2DF04060E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray.Tests", "GlucoseTray.Tests\GlucoseTray.Tests.csproj", "{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlucoseTray2.Tests", "GlucoseTray2.Tests\GlucoseTray2.Tests.csproj", "{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray", "GlucoseTray\GlucoseTray.csproj", "{27AB4908-4214-412D-8C97-8823A4AB373C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlucoseTray.Tests", "GlucoseTray.Tests\GlucoseTray.Tests.csproj", "{3F665D5A-36E1-4EB7-914E-C2FE2870F8EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D51E5C0-484E-4152-8F1B-1C1CAD05B1D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27AB4908-4214-412D-8C97-8823A4AB373C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27AB4908-4214-412D-8C97-8823A4AB373C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27AB4908-4214-412D-8C97-8823A4AB373C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27AB4908-4214-412D-8C97-8823A4AB373C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F665D5A-36E1-4EB7-914E-C2FE2870F8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F665D5A-36E1-4EB7-914E-C2FE2870F8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F665D5A-36E1-4EB7-914E-C2FE2870F8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F665D5A-36E1-4EB7-914E-C2FE2870F8EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
