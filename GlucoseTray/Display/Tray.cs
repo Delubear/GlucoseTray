@@ -5,7 +5,6 @@ namespace GlucoseTray.Display;
 public interface ITray
 {
     void Refresh(GlucoseReading result);
-
     void Dispose();
 }
 

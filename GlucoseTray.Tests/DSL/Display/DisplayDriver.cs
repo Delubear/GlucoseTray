@@ -15,6 +15,11 @@ internal class DisplayDriver
         LowMgThreshold = 70,
         HighMgThreshold = 250,
         CriticalHighMgThreshold = 300,
+        CriticalLowMmolThreshold = 3.0f,
+        LowMmolThreshold = 3.8f,
+        HighMmolThreshold = 13.8f,
+        CriticalHighMmolThreshold = 16.6f,
+        DisplayUnitType = GlucoseUnitType.Mg,
         IsDarkMode = false,
         ServerUnitType = GlucoseUnitType.Mg,
     };
@@ -23,7 +28,7 @@ internal class DisplayDriver
 
     public DisplayDriver GivenAGlucoseReading()
     {
-        _reading = new GlucoseReading();
+        _reading = new GlucoseReading() { TimestampUtc = DateTime.UtcNow };
         return this;
     }
 

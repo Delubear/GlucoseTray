@@ -12,5 +12,5 @@ internal class DisplayBehaviorDriver(DisplayProvider provider, GlucoseReading gl
         return this;
     }
 
-    public DisplayAssertionDriver Then => new(provider);
+    public DisplayAssertionDriver Then => new(provider, this);
 }

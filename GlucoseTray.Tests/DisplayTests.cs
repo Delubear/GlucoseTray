@@ -238,4 +238,134 @@ public class DisplayTests
 
         Assert.That(result, Is.EqualTo($"100 6:00:00 AM → \r\n60 minutes ago"));
     }
+
+    [Test]
+    public void ShouldNotShowNotificationWhenStale()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithMgValue(100)
+              .WithStaleData()
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowNotificationIfReadingIs0()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithMgValue(0)
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldShowNotificationIfReadingIsAboveCriticalHighThreshold()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithCriticalHighValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Critical High Glucose Alert");
+    }
+
+    [Test]
+    public void ShouldShowNotificationIfReadingIsBelowCriticalLowThreshold()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithCriticalLowValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Critical Low Glucose Alert");
+    }
+
+    [Test]
+    public void ShouldShowNotificationIfReadingIsAboveHighThreshold()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithHighValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("High Glucose Alert");
+    }
+
+    [Test]
+    public void ShouldShowNotificationIfReadingIsBelowLowThreshold()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithLowValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Low Glucose Alert");
+    }
+
+    [Test]
+    public void ShouldNotShowNotificationIfReadingIsWithinNormalRange()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithMgValue(100)
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowNotificationIfReadingIsWithinNormalRangeInMmol()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithMmolDisplay()
+              .WithMmolValue(5.5f)
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowRepeatNotificationsForCriticalHigh()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithCriticalHighValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Critical High Glucose Alert")
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowRepeatNotificationsForCriticalLow()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithCriticalLowValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Critical Low Glucose Alert")
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowRepeatNotificationsForHigh()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithHighValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("High Glucose Alert")
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
+
+    [Test]
+    public void ShouldNotShowRepeatNotificationsForLow()
+    {
+        var driver = new DisplayDriver();
+        driver.GivenAGlucoseReading()
+              .WithLowValue()
+              .When.RefreshingIcon()
+              .Then.ShouldShowNotification("Low Glucose Alert")
+              .When.RefreshingIcon()
+              .Then.ShouldNotShowNotification();
+    }
 }
