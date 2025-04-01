@@ -22,6 +22,7 @@ internal class DisplayDriver
         DisplayUnitType = GlucoseUnitType.Mg,
         IsDarkMode = false,
         ServerUnitType = GlucoseUnitType.Mg,
+        EnableAlerts = true,
     };
 
     public DisplayDriver() => _provider.Options.CurrentValue.Returns(_settings);

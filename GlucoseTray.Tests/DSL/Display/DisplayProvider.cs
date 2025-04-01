@@ -23,7 +23,7 @@ internal class DisplayProvider
         GlucoseDisplayMapper = new GlucoseDisplayMapper(Options);
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
         AlertService = new AlertService(Options);
-        Tray = new Tray(Icon, GlucoseDisplayMapper, Scheduler, AlertService);
+        Tray = new Tray(Icon, GlucoseDisplayMapper, Scheduler, AlertService, Options);
         Runner = new AppRunner(Tray, Reader, Options);
     }
 }

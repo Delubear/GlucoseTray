@@ -1,4 +1,5 @@
 ﻿using GlucoseTray.Read;
+using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Display;
 
@@ -14,13 +15,15 @@ public class Tray : ITray
     private readonly IGlucoseDisplayMapper _mapper;
     private readonly IScheduler _scheduler;
     private readonly IAlertService _alertService;
+    private readonly IOptionsMonitor<AppSettings> _options;
 
-    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler, IAlertService alertService)
+    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler, IAlertService alertService, IOptionsMonitor<AppSettings> options)
     {
         _icon = icon;
         _mapper = mapper;
         _scheduler = scheduler;
         _alertService = alertService;
+        _options = options;
 
         RebuildContextMenu();
     }
@@ -44,6 +47,12 @@ public class Tray : ITray
         var display = _mapper.Map(result);
         _icon.RefreshIcon(display);
 
+        if (_options.CurrentValue.EnableAlerts)
+            NotifyUser(result, display);
+    }
+
+    private void NotifyUser(GlucoseReading result, GlucoseDisplay display)
+    {
         var alert = _alertService.GetAlertMessage(result.MgValue, result.MmolValue, display.IsStale);
         if (!string.IsNullOrWhiteSpace(alert))
             _icon.ShowNotification(alert);

@@ -35,4 +35,6 @@ public class AppSettings
     public float LowMmolThreshold { get; set; } = 3.8f;
     public float HighMmolThreshold { get; set; } = 13.8f;
     public float CriticalHighMmolThreshold { get; set; } = 16.6f;
+
+    public bool EnableAlerts { get; set; }
 }
