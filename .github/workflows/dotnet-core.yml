@@ -34,6 +34,8 @@ jobs:
         skip-build: true # optional, default is true
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
+    - name: Publish
+      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - name: read JSON property
       id: version
       uses: notiz-dev/github-action-json-property@v0.2.0
@@ -51,7 +53,7 @@ jobs:
         #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
         #artifacts: './GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/'
-        artifacts: './GlucoseTray/bin/Release/net9.0-windows/win-x64/publish/GlucoseTray.exe'
+        artifacts: './GlucoseTray/bin/Release/net9.0-windows/win-x64/publish/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows/win-x64-small/publish/GlucoseTray.exe'
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
