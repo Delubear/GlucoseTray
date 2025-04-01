@@ -18,7 +18,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
             FontSize = GetFontSize(reading),
             TimestampUtc = reading.TimestampUtc,
             Trend = reading.Trend,
-            IsStale = reading.TimestampUtc < DateTime.Now.AddMinutes(-options.CurrentValue.MinutesUntilStale),
+            IsStale = reading.TimestampUtc < DateTime.UtcNow.AddMinutes(-options.CurrentValue.MinutesUntilStale),
         };
     }
 

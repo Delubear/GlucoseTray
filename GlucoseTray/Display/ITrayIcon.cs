@@ -12,6 +12,7 @@ public interface ITrayIcon
 public class NotificationIcon : ITrayIcon
 {
     private readonly NotifyIcon _trayIcon;
+    private GlucoseDisplay? _latestGlucose;
 
     public NotificationIcon()
     {
@@ -24,7 +25,7 @@ public class NotificationIcon : ITrayIcon
         _trayIcon.ContextMenuStrip?.Items.Clear();
     }
 
-    private void ShowBalloon(object? sender, EventArgs e) => _trayIcon?.ShowBalloonTip(2000, "Glucose", "todo", ToolTipIcon.Info);
+    private void ShowBalloon(object? sender, EventArgs e) => _trayIcon?.ShowBalloonTip(2000, "Glucose", _latestGlucose?.GetDisplayMessage(DateTime.UtcNow) ?? "error", ToolTipIcon.Info);
 
     public void AddExitMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, Exit));
 
@@ -34,7 +35,11 @@ public class NotificationIcon : ITrayIcon
         Application.Exit();
     }
 
-    public void RefreshIcon(GlucoseDisplay display) => CreateTextIcon(display);
+    public void RefreshIcon(GlucoseDisplay display)
+    {
+        _latestGlucose = display;
+        CreateTextIcon(display);
+    }
 
     private void CreateTextIcon(GlucoseDisplay display)
     {

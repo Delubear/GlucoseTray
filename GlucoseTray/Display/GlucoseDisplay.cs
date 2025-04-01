@@ -8,6 +8,12 @@ public class GlucoseDisplay
     public Trend Trend { get; set; }
     public int FontSize { get; set; }
     public IconTextColor Color { get; set; } = IconTextColor.White;
+
+    public string GetDisplayMessage(DateTime utcNow)
+    {
+        var staleMessage = IsStale ? $"\r\n{Math.Abs((utcNow - TimestampUtc).TotalMinutes):#} minutes ago" : string.Empty;
+        return $"{DisplayValue} {TimestampUtc.ToLocalTime().ToLongTimeString()} {Trend.GetTrendArrow()} {staleMessage}".Trim();
+    }
 }
 
 public enum IconTextColor

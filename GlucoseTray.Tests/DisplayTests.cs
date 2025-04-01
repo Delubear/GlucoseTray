@@ -221,4 +221,20 @@ public class DisplayTests
               .When.RefreshingIcon()
               .Then.ShouldBeRefreshedWithFontSize(38);
     }
+
+    [Test]
+    public void ShouldHaveTheCorrectDisplayMessage()
+    {
+        var display = new GlucoseDisplay
+        {
+            TimestampUtc = new DateTime(2000, 5, 5, 11, 0, 0, DateTimeKind.Utc),
+            DisplayValue = "100",
+            IsStale = true,
+            Trend = Trend.Flat,
+        };
+
+        var result = display.GetDisplayMessage(new DateTime(2000, 5, 5, 10, 0, 0, DateTimeKind.Utc));
+
+        Assert.That(result, Is.EqualTo($"100 6:00:00 AM → \r\n60 minutes ago"));
+    }
 }
