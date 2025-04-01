@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using GlucoseTray.Read;
+using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Display;
 

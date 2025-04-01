@@ -1,8 +1,12 @@
-﻿namespace GlucoseTray.Display;
+﻿using GlucoseTray.Read;
+
+namespace GlucoseTray.Display;
 
 public interface ITray
 {
     void Refresh(GlucoseReading result);
+
+    void Dispose();
 }
 
 public class Tray : ITray
@@ -42,7 +46,9 @@ public class Tray : ITray
         _icon.RefreshIcon(display);
 
         var alert = _alertService.GetAlertMessage(result.MgValue, result.MmolValue, display.IsStale);
-        if (string.IsNullOrWhiteSpace(alert))
+        if (!string.IsNullOrWhiteSpace(alert))
             _icon.ShowNotification(alert);
     }
+
+    public void Dispose() => _icon.Dispose();
 }

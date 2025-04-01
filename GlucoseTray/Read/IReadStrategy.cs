@@ -1,5 +1,4 @@
-﻿
-namespace GlucoseTray.Read;
+﻿namespace GlucoseTray.Read;
 
 public interface IReadStrategy
 {

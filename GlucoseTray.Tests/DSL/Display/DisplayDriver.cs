@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using GlucoseTray.Read;
+using NSubstitute;
 
 namespace GlucoseTray.Tests.DSL.Display;
 

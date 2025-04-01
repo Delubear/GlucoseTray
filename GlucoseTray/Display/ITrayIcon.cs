@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace GlucoseTray.Display;
@@ -13,6 +12,7 @@ public interface ITrayIcon
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
     void ShowNotification(string alertText);
+    void Dispose();
 }
 
 public class NotificationIcon : ITrayIcon
@@ -40,16 +40,19 @@ public class NotificationIcon : ITrayIcon
 
     private void Settings(object? sender, EventArgs e)
     {
-        ProcessStartInfo startInfo = new ProcessStartInfo
+        ProcessStartInfo startInfo = new()
         {
-            FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\appsettings.json",
+            FileName = Path.GetDirectoryName(AppContext.BaseDirectory) + "\\appsettings.json",
             UseShellExecute = true,
         };
         Process.Start(startInfo);
     }
 
+    public void Dispose() => _trayIcon.Dispose();
+
     private void Exit(object? sender, EventArgs e)
     {
+        Dispose();
         Application.ExitThread();
         Application.Exit();
     }

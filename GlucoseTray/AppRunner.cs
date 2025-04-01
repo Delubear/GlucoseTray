@@ -8,6 +8,8 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
 {
     public async Task Start()
     {
+        options.OnChange(async _ => await Process());
+
         while (true)
         {
             try
@@ -17,7 +19,8 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
             }
             catch
             {
-                throw new Exception();
+                tray.Dispose();
+                throw;
             }
         }
     }
