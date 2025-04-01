@@ -1,5 +1,6 @@
 ﻿
 using GlucoseTray.Display;
+using GlucoseTray.Read;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 

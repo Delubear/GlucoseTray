@@ -6,6 +6,15 @@ public class AppSettings
     public bool IsDarkMode { get; set; } = false;
     public int MinutesUntilStale { get; set; } = 15;
 
+    public GlucoseSource DataSource { get; set; } = GlucoseSource.Dexcom;
+    public DexcomServer DexcomServer { get; set; } = DexcomServer.DexcomShare1;
+
+    public string DexcomUsername { get; set; } = string.Empty;
+    public string DexcomPassword { get; set; } = string.Empty;
+
+    public string NightscoutUrl { get; set; } = string.Empty;
+    public string NightscoutToken { get; set; } = string.Empty;
+
     public GlucoseUnitType DisplayUnitType { get; set; }
     public GlucoseUnitType ServerUnitType { get; set; }
 
@@ -25,4 +34,17 @@ public enum GlucoseUnitType
 {
     Mg,
     Mmol
+}
+
+public enum GlucoseSource
+{
+    Dexcom,
+    Nightscout,
+}
+
+public enum DexcomServer
+{
+    DexcomShare1,
+    DexcomShare2,
+    DexcomInternational
 }

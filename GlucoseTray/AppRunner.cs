@@ -1,4 +1,5 @@
 ﻿using GlucoseTray.Display;
+using GlucoseTray.Read;
 
 namespace GlucoseTray;
 

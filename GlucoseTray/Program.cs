@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using GlucoseTray;
 using GlucoseTray.Display;
 using System.Text.Json;
+using GlucoseTray.Read;
 
 public class Program
 {
@@ -33,7 +34,9 @@ public class Program
                 .AddScoped<ITray, Tray>()
                 .AddScoped<ITrayIcon, NotificationIcon>()
                 .AddScoped<IGlucoseReader, GlucoseReader>()
-                .AddScoped<IGlucoseDisplayMapper, GlucoseDisplayMapper>();
+                .AddScoped<IGlucoseDisplayMapper, GlucoseDisplayMapper>()
+                .AddScoped<IGlucoseReadingMapper, GlucoseReadingMapper>()
+                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>();
     }
 
     private static void CreateDefaultAppSettings(string filePath)
