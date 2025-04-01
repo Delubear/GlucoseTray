@@ -40,7 +40,7 @@ jobs:
       id: package_version
       uses: KageKirin/get-csproj-version@v1.0.0
       with:
-        file: './GlucoseTray/GlucoseTray.csproj'
+        file: GlucoseTray/GlucoseTray.csproj
     - name: Create Release
       uses: ncipollo/release-action@v1.16.0
       with:
@@ -50,7 +50,7 @@ jobs:
         #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
         #artifacts: './GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/'
-        artifacts: "./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray.exe"
+        artifacts: "./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe"
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
@@ -62,7 +62,7 @@ jobs:
         # Optionally marks this release as a draft release. Set to true to enable.
         draft: false
         # An optional name for the release. If this is omitted the tag will be used.
-        name: "Glucose Tray ${{steps.package_version.version}}"
+        name: "Glucose Tray ${{steps.test.package_version.version}}"
         # Indicates if the release body should be omitted.
         #omitBody: # optional, default is false
         # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
@@ -76,7 +76,7 @@ jobs:
         # Indicates if existing release artifacts should be replaced. Defaults to true.
         replacesArtifacts: true
         # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
-        tag: "v${{steps.package_version.version}}"
+        tag: "v${{steps.test.package_version.version}}"
         # The Github token.
         token: ${{ secrets.GITHUB_TOKEN }}
 
