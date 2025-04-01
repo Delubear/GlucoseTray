@@ -3,14 +3,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using GlucoseTray;
 using GlucoseTray.Display;
+using System.Text.Json;
 
 public class Program
 {
     [STAThread]
     private static void Main(string[] args)
     {
+        var filePath = "appsettings.json";
+        if (!File.Exists(filePath))
+            CreateDefaultAppSettings(filePath);
+
         var host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true))
+            .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
             .ConfigureServices(static (context, services) => ConfigureServices(context.Configuration, services))
             .Build();
 
@@ -29,5 +34,12 @@ public class Program
                 .AddScoped<ITrayIcon, NotificationIcon>()
                 .AddScoped<IGlucoseReader, GlucoseReader>()
                 .AddScoped<IGlucoseDisplayMapper, GlucoseDisplayMapper>();
+    }
+
+    private static void CreateDefaultAppSettings(string filePath)
+    {
+        var settings = new AppSettings();
+        var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+        File.WriteAllText(filePath, json);
     }
 }
