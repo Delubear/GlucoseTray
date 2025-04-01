@@ -3,45 +3,35 @@
 public interface ITray
 {
     void Refresh(GlucoseReading result);
-    //void Initialize(EventHandler exitHandler);
-    //void ShowBalloon(string alertName);
-    //void Dispose();
-    //void CreateIcon();
 }
 
 public class Tray : ITray
 {
     private readonly ITrayIcon _icon;
     private readonly IGlucoseDisplayMapper _mapper;
+    private readonly IScheduler _scheduler;
 
-    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper)
+    public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler)
     {
         _icon = icon;
         _mapper = mapper;
+        _scheduler = scheduler;
 
+        RebuildContextMenu();
+    }
+
+    private void RebuildContextMenu()
+    {
+        _icon.ClearMenu();
+        _icon.AddAutoRunMenu(_scheduler.HasTaskEnabled(), ToggleAutoRun);
         _icon.AddSettingsMenu();
         _icon.AddExitMenu();
     }
 
-    private void PopulateContextMenu(EventHandler exitHandler)
+    private void ToggleAutoRun(object? sender, EventArgs e)
     {
-        // Remove all existing items
-
-        //if (!string.IsNullOrWhiteSpace(options.NightscoutUrl)) // Add Nightscout website shortcut
-        //{
-        //    logger.LogDebug("Nightscout url supplied, adding option to context menu.");
-
-        //    var process = new Process();
-        //    process.StartInfo.UseShellExecute = true;
-        //    process.StartInfo.FileName = options.NightscoutUrl;
-        //    _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Nightscout", null, (obj, e) => process.Start()));
-        //}
-
-        //var taskEnabled = taskScheduler.HasTaskEnabled();
-        //_trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem(taskEnabled ? "Disable Run on startup" : "Run on startup", null, (obj, e) => ToggleTask(!taskEnabled, exitEvent)));
-        //_trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Change Settings", null, new EventHandler(ChangeSettings)));
-        //_trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("About", null, new EventHandler(About)));
-        //_trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, exitHandler));
+        _scheduler.ToggleTask(!_scheduler.HasTaskEnabled());
+        RebuildContextMenu();
     }
 
     public void Refresh(GlucoseReading result)

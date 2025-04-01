@@ -7,9 +7,11 @@ namespace GlucoseTray.Display;
 
 public interface ITrayIcon
 {
+    void ClearMenu();
+    void AddAutoRunMenu(bool isAlreadyOn, EventHandler toggleCallback);
+    void AddSettingsMenu();
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
-    void AddSettingsMenu();
 }
 
 public class NotificationIcon : ITrayIcon
@@ -25,13 +27,14 @@ public class NotificationIcon : ITrayIcon
             Visible = true,
         };
         _trayIcon.DoubleClick += ShowBalloon;
-        _trayIcon.ContextMenuStrip?.Items.Clear();
     }
 
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon?.ShowBalloonTip(2000, "Glucose", _latestGlucose?.GetDisplayMessage(DateTime.UtcNow) ?? "error", ToolTipIcon.Info);
 
-    public void AddExitMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, Exit));
+    public void ClearMenu() => _trayIcon?.ContextMenuStrip?.Items.Clear();
+    public void AddAutoRunMenu(bool isAlreadyOn, EventHandler toggleCallback) => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem(isAlreadyOn ? "Disable auto-start" : "Run on startup", null, toggleCallback));
     public void AddSettingsMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Settings", null, Settings));
+    public void AddExitMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, Exit));
 
     private void Settings(object? sender, EventArgs e)
     {

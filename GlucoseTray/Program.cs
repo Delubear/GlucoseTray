@@ -36,7 +36,8 @@ public class Program
                 .AddScoped<IGlucoseReader, GlucoseReader>()
                 .AddScoped<IGlucoseDisplayMapper, GlucoseDisplayMapper>()
                 .AddScoped<IGlucoseReadingMapper, GlucoseReadingMapper>()
-                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>();
+                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
+                .AddScoped<IScheduler, TaskSchedulerService>();
     }
 
     private static void CreateDefaultAppSettings(string filePath)
