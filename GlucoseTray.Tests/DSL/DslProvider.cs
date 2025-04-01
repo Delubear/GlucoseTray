@@ -18,6 +18,6 @@ internal class DslProvider
     {
         GlucoseDisplayMapper = new GlucoseDisplayMapper(Options);
         Tray = new Tray(Icon, GlucoseDisplayMapper);
-        Runner = new AppRunner(Options, Tray, Reader);
+        Runner = new AppRunner(Tray, Reader);
     }
 }
