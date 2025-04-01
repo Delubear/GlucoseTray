@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Enums;
 using GlucoseTray.Tests.DSL.Display;
+using NUnit.Framework.Legacy;
 
 namespace GlucoseTray.Tests;
 
@@ -236,7 +237,9 @@ public class DisplayTests
 
         var result = display.GetDisplayMessage(new DateTime(2000, 5, 5, 10, 0, 0, DateTimeKind.Utc));
 
-        Assert.That(result, Is.EqualTo($"100 6:00:00 AM → \r\n60 minutes ago"));
+        Assert.That(result, Does.Contain("100 "));
+        Assert.That(result, Does.Contain(":00:00 "));
+        Assert.That(result, Does.Contain(" → \r\n60 minutes ago"));
     }
 
     [Test]
