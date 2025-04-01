@@ -5,6 +5,7 @@ public class AppSettings
 {
     public bool IsDarkMode { get; set; } = false;
     public int MinutesUntilStale { get; set; } = 15;
+    public int RefreshIntervalInMinutes { get; set; } = 5;
 
     public string DATA_SOURCE_OPTIONS = "Dexcom,Nightscout";
     public GlucoseSource DataSource { get; set; } = GlucoseSource.Dexcom;

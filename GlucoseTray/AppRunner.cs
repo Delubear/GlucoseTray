@@ -1,9 +1,10 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Read;
+using Microsoft.Extensions.Options;
 
 namespace GlucoseTray;
 
-public class AppRunner(ITray tray, IGlucoseReader reader)
+public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options)
 {
     public async Task Start()
     {
@@ -12,7 +13,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader)
             try
             {
                 await Process();
-                await Task.Delay(1000);
+                await Task.Delay(Math.Max(options.CurrentValue.RefreshIntervalInMinutes, 1));
             }
             catch
             {

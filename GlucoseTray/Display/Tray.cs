@@ -19,6 +19,7 @@ public class Tray : ITray
         _icon = icon;
         _mapper = mapper;
 
+        _icon.AddSettingsMenu();
         _icon.AddExitMenu();
     }
 

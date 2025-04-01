@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace GlucoseTray.Display;
@@ -7,6 +9,7 @@ public interface ITrayIcon
 {
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
+    void AddSettingsMenu();
 }
 
 public class NotificationIcon : ITrayIcon
@@ -28,6 +31,17 @@ public class NotificationIcon : ITrayIcon
     private void ShowBalloon(object? sender, EventArgs e) => _trayIcon?.ShowBalloonTip(2000, "Glucose", _latestGlucose?.GetDisplayMessage(DateTime.UtcNow) ?? "error", ToolTipIcon.Info);
 
     public void AddExitMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, Exit));
+    public void AddSettingsMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Settings", null, Settings));
+
+    private void Settings(object? sender, EventArgs e)
+    {
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\appsettings.json",
+            UseShellExecute = true,
+        };
+        Process.Start(startInfo);
+    }
 
     private void Exit(object? sender, EventArgs e)
     {
