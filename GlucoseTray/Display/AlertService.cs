@@ -1,4 +1,5 @@
 ﻿
+using GlucoseTray.Enums;
 using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Display;
@@ -63,13 +64,4 @@ public class AlertService(IOptionsMonitor<AppSettings> options) : IAlertService
 
         return string.Empty;
     }
-}
-
-public enum AlertLevel
-{
-    None,
-    CriticalLow,
-    Low,
-    High,
-    CriticalHigh,
 }

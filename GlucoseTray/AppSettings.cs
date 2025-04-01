@@ -1,4 +1,6 @@
 ﻿
+using GlucoseTray.Enums;
+
 namespace GlucoseTray;
 
 public class AppSettings
@@ -33,23 +35,4 @@ public class AppSettings
     public float LowMmolThreshold { get; set; } = 3.8f;
     public float HighMmolThreshold { get; set; } = 13.8f;
     public float CriticalHighMmolThreshold { get; set; } = 16.6f;
-}
-
-public enum GlucoseUnitType
-{
-    Mg,
-    Mmol
-}
-
-public enum GlucoseSource
-{
-    Dexcom,
-    Nightscout,
-}
-
-public enum DexcomServer
-{
-    DexcomShare1,
-    DexcomShare2,
-    DexcomInternational
 }

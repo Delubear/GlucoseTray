@@ -1,4 +1,6 @@
-﻿namespace GlucoseTray.Read;
+﻿using GlucoseTray.Enums;
+
+namespace GlucoseTray.Read;
 
 public class GlucoseReading
 {

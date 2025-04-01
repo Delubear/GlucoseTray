@@ -1,5 +1,4 @@
-﻿
-namespace GlucoseTray;
+﻿namespace GlucoseTray.Enums;
 
 public enum Trend
 {

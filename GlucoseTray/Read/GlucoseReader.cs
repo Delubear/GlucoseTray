@@ -1,4 +1,5 @@
-﻿using GlucoseTray.Read.Dexcom;
+﻿using GlucoseTray.Enums;
+using GlucoseTray.Read.Dexcom;
 using GlucoseTray.Read.Nightscout;
 using Microsoft.Extensions.Options;
 

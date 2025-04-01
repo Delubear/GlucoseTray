@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using GlucoseTray.Enums;
+using System.Text.Json;
 
 namespace GlucoseTray.Read.Dexcom;
 
