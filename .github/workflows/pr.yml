@@ -18,7 +18,7 @@ jobs:
       with:
         dotnet-version: 9.x
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:SelfContained=true
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Dotnet Tests
