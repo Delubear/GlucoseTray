@@ -62,7 +62,7 @@ jobs:
         # Optionally marks this release as a draft release. Set to true to enable.
         draft: false
         # An optional name for the release. If this is omitted the tag will be used.
-        name: 'Glucose Tray ${{steps.package_version.version}}'
+        name: "Glucose Tray ${{steps.package_version.version}}"
         # Indicates if the release body should be omitted.
         #omitBody: # optional, default is false
         # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
