@@ -1,12 +1,13 @@
 ﻿using GlucoseTray.Read.Dexcom;
+using GlucoseTray.Read.Nightscout;
 using NSubstitute;
-namespace GlucoseTray.Tests.DSL;
+namespace GlucoseTray.Tests.DSL.Read;
 
-internal class AppDriver
+internal class ReadDriver
 {
-    private readonly DslProvider _provider = new();
-    private GlucoseReading _reading = new();
+    private readonly ReadProvider _provider = new();
     private DexcomResult _dexcomResult = new();
+    private NightScoutResult _nightScoutResult = new();
     private readonly AppSettings _settings = new()
     {
         MinutesUntilStale = 5,
@@ -22,109 +23,123 @@ internal class AppDriver
         ServerUnitType = GlucoseUnitType.Mg,
     };
 
-    public AppDriver() => _provider.Options.CurrentValue.Returns(_settings);
+    public ReadDriver() => _provider.Options.CurrentValue.Returns(_settings);
 
-    public AppDriver GivenADexcomResult()
+    public ReadDriver GivenADexcomResult()
     {
+        _settings.DataSource = GlucoseSource.Dexcom;
+        _provider.Options.CurrentValue.Returns(_settings);
         _dexcomResult = new DexcomResult();
         return this;
     }
 
-    public AppDriver GivenAGlucoseReading()
+    public ReadDriver GivenANightscoutResult()
     {
-        _reading = new GlucoseReading();
+        _settings.DataSource = GlucoseSource.Nightscout;
+        _provider.Options.CurrentValue.Returns(_settings);
+        _nightScoutResult = new NightScoutResult();
         return this;
     }
 
-    public AppDriver WithMgServerUnit()
+    public ReadDriver WithMgServerUnit()
     {
         _settings.ServerUnitType = GlucoseUnitType.Mg;
         _provider.Options.CurrentValue.Returns(_settings);
         return this;
     }
 
-    public AppDriver WithMmolServerUnit()
+    public ReadDriver WithMmolServerUnit()
     {
         _settings.ServerUnitType = GlucoseUnitType.Mmol;
         _provider.Options.CurrentValue.Returns(_settings);
         return this;
     }
 
-    public AppDriver WithMgDisplay()
+    public ReadDriver WithMgDisplay()
     {
         _settings.DisplayUnitType = GlucoseUnitType.Mg;
         _provider.Options.CurrentValue.Returns(_settings);
         return this;
     }
 
-    public AppDriver WithMmolDisplay()
+    public ReadDriver WithMmolDisplay()
     {
         _settings.DisplayUnitType = GlucoseUnitType.Mmol;
         _provider.Options.CurrentValue.Returns(_settings);
         return this;
     }
 
-    public AppDriver WithMgValue(int value)
+    public ReadDriver WithMgValue(int value)
     {
-        _reading.MgValue = value;
         _dexcomResult.Value = value;
+        _nightScoutResult.Sgv = value;
         return this;
     }
 
-    public AppDriver WithMmolValue(float value)
+    public ReadDriver WithMmolValue(float value)
     {
-        _reading.MmolValue = value;
         _dexcomResult.Value = value;
+        _nightScoutResult.Sgv = value;
         return this;
     }
 
-    public AppDriver WithDarkMode()
+    public ReadDriver WithMgServerUnitType()
+    {
+        _settings.ServerUnitType = GlucoseUnitType.Mg;
+        _provider.Options.CurrentValue.Returns(_settings);
+        return this;
+    }
+
+    public ReadDriver WithMmolServerUnitType()
+    {
+        _settings.ServerUnitType = GlucoseUnitType.Mmol;
+        _provider.Options.CurrentValue.Returns(_settings);
+        return this;
+    }
+
+    public ReadDriver WithDarkMode()
     {
         _settings.IsDarkMode = true;
         _provider.Options.CurrentValue.Returns(_settings);
         return this;
     }
 
-    public AppDriver WithStaleData()
+    public ReadDriver WithStaleData()
     {
         _settings.MinutesUntilStale = 15;
         _provider.Options.CurrentValue.Returns(_settings);
-        _reading.TimestampUtc = DateTime.UtcNow.AddMinutes(-30);
         _dexcomResult.ST = DateTime.UtcNow.AddMinutes(-30).Ticks.ToString();
+        _nightScoutResult.Date = DateTime.UtcNow.AddMinutes(-30).Ticks;
         return this;
     }
 
-    public AppDriver WithCriticalLowValue()
+    public ReadDriver WithCriticalLowValue()
     {
-        _reading.MgValue = 50;
-        _reading.MmolValue = 2.8f;
         _dexcomResult.Value = 50;
+        _nightScoutResult.Sgv = 50;
         return this;
     }
 
-    public AppDriver WithLowValue()
+    public ReadDriver WithLowValue()
     {
-        _reading.MgValue = 65;
-        _reading.MmolValue = 3.6f;
         _dexcomResult.Value = 65;
+        _nightScoutResult.Sgv = 65;
         return this;
     }
 
-    public AppDriver WithHighValue()
+    public ReadDriver WithHighValue()
     {
-        _reading.MgValue = 260;
-        _reading.MmolValue = 14.4f;
         _dexcomResult.Value = 260;
+        _nightScoutResult.Sgv = 260;
         return this;
     }
 
-    public AppDriver WithCriticalHighValue()
+    public ReadDriver WithCriticalHighValue()
     {
-        _reading.MgValue = 300;
-        _reading.MmolValue = 16.6f;
         _dexcomResult.Value = 300;
+        _nightScoutResult.Sgv = 300;
         return this;
     }
 
-    public BehaviorDriver When => new(_provider, _reading, _dexcomResult);
+    public ReadBehaviorDriver When => new(_provider, _dexcomResult, _nightScoutResult);
 }

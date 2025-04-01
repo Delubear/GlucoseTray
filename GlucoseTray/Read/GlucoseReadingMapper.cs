@@ -49,7 +49,7 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
         if (value == 0)
             return (0, 0);
         if (options.CurrentValue.ServerUnitType == GlucoseUnitType.Mmol)
-            return ((int)(value * 18.0182), value);
+            return ((int)(value * 18.0182f), value);
         else
             return ((int)value, value / 18.0182f);
     }

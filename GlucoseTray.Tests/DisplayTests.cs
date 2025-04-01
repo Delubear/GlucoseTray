@@ -1,5 +1,5 @@
 ﻿using GlucoseTray.Display;
-using GlucoseTray.Tests.DSL;
+using GlucoseTray.Tests.DSL.Display;
 
 namespace GlucoseTray.Tests;
 
@@ -8,7 +8,7 @@ public class DisplayTests
     [Test]
     public void ShouldMapMgToDisplay()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMgValue(100)
               .When.RefreshingIcon()
@@ -18,7 +18,7 @@ public class DisplayTests
     [Test]
     public void ShouldMapMmolToDisplay()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithMmolValue(5.5f)
@@ -29,7 +29,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowWhiteTextForStandardMmolReadingInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithMmolValue(5.5f)
@@ -41,7 +41,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowWhiteTextForStandardMgReadingInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMgValue(100)
               .WithDarkMode()
@@ -52,7 +52,7 @@ public class DisplayTests
     [Test]
     public void ShouldRecognizeWhenDataIsStale()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMgValue(100)
               .WithStaleData()
@@ -63,7 +63,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowYellowTextForMgReadingsBelowLow()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithLowValue()
               .When.RefreshingIcon()
@@ -73,7 +73,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowYellowTextForMmolReadingsBelowLow()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithLowValue()
@@ -84,7 +84,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowGoldTextForMgReadingsBelowLowInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithLowValue()
               .WithDarkMode()
@@ -95,7 +95,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowGoldTextForMmolReadingsBelowLowInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithLowValue()
@@ -107,7 +107,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowRedTextForMgReadingsBelowCriticalLow()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithCriticalLowValue()
               .When.RefreshingIcon()
@@ -117,7 +117,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowRedTextForMmolReadingsBelowCriticalLow()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithCriticalLowValue()
@@ -128,7 +128,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowRedTextForMgReadingsAboveCriticalHigh()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithCriticalHighValue()
               .When.RefreshingIcon()
@@ -138,7 +138,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowRedTextForMmolReadingsAboveCriticalHigh()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithCriticalHighValue()
@@ -149,7 +149,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowYellowTextForMgReadingsAboveHigh()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithHighValue()
               .When.RefreshingIcon()
@@ -159,7 +159,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowYellowTextForMmolReadingsAboveHigh()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithHighValue()
@@ -170,7 +170,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowGoldTextForMgReadingsAboveHighInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithHighValue()
               .WithDarkMode()
@@ -181,7 +181,7 @@ public class DisplayTests
     [Test]
     public void ShouldShowGoldTextForMmolReadingsAboveHighInDarkMode()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithHighValue()
@@ -193,7 +193,7 @@ public class DisplayTests
     [Test]
     public void ShouldUseDefaultFontSizeForAllMgReadings()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMgValue(100)
               .When.RefreshingIcon()
@@ -203,7 +203,7 @@ public class DisplayTests
     [Test]
     public void ShouldUseDefaultFontSizeForMmolReadingsBelow10()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithMmolValue(5.5f)
@@ -214,7 +214,7 @@ public class DisplayTests
     [Test]
     public void ShouldUseSmallerFontSizeForMmolReadings10AndAbove()
     {
-        var driver = new AppDriver();
+        var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithMmolValue(15.5f)
