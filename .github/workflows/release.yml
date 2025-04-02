@@ -50,7 +50,7 @@ jobs:
         #artifact: 
         # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
         #artifacts: './GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/'
-        artifacts: "./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe,./GlucoseTray/README.md"
+        artifacts: "./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe,./README.md"
         # The content type of the artifact. Defaults to raw
         #artifactContentType: # optional, default is 
         # An optional body for the release.
