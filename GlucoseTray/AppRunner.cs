@@ -15,7 +15,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
             try
             {
                 await Process();
-                await Task.Delay(Math.Max(options.CurrentValue.RefreshIntervalInMinutes, 1));
+                await Task.Delay(TimeSpan.FromMinutes(Math.Max(options.CurrentValue.RefreshIntervalInMinutes, 1)));
             }
             catch
             {
