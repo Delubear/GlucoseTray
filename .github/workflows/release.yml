@@ -1,8 +1,9 @@
-name: Release
+name: Create release
 
 on:
   push:
-    branches: [ master ]
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -62,10 +63,11 @@ jobs:
         #bodyFile: # optional, default is 
         # An optional commit reference. This will be used to create the tag if it does not exist.
         #commit: # optional, default is 
+        generateReleaseNotes: true
         # Optionally marks this release as a draft release. Set to true to enable.
         draft: false
         # An optional name for the release. If this is omitted the tag will be used.
-        name: "Glucose Tray v${{steps.get-version.outputs.version}}"
+        name: "Glucose Tray $tag"
         # Indicates if the release body should be omitted.
         #omitBody: # optional, default is false
         # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
@@ -79,7 +81,7 @@ jobs:
         # Indicates if existing release artifacts should be replaced. Defaults to true.
         replacesArtifacts: true
         # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
-        tag: "v${{steps.get-version.outputs.version}}"
+        tag: "$tag"
         # The Github token.
         token: ${{ secrets.GITHUB_TOKEN }}
 
