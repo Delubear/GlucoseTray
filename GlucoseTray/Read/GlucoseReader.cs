@@ -12,6 +12,8 @@ public interface IGlucoseReader
 
 public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IGlucoseReader
 {
+    private GlucoseReading? _latestReading;
+
     public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
         IReadStrategy strategy;
@@ -23,12 +25,12 @@ public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommun
 
         try
         {
-            var result = await strategy.GetLatestGlucoseAsync();
-            return result;
+            _latestReading = await strategy.GetLatestGlucoseAsync();
+            return _latestReading;
         }
         catch
         {
-            return new GlucoseReading();
+            return _latestReading ?? new GlucoseReading() { TimestampUtc = DateTime.UtcNow, Trend = Trend.Unknown };
         }
     }
 }
