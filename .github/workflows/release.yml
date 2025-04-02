@@ -1,6 +1,8 @@
 # To create a release:
 # git tag v1.0.0
 # git push origin v1.0.0
+# or
+# use Github UI -> Create Release -> Create New Tag -> v1.0.0 -> Publish Release
 
 name: Create release
 
