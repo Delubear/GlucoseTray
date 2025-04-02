@@ -3,8 +3,10 @@ using NSubstitute;
 
 namespace GlucoseTray.Tests.DSL.Read;
 
-internal class ReadAssertionDriver(ReadProvider provider)
+internal class ReadAssertionDriver(ReadProvider provider, ReadBehaviorDriver behaviorDriver)
 {
+    public ReadBehaviorDriver When => behaviorDriver;
+
     public ReadAssertionDriver ShouldHaveMgValueOf(int value)
     {
         provider.Tray.Received().Refresh(Arg.Is<GlucoseReading>(x => x.MgValue == value));

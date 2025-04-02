@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Read.Dexcom;
 using GlucoseTray.Read.Nightscout;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using System.Text.Json;
 
 namespace GlucoseTray.Tests.DSL.Read;
@@ -25,5 +26,13 @@ internal class ReadBehaviorDriver(ReadProvider provider, DexcomResult dexcomResu
         return this;
     }
 
-    public ReadAssertionDriver Then => new(provider);
+    public ReadBehaviorDriver CommunicationErrorOccurs()
+    {
+        provider.ExternalCommunicationAdapter.GetApiResponseAsync(Arg.Any<string>()).ThrowsAsync(x => throw new Exception());
+        provider.ExternalCommunicationAdapter.PostApiResponseAsync(Arg.Any<string>()).ThrowsAsync(x => throw new Exception());
+        provider.Runner.Process().Wait();
+        return this;
+    }
+
+    public ReadAssertionDriver Then => new(provider, this);
 }

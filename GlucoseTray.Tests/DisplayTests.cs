@@ -1,7 +1,6 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Enums;
 using GlucoseTray.Tests.DSL.Display;
-using NUnit.Framework.Legacy;
 
 namespace GlucoseTray.Tests;
 

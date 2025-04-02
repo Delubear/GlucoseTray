@@ -90,4 +90,16 @@ public class ReadTests
               .When.GettingLatestNightScoutReading()
               .Then.ShouldHaveMmolValueOf(5.549944f);
     }
+
+    [Test]
+    public void ShouldReturnLatestReceivedReadingWhenCommunicationErrorOccurs()
+    {
+        var driver = new ReadDriver();
+        driver.GivenADexcomResult()
+              .WithMgValue(100)
+              .When.GettingLatestDexcomReading()
+              .Then.ShouldHaveMgValueOf(100)
+              .When.CommunicationErrorOccurs()
+              .Then.ShouldHaveMgValueOf(100);
+    }
 }
