@@ -1,8 +1,6 @@
 # GlucoseTray
 Tray Icon for displaying current BG information in taskbar.
 
-Featured at: https://www.deebee.it/?p=18480&lang=en
-
 Always verify the time of the last reading by hovering over the tray icon or double-clicking it.  Should it crash, the icon may stay in the taskbar but stop updating.
 
 <b>Always check with your DexCom reader before making any treatment decisions.</b>
