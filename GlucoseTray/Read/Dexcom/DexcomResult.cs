@@ -1,13 +1,16 @@
-﻿namespace GlucoseTray.Read.Dexcom;
+﻿using System.Text.Json.Serialization;
+
+namespace GlucoseTray.Read.Dexcom;
 
 /// <summary>
 /// Class that maps to the JSON received from DexCom queries.
 /// </summary>
 public class DexcomResult
 {
-    public string ST { get; set; } = string.Empty;
-    public string DT { get; set; } = string.Empty;
+    [JsonPropertyName("ST")]
+    public string UnixTicks { get; set; } = string.Empty;
+    [JsonPropertyName("Trend")]
     public string Trend { get; set; } = string.Empty;
-    public double Value { get; set; }
-    public string WT { get; set; } = string.Empty;
+    [JsonPropertyName("Value")]
+    public float GlucoseValue { get; set; }
 }

@@ -72,15 +72,15 @@ internal class ReadDriver
 
     public ReadDriver WithMgValue(int value)
     {
-        _dexcomResult.Value = value;
-        _nightScoutResult.Sgv = value;
+        _dexcomResult.GlucoseValue = value;
+        _nightScoutResult.GlucoseValue = value;
         return this;
     }
 
     public ReadDriver WithMmolValue(float value)
     {
-        _dexcomResult.Value = value;
-        _nightScoutResult.Sgv = value;
+        _dexcomResult.GlucoseValue = value;
+        _nightScoutResult.GlucoseValue = value;
         return this;
     }
 
@@ -109,36 +109,36 @@ internal class ReadDriver
     {
         _settings.MinutesUntilStale = 15;
         _provider.Options.CurrentValue.Returns(_settings);
-        _dexcomResult.ST = DateTime.UtcNow.AddMinutes(-30).Ticks.ToString();
-        _nightScoutResult.Date = DateTime.UtcNow.AddMinutes(-30).Ticks;
+        _dexcomResult.UnixTicks = DateTime.UtcNow.AddMinutes(-30).Ticks.ToString();
+        _nightScoutResult.UnixTicks = DateTime.UtcNow.AddMinutes(-30).Ticks;
         return this;
     }
 
     public ReadDriver WithCriticalLowValue()
     {
-        _dexcomResult.Value = 50;
-        _nightScoutResult.Sgv = 50;
+        _dexcomResult.GlucoseValue = 50;
+        _nightScoutResult.GlucoseValue = 50;
         return this;
     }
 
     public ReadDriver WithLowValue()
     {
-        _dexcomResult.Value = 65;
-        _nightScoutResult.Sgv = 65;
+        _dexcomResult.GlucoseValue = 65;
+        _nightScoutResult.GlucoseValue = 65;
         return this;
     }
 
     public ReadDriver WithHighValue()
     {
-        _dexcomResult.Value = 260;
-        _nightScoutResult.Sgv = 260;
+        _dexcomResult.GlucoseValue = 260;
+        _nightScoutResult.GlucoseValue = 260;
         return this;
     }
 
     public ReadDriver WithCriticalHighValue()
     {
-        _dexcomResult.Value = 300;
-        _nightScoutResult.Sgv = 300;
+        _dexcomResult.GlucoseValue = 300;
+        _nightScoutResult.GlucoseValue = 300;
         return this;
     }
 

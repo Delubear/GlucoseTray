@@ -15,8 +15,8 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
 {
     public GlucoseReading Map(DexcomResult input)
     {
-        var (MgValue, MmolValue) = GetValues((float)input.Value);
-        var unixTime = string.Join("", input.ST.Where(char.IsDigit));
+        var (MgValue, MmolValue) = GetValues((float)input.GlucoseValue);
+        var unixTime = string.Join("", input.UnixTicks.Where(char.IsDigit));
 
         var result = new GlucoseReading
         {
@@ -31,14 +31,14 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
 
     public GlucoseReading Map(NightScoutResult input)
     {
-        var (MgValue, MmolValue) = GetValues((float)input.Sgv);
+        var (MgValue, MmolValue) = GetValues((float)input.GlucoseValue);
 
         var result = new GlucoseReading
         {
             MgValue = MgValue,
             MmolValue = MmolValue,
-            Trend = input.Direction.GetTrend(),
-            TimestampUtc = !string.IsNullOrEmpty(input.DateString) ? DateTime.Parse(input.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(input.Date).UtcDateTime,
+            Trend = input.Trend.GetTrend(),
+            TimestampUtc = !string.IsNullOrEmpty(input.DateString) ? DateTime.Parse(input.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(input.UnixTicks).UtcDateTime,
         };
 
         return result;
