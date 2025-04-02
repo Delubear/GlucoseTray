@@ -10,12 +10,14 @@ internal class ReadAssertionDriver(ReadProvider provider, ReadBehaviorDriver beh
     public ReadAssertionDriver ShouldHaveMgValueOf(int value)
     {
         provider.Tray.Received().Refresh(Arg.Is<GlucoseReading>(x => x.MgValue == value));
+        provider.Tray.ClearReceivedCalls();
         return this;
     }
 
     public ReadAssertionDriver ShouldHaveMmolValueOf(float value)
     {
         provider.Tray.Received().Refresh(Arg.Is<GlucoseReading>(x => x.MmolValue == value));
+        provider.Tray.ClearReceivedCalls();
         return this;
     }
 }
