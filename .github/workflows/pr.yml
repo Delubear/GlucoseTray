@@ -36,11 +36,3 @@ jobs:
         skip-build: true # optional, default is true
     - name: Publish
       run: dotnet publish --configuration Release --no-restore
-    - name: read JSON property
-      id: version
-      uses: notiz-dev/github-action-json-property@v0.2.0
-      with:
-        # path to json file
-        path: ./GlucoseTray/appsettings.json
-        # which property to read
-        prop_path: appsettings.Version

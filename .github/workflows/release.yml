@@ -1,3 +1,7 @@
+# To create a release:
+# git tag v1.0.0
+# git push origin v1.0.0
+
 name: Create release
 
 on:
@@ -21,8 +25,6 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Dotnet Tests
-      # You may pin to the exact commit or the version.
-      # uses: EasyDesk/action-dotnet-test@228a60327933ff6200594e89a6fa906a69e5f1e6
       uses: EasyDesk/action-dotnet-test@v1.3.0
       with:
         # Additional arguments to pass to 'dotnet test'.
