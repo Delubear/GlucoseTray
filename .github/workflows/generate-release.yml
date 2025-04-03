@@ -41,16 +41,12 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
-    - uses: release-drafter/release-drafter@v6
-      name: release-drafter
-      id: release-drafter
-        # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+    - name: Generate Release Notes
+      id: notes
+      uses: RedCrafter07/release-notes-action@v1
       with:
-        config-name: workflows/release-drafter.yml
-        # with:
-        #   disable-autolabeler: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tag-name: ${{ github.ref_name }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@master
     - name: Create Release
       uses: ncipollo/release-action@v1.16.0
@@ -66,7 +62,7 @@ jobs:
         #artifactContentType: # optional, default is 
         # An optional body for the release.
         #body: # optional, default is 
-        body: "${{ steps.release-drafter.outputs.body }}"
+        body: "${{ steps.notes.outputs.release-notes }}"
         # An optional body file for the release. This should be the path to the file
         #bodyFile: # optional, default is 
         #bodyFile: "${{ steps.notes.outputs.release-notes }}"
