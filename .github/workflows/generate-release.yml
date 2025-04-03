@@ -22,25 +22,6 @@ jobs:
       uses: actions/setup-dotnet@v4.3.1
       with:
         dotnet-version: 9.x
-    - name: Install dependencies
-      run: dotnet restore -p:SelfContained=true
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Dotnet Tests
-      uses: EasyDesk/action-dotnet-test@v1.3.0
-      with:
-        # Additional arguments to pass to 'dotnet test'.
-        #test-args: # optional
-        # The build configuration to use (defaults to 'Release').
-        #build-configuration: # optional, default is Release
-        # The path to the project or solution to test (defaults to the current directory).
-        #path: # optional, default is .
-        # Whether or not to skip the build using the '--no-build' flag (defaults to true).
-        skip-build: true # optional, default is true
-    - name: Publish
-      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
-    - name: Publish
-      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - name: notes
       id: notes
       # You may pin to the exact commit or the version.
@@ -70,8 +51,27 @@ jobs:
     # This option is for a use case to include commit logs without scopes even if "scopes" option is set.  For example, assume that the following commit logs: - feat(util): add a feature - feat: add a feature - feat(debug): add a feature And assume that the following `scopes` and `include-non-scoped` are set as well: ``` - scopes |
     #util
     #- include-non-scoped: true #``` Then the following release note will be generated. ``` ## Features - feat(util): add a feature - feat: add a feature ```
-
-        include-non-scoped: true
+        #scopes:
+        #include-non-scoped: true
+    - name: Install dependencies
+      run: dotnet restore -p:SelfContained=true
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Dotnet Tests
+      uses: EasyDesk/action-dotnet-test@v1.3.0
+      with:
+        # Additional arguments to pass to 'dotnet test'.
+        #test-args: # optional
+        # The build configuration to use (defaults to 'Release').
+        #build-configuration: # optional, default is Release
+        # The path to the project or solution to test (defaults to the current directory).
+        #path: # optional, default is .
+        # Whether or not to skip the build using the '--no-build' flag (defaults to true).
+        skip-build: true # optional, default is true
+    - name: Publish
+      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
+    - name: Publish
+      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - name: Create a new release note
       uses: softprops/action-gh-release@v1
       env:
@@ -82,7 +82,7 @@ jobs:
         body: ${{ steps.notes.outputs.summary }}
         draft: false
         prerelease: false
-        append-body: true
+        append_body: true
         files: |
           ./GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/GlucoseTray.exe
           ./GlucoseTray/bin/Release/net5.0-windows/win-x64-small/GlucoseTray-Slim.exe
