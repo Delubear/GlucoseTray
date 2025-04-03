@@ -74,11 +74,11 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
         if (value <= criticalLow)
             return IconTextColor.Red;
         else if (value <= low)
-            return options.CurrentValue.IsDarkMode ? IconTextColor.Gold : IconTextColor.Yellow;
+            return options.CurrentValue.IsDarkMode ? IconTextColor.Yellow : IconTextColor.Gold;
         else if (value >= criticalHigh)
             return IconTextColor.Red;
         else if (value >= high)
-            return options.CurrentValue.IsDarkMode ? IconTextColor.Gold : IconTextColor.Yellow;
+            return options.CurrentValue.IsDarkMode ? IconTextColor.Yellow : IconTextColor.Gold;
         else
             return options.CurrentValue.IsDarkMode ? IconTextColor.White : IconTextColor.Black;
     }

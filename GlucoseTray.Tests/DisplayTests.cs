@@ -62,39 +62,39 @@ public class DisplayTests
     }
 
     [Test]
-    public void ShouldShowYellowTextForMgReadingsBelowLow()
+    public void ShouldShowGoldTextForMgReadingsBelowLow()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithLowValue()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
     }
 
     [Test]
-    public void ShouldShowYellowTextForMmolReadingsBelowLow()
+    public void ShouldShowGoldTextForMmolReadingsBelowLow()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithLowValue()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
     }
 
     [Test]
-    public void ShouldShowGoldTextForMgReadingsBelowLowInDarkMode()
+    public void ShouldShowYellowTextForMgReadingsBelowLowInDarkMode()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithLowValue()
               .WithDarkMode()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
     }
 
     [Test]
-    public void ShouldShowGoldTextForMmolReadingsBelowLowInDarkMode()
+    public void ShouldShowYellowTextForMmolReadingsBelowLowInDarkMode()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
@@ -102,7 +102,7 @@ public class DisplayTests
               .WithLowValue()
               .WithDarkMode()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
     }
 
     [Test]
@@ -148,39 +148,39 @@ public class DisplayTests
     }
 
     [Test]
-    public void ShouldShowYellowTextForMgReadingsAboveHigh()
+    public void ShouldShowGoldTextForMgReadingsAboveHigh()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithHighValue()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
     }
 
     [Test]
-    public void ShouldShowYellowTextForMmolReadingsAboveHigh()
+    public void ShouldShowGoldTextForMmolReadingsAboveHigh()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
               .WithHighValue()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
     }
 
     [Test]
-    public void ShouldShowGoldTextForMgReadingsAboveHighInDarkMode()
+    public void ShouldShowYellowTextForMgReadingsAboveHighInDarkMode()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithHighValue()
               .WithDarkMode()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
     }
 
     [Test]
-    public void ShouldShowGoldTextForMmolReadingsAboveHighInDarkMode()
+    public void ShouldShowYellowTextForMmolReadingsAboveHighInDarkMode()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
@@ -188,7 +188,7 @@ public class DisplayTests
               .WithHighValue()
               .WithDarkMode()
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Gold);
+              .Then.ShouldBeRefreshedWithTextColor(IconTextColor.Yellow);
     }
 
     [Test]
