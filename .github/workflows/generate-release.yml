@@ -42,12 +42,6 @@ jobs:
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - uses: actions/checkout@master
-    - name: Generate Release Notes
-      id: notes
-      uses: RedCrafter07/release-notes-action@v1.0.1
-      with:
-        tag-name: ${{ github.ref_name }}
-        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release
       uses: ncipollo/release-action@v1.16.0
       with:
@@ -64,7 +58,7 @@ jobs:
         #body: # optional, default is 
         # An optional body file for the release. This should be the path to the file
         #bodyFile: # optional, default is 
-        bodyFile: "${{ steps.notes.outputs.release-notes }}"
+        #bodyFile: "${{ steps.notes.outputs.release-notes }}"
         # An optional commit reference. This will be used to create the tag if it does not exist.
         #commit: # optional, default is 
         generateReleaseNotes: true
