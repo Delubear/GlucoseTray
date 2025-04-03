@@ -41,12 +41,35 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
-    - name: Generate Release Notes
+    - name: conventional-release-note
       id: notes
-      uses: RedCrafter07/release-notes-action@v1.0.1
+      # You may pin to the exact commit or the version.
+      # uses: yuk1ty/conventional-release-note@78590eaf41442fce4cdb82cfde07a394fbe04a12
+      uses: yuk1ty/conventional-release-note@v1.1.1
       with:
-        tag-name: "${{ github.ref_name }}"
-        token: ${{ secrets.GITHUB_TOKEN }}
+      # Sets the current tag. This will be used in extracting logs in the specific range of tags. Logs are extracted in condition of `${previous-tag}...${current-tag}`. This option decides what tag you'd like to set as the end of the range. The default value is `github.ref_name`, but you can set a specific tag whatever you like.
+
+      #current-tag: # default is ${{ github.ref_name }}
+    # Sets the previous tag. This will be used in extracting logs in the specific range of tags. Logs are extracted in condition of `${previous-tag}...${current-tag}`. This option decides what tag you'd like to set as the start of the range. You don't need to set this options as usual, but you can set a specific tag whatever you like.
+
+      #previous-tag: # optional
+    # Filters tags by this option. This will be used as a parameter of `git tag --list [tag-pattern]`. If this passed with empty string, `git tag` will be executed. It means getting all tags indiscriminately.
+
+      #tag-pattern: # optional
+    # Decides what kind of the commit convention you would like to use. Now the action has only "default".
+    #kind: # optional, default is default
+    # If scopes are set, this action will only include commit logs with their scopes (others are excluded). For example, assume that the following commit logs: - feat(core): add a feature - feat(util): add a feature - feat(debug): add a feature - feat: add a feature And assume that the following `scopes` is set as well: ``` - scopes |
+    #core
+    #util
+    #  ``` Then the following release note will be generated. ``` ## Features - feat(core): add a feature - feat(util): add a feature ```
+
+    #scopes: # optional
+    # This option is for a use case to include commit logs without scopes even if "scopes" option is set.  For example, assume that the following commit logs: - feat(util): add a feature - feat: add a feature - feat(debug): add a feature And assume that the following `scopes` and `include-non-scoped` are set as well: ``` - scopes |
+    #util
+    #- include-non-scoped: true #``` Then the following release note will be generated. ``` ## Features - feat(util): add a feature - feat: add a feature ```
+
+        include-non-scoped: true
+          
     - uses: actions/checkout@master
     - name: Create Release
       uses: ncipollo/release-action@v1.16.0
@@ -62,7 +85,7 @@ jobs:
         #artifactContentType: # optional, default is 
         # An optional body for the release.
         #body: # optional, default is 
-        body: "${{ steps.notes.outputs.release-notes }}"
+        body: "${{ steps.notes.outputs.summary }}"
         # An optional body file for the release. This should be the path to the file
         #bodyFile: # optional, default is 
         #bodyFile: "${{ steps.notes.outputs.release-notes }}"
