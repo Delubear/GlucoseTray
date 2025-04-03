@@ -41,12 +41,15 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
-    - name: conventional-release-note
+    - name: notes
       id: notes
       # You may pin to the exact commit or the version.
       # uses: yuk1ty/conventional-release-note@78590eaf41442fce4cdb82cfde07a394fbe04a12
       uses: yuk1ty/conventional-release-note@v1.1.1
       with:
+        kind: default
+        tag-pattern: v*
+        current-tag: ${{ github.ref_name }}
       # Sets the current tag. This will be used in extracting logs in the specific range of tags. Logs are extracted in condition of `${previous-tag}...${current-tag}`. This option decides what tag you'd like to set as the end of the range. The default value is `github.ref_name`, but you can set a specific tag whatever you like.
 
       #current-tag: # default is ${{ github.ref_name }}
@@ -69,47 +72,17 @@ jobs:
     #- include-non-scoped: true #``` Then the following release note will be generated. ``` ## Features - feat(util): add a feature - feat: add a feature ```
 
         include-non-scoped: true
-          
-    - uses: actions/checkout@master
-    - name: Create Release
-      uses: ncipollo/release-action@v1.16.0
+    - name: Create a new release note
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        # An optional flag which indicates if we should update a release if it already exists. Defaults to false.
-        allowUpdates: true
-        # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        #artifact: 
-        # An optional set of paths representing artifacts to upload to the release. This may be a single path or a comma delimited list of paths (or globs)
-        #artifacts: './GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/'
-        artifacts: "./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe,./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe,./README.md"
-        # The content type of the artifact. Defaults to raw
-        #artifactContentType: # optional, default is 
-        # An optional body for the release.
-        #body: # optional, default is 
-        body: "${{ steps.notes.outputs.summary }}"
-        # An optional body file for the release. This should be the path to the file
-        #bodyFile: # optional, default is 
-        #bodyFile: "${{ steps.notes.outputs.release-notes }}"
-        # An optional commit reference. This will be used to create the tag if it does not exist.
-        #commit: # optional, default is 
-        generateReleaseNotes: true
-        # Optionally marks this release as a draft release. Set to true to enable.
-        # draft: false
-        # An optional name for the release. If this is omitted the tag will be used.
-        name: "Glucose Tray ${{ github.ref_name }}"
-        # Indicates if the release body should be omitted.
-        #omitBody: # optional, default is false
-        # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
-        #omitBodyDuringUpdate: # optional, default is false
-        # Indicates if the release name should be omitted.
-        #omitName: # optional, default is false
-        # Indicates if the release name should be omitted during updates. The name will still be applied for newly created releases. This will preserve the existing name during updates.
-        #omitNameDuringUpdate: # optional, default is false
-        # Optionally marks this release as prerelease. Set to true to enable.
-        # prerelease: false
-        # Indicates if existing release artifacts should be replaced. Defaults to true.
-        replacesArtifacts: true
-        # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
-        #tag: "$tag"
-        # The Github token.
-        token: ${{ secrets.GITHUB_TOKEN }}
-
+        tag_name: ${{ github.ref_name }}
+        name: GlucoseTray ${{ github.ref_name }}
+        body: ${{ steps.gen_note.outputs.summary }}
+        draft: false
+        prerelease: false
+        files: |
+          GlucoseTray/bin/Release/net5.0-windows/win-x64/publish/GlucoseTray.exe
+          GlucoseTray/bin/Release/net5.0-windows/win-x64-small/GlucoseTray-Slim.exe
+          README.md
