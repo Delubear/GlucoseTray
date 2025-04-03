@@ -41,6 +41,13 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
+    - uses: release-drafter/release-drafter@v6
+        # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+        # with:
+        #   config-name: my-config.yml
+        #   disable-autolabeler: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@master
     - name: Create Release
       uses: ncipollo/release-action@v1.16.0
