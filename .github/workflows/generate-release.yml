@@ -81,7 +81,8 @@ jobs:
       with:
         tag_name: ${{ github.ref_name }}
         name: GlucoseTray ${{ github.ref_name }}
-        body: ${{ steps.notes.outputs.summary }}
+        body: |
+          ${{ steps.notes.outputs.summary }}
         draft: false
         prerelease: false
         append_body: true
