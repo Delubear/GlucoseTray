@@ -86,7 +86,7 @@ jobs:
         prerelease: false
         append_body: true
         fail_on_unmatched_files: true
-        generate_release_notes: true
+        generate_release_notes: false # !important
         files: |
           ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe
           ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe
