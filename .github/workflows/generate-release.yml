@@ -45,7 +45,7 @@ jobs:
       id: notes
       uses: RedCrafter07/release-notes-action@v1.0.1
       with:
-        tag-name: ${{ github.ref_name }}
+        tag-name: "${{ github.ref_name }}"
         token: ${{ secrets.GITHUB_TOKEN }}
     - uses: actions/checkout@master
     - name: Create Release
