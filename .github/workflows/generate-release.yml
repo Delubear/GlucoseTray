@@ -43,9 +43,11 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - uses: release-drafter/release-drafter@v6
       name: release-drafter
+      id: release-drafter
         # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+      with:
+        config-name: workflows/release-drafter.yml
         # with:
-        #   config-name: my-config.yml
         #   disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
