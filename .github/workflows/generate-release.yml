@@ -89,5 +89,5 @@ jobs:
         generate_release_notes: true
         files: |
           ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe
-          ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray-Slim.exe
+          ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe
           ./README.md
