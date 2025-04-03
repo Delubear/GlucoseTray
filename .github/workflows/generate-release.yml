@@ -42,6 +42,7 @@ jobs:
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - uses: release-drafter/release-drafter@v6
+      name: release-drafter
         # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
         # with:
         #   config-name: my-config.yml
@@ -63,6 +64,7 @@ jobs:
         #artifactContentType: # optional, default is 
         # An optional body for the release.
         #body: # optional, default is 
+        body: "${{ steps.release-drafter.outputs.body }}"
         # An optional body file for the release. This should be the path to the file
         #bodyFile: # optional, default is 
         #bodyFile: "${{ steps.notes.outputs.release-notes }}"
