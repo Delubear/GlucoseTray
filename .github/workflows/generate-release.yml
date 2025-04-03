@@ -43,7 +43,7 @@ jobs:
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - name: Generate Release Notes
       id: notes
-      uses: RedCrafter07/release-notes-action@v1
+      uses: RedCrafter07/release-notes-action@v1.0.1
       with:
         tag-name: ${{ github.ref_name }}
         token: ${{ secrets.GITHUB_TOKEN }}
