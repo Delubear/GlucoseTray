@@ -13,9 +13,7 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v4.1.2
       with:
@@ -26,16 +24,15 @@ jobs:
         dotnet-version: 9.x
     - name: create-release-notes
       id: notes
-      # You may pin to the exact commit or the version.
-      # uses: johnyherangi/create-release-notes@8986cd6f5959f917ca328b0fe0849e1cab7f5920
       uses: johnyherangi/create-release-notes@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #with:
-        # Custom head ref
-        #head-ref: # optional, default is HEAD
+      with:
         # Release note format
-        #format: # optional, default is - {{subject}} by @{{author}}
+        format: |
+             - {{subject}} by @{{author}}
+               {{message}}
+
     - name: Install dependencies
       run: dotnet restore -p:SelfContained=true
     - name: Build
@@ -61,7 +58,7 @@ jobs:
         prerelease: false
         append_body: true
         fail_on_unmatched_files: true
-        generate_release_notes: false # !important
+        generate_release_notes: true
         files: |
           ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe
           ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe
