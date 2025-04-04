@@ -54,7 +54,7 @@ jobs:
     #util
     #- include-non-scoped: true #``` Then the following release note will be generated. ``` ## Features - feat(util): add a feature - feat: add a feature ```
         #scopes:
-        #include-non-scoped: true
+        include-non-scoped: true
     - name: Install dependencies
       run: dotnet restore -p:SelfContained=true
     - name: Build
