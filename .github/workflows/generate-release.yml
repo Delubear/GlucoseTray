@@ -24,37 +24,16 @@ jobs:
       uses: actions/setup-dotnet@v4.3.1
       with:
         dotnet-version: 9.x
-    - name: notes
+    - name: create-release-notes
       id: notes
       # You may pin to the exact commit or the version.
-      # uses: yuk1ty/conventional-release-note@78590eaf41442fce4cdb82cfde07a394fbe04a12
-      uses: yuk1ty/conventional-release-note@v1.1.1
-      with:
-        kind: default
-        tag-pattern: v*
-        current-tag: ${{ github.ref_name }}
-      # Sets the current tag. This will be used in extracting logs in the specific range of tags. Logs are extracted in condition of `${previous-tag}...${current-tag}`. This option decides what tag you'd like to set as the end of the range. The default value is `github.ref_name`, but you can set a specific tag whatever you like.
-
-      #current-tag: # default is ${{ github.ref_name }}
-    # Sets the previous tag. This will be used in extracting logs in the specific range of tags. Logs are extracted in condition of `${previous-tag}...${current-tag}`. This option decides what tag you'd like to set as the start of the range. You don't need to set this options as usual, but you can set a specific tag whatever you like.
-
-      #previous-tag: # optional
-    # Filters tags by this option. This will be used as a parameter of `git tag --list [tag-pattern]`. If this passed with empty string, `git tag` will be executed. It means getting all tags indiscriminately.
-
-      #tag-pattern: # optional
-    # Decides what kind of the commit convention you would like to use. Now the action has only "default".
-    #kind: # optional, default is default
-    # If scopes are set, this action will only include commit logs with their scopes (others are excluded). For example, assume that the following commit logs: - feat(core): add a feature - feat(util): add a feature - feat(debug): add a feature - feat: add a feature And assume that the following `scopes` is set as well: ``` - scopes |
-    #core
-    #util
-    #  ``` Then the following release note will be generated. ``` ## Features - feat(core): add a feature - feat(util): add a feature ```
-
-    #scopes: # optional
-    # This option is for a use case to include commit logs without scopes even if "scopes" option is set.  For example, assume that the following commit logs: - feat(util): add a feature - feat: add a feature - feat(debug): add a feature And assume that the following `scopes` and `include-non-scoped` are set as well: ``` - scopes |
-    #util
-    #- include-non-scoped: true #``` Then the following release note will be generated. ``` ## Features - feat(util): add a feature - feat: add a feature ```
-        #scopes:
-        include-non-scoped: true
+      # uses: johnyherangi/create-release-notes@8986cd6f5959f917ca328b0fe0849e1cab7f5920
+      uses: johnyherangi/create-release-notes@v1
+      #with:
+        # Custom head ref
+        #head-ref: # optional, default is HEAD
+        # Release note format
+        #format: # optional, default is - {{subject}} by @{{author}}
     - name: Install dependencies
       run: dotnet restore -p:SelfContained=true
     - name: Build
@@ -62,13 +41,6 @@ jobs:
     - name: Dotnet Tests
       uses: EasyDesk/action-dotnet-test@v1.3.0
       with:
-        # Additional arguments to pass to 'dotnet test'.
-        #test-args: # optional
-        # The build configuration to use (defaults to 'Release').
-        #build-configuration: # optional, default is Release
-        # The path to the project or solution to test (defaults to the current directory).
-        #path: # optional, default is .
-        # Whether or not to skip the build using the '--no-build' flag (defaults to true).
         skip-build: true # optional, default is true
     - name: Publish
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
@@ -82,7 +54,7 @@ jobs:
         tag_name: ${{ github.ref_name }}
         name: GlucoseTray ${{ github.ref_name }}
         body: |
-          ${{ steps.notes.outputs.summary }}
+          ${{ steps.notes.outputs.release-notes }}
         draft: false
         prerelease: false
         append_body: true
