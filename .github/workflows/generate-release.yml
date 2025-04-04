@@ -29,6 +29,8 @@ jobs:
       # You may pin to the exact commit or the version.
       # uses: johnyherangi/create-release-notes@8986cd6f5959f917ca328b0fe0849e1cab7f5920
       uses: johnyherangi/create-release-notes@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #with:
         # Custom head ref
         #head-ref: # optional, default is HEAD
