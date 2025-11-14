@@ -21,7 +21,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4.3.1
       with:
-        dotnet-version: 9.x
+        dotnet-version: 10.x
     - name: create-release-notes
       id: notes
       uses: johnyherangi/create-release-notes@v1
@@ -57,6 +57,6 @@ jobs:
         fail_on_unmatched_files: true
         generate_release_notes: true
         files: |
-          ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64/GlucoseTray.exe
-          ./GlucoseTray/bin/Release/net9.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe
+          ./GlucoseTray/bin/Release/net10.0-windows7.0/publish/win-x64/GlucoseTray.exe
+          ./GlucoseTray/bin/Release/net10.0-windows7.0/publish/win-x64-small/GlucoseTray-Slim.exe
           ./README.md
