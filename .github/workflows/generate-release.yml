@@ -2,7 +2,7 @@
 # git tag v1.0.0
 # git push origin v1.0.0
 # or
-# use Github UI -> Create Release -> Create New Tag -> v1.0.0 -> Publish Release
+# use Github UI -> Create Release -> Create New Tag -> v1.0.0 -> Publish Release (prefer above option as it will trigger the workflow)
 
 name: Create release
 
