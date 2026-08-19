@@ -370,4 +370,25 @@ public class DisplayTests
               .When.RefreshingIcon()
               .Then.ShouldNotShowNotification();
     }
+
+    [Test]
+    public void ShouldFormatMmolValueInvariantlyRegardlessOfCulture()
+    {
+        var original = Thread.CurrentThread.CurrentCulture;
+        try
+        {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
+
+            var driver = new DisplayDriver();
+            driver.GivenAGlucoseReading()
+                  .WithMmolDisplay()
+                  .WithMmolValue(5.5f)
+                  .When.RefreshingIcon()
+                  .Then.ShouldBeRefreshedWithValue("5'5");
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = original;
+        }
+    }
 }

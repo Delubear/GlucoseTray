@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Enums;
 using GlucoseTray.Read;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace GlucoseTray.Display;
 
@@ -50,7 +51,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
                 return "NUL";
             if (IsCriticalLow(reading.MmolValue))
                 return "DAN";
-            return reading.MmolValue.ToString("0.0").Replace('.', '\''); // ' uses less space than .
+            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture).Replace('.', '\''); // ' uses less space than .
         }
     }
 

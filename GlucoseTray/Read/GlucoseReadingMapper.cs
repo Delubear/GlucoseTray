@@ -2,6 +2,7 @@
 using GlucoseTray.Read.Dexcom;
 using GlucoseTray.Read.Nightscout;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace GlucoseTray.Read;
 
@@ -23,7 +24,7 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
             MgValue = MgValue,
             MmolValue = MmolValue,
             Trend = input.Trend.GetTrend(),
-            TimestampUtc = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime)).UtcDateTime : DateTime.MinValue,
+            TimestampUtc = !string.IsNullOrWhiteSpace(unixTime) ? DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(unixTime, CultureInfo.InvariantCulture)).UtcDateTime : DateTime.MinValue,
         };
 
         return result;
@@ -38,7 +39,7 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
             MgValue = MgValue,
             MmolValue = MmolValue,
             Trend = input.Trend.GetTrend(),
-            TimestampUtc = !string.IsNullOrEmpty(input.DateString) ? DateTime.Parse(input.DateString).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(input.UnixTicks).UtcDateTime,
+            TimestampUtc = !string.IsNullOrEmpty(input.DateString) ? DateTime.Parse(input.DateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(input.UnixTicks).UtcDateTime,
         };
 
         return result;
