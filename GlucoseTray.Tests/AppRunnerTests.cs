@@ -14,7 +14,7 @@ public class AppRunnerTests
         var reader = new ConcurrencyTrackingReader();
         var tray = Substitute.For<ITray>();
         var options = new TestOptionsMonitor(new AppSettings());
-        var runner = new AppRunner(tray, reader, options, NullLogger<AppRunner>.Instance);
+        var runner = new AppRunner(tray, reader, options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
 
         var calls = Enumerable.Range(0, 10).Select(_ => runner.Process());
         await Task.WhenAll(calls);
@@ -30,7 +30,7 @@ public class AppRunnerTests
         reader.GetLatestGlucoseAsync().Returns(reading);
         var tray = Substitute.For<ITray>();
         var options = new TestOptionsMonitor(new AppSettings());
-        var runner = new AppRunner(tray, reader, options, NullLogger<AppRunner>.Instance);
+        var runner = new AppRunner(tray, reader, options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
 
         await runner.Process();
 
@@ -44,7 +44,7 @@ public class AppRunnerTests
         reader.GetLatestGlucoseAsync().Returns(new GlucoseReading());
         var tray = Substitute.For<ITray>();
         var options = new TestOptionsMonitor(new AppSettings());
-        var runner = new AppRunner(tray, reader, options, NullLogger<AppRunner>.Instance);
+        var runner = new AppRunner(tray, reader, options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
 
         _ = runner.Start();
         options.TriggerChange(new AppSettings());
@@ -55,13 +55,31 @@ public class AppRunnerTests
     }
 
     [Test]
+    public async Task ShouldReEncryptCredentialsWhenConfigurationChanges()
+    {
+        var reader = Substitute.For<IGlucoseReader>();
+        reader.GetLatestGlucoseAsync().Returns(new GlucoseReading());
+        var tray = Substitute.For<ITray>();
+        var migrator = Substitute.For<ICredentialMigrator>();
+        var options = new TestOptionsMonitor(new AppSettings());
+        var runner = new AppRunner(tray, reader, options, migrator, NullLogger<AppRunner>.Instance);
+
+        _ = runner.Start();
+        options.TriggerChange(new AppSettings());
+        await WaitForAsync(() => migrator.ReceivedCalls().Any(c => c.GetMethodInfo().Name == nameof(ICredentialMigrator.ProtectFile)));
+
+        migrator.Received().ProtectFile(AppSettings.FileName);
+        runner.Dispose();
+    }
+
+    [Test]
     public void ShouldStopHandlingConfigChangesAfterDispose()
     {
         var reader = Substitute.For<IGlucoseReader>();
         reader.GetLatestGlucoseAsync().Returns(new GlucoseReading());
         var tray = Substitute.For<ITray>();
         var options = new TestOptionsMonitor(new AppSettings());
-        var runner = new AppRunner(tray, reader, options, NullLogger<AppRunner>.Instance);
+        var runner = new AppRunner(tray, reader, options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
 
         _ = runner.Start();
         runner.Dispose();

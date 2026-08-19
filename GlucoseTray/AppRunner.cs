@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace GlucoseTray;
 
-public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options, ILogger<AppRunner> logger) : IDisposable
+public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options, ICredentialMigrator credentialMigrator, ILogger<AppRunner> logger) : IDisposable
 {
     private readonly SemaphoreSlim _processLock = new(1, 1);
     private IDisposable? _onChangeSubscription;
@@ -34,6 +34,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
     {
         try
         {
+            credentialMigrator.ProtectFile(AppSettings.FileName);
             await Process();
         }
         catch (Exception ex)

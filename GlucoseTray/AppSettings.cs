@@ -6,6 +6,8 @@ namespace GlucoseTray;
 
 public class AppSettings
 {
+    public const string FileName = "appsettings.json";
+
     [JsonPropertyOrder(1)]
     public bool IsDarkMode { get; set; } = false;
     [JsonPropertyOrder(2)]

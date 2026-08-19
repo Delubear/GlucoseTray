@@ -25,6 +25,6 @@ internal class DisplayProvider
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
         AlertService = new AlertService(Options);
         Tray = new Tray(Icon, GlucoseDisplayMapper, Scheduler, AlertService, Options);
-        Runner = new AppRunner(Tray, Reader, Options, NullLogger<AppRunner>.Instance);
+        Runner = new AppRunner(Tray, Reader, Options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
     }
 }

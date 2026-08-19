@@ -11,14 +11,14 @@ public class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        var filePath = "appsettings.json";
+        var filePath = AppSettings.FileName;
         if (!File.Exists(filePath))
             CreateDefaultAppSettings(filePath);
 
         ProtectCredentialsAtRest(filePath);
 
         var host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
+            .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile(AppSettings.FileName, optional: false, reloadOnChange: true))
             .ConfigureServices(static (context, services) => ConfigureServices(context.Configuration, services))
             .Build();
 
@@ -32,6 +32,7 @@ public class Program
         services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15));
 
         services.AddSingleton<ICredentialProtector, DpapiCredentialProtector>();
+        services.AddSingleton<ICredentialMigrator, CredentialMigrator>();
 
         services.Configure<AppSettings>(configuration)
                 .AddSingleton<AppWrapper>()
