@@ -4,6 +4,7 @@
     <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
     <File Path=".github/workflows/generate-release.yml" />
     <File Path=".github/workflows/pr.yml" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="GlucoseTray.Tests/GlucoseTray.Tests.csproj" />
   <Project Path="GlucoseTray/GlucoseTray.csproj" />
