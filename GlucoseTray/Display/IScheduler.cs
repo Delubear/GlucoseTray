@@ -23,7 +23,7 @@ public class TaskSchedulerService : IScheduler
             return false;
 
         var action = (ExecAction)existingTask.Definition.Actions[0];
-        if (action.Path != ExecutablePath || action.WorkingDirectory != Directory.GetCurrentDirectory()) // File has been moved since task was created. Update values.
+        if (action.Path != ExecutablePath || action.WorkingDirectory != WorkingDirectory) // File has been moved since task was created. Update values.
         {
             action.Path = ExecutablePath;
             action.WorkingDirectory = WorkingDirectory;
