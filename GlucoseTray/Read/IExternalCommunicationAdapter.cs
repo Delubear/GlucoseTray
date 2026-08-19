@@ -1,6 +1,7 @@
 ﻿
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace GlucoseTray.Read;
 
@@ -10,7 +11,7 @@ public interface IExternalCommunicationAdapter
     Task<string> GetApiResponseAsync(string url, string? content = null);
 }
 
-public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) : IExternalCommunicationAdapter
+public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger) : IExternalCommunicationAdapter
 {
     public const string HttpClientName = "GlucoseTray";
     public async Task<string> PostApiResponseAsync(string url, string? content = null)
@@ -50,6 +51,11 @@ public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) 
             var result = await response.Content.ReadAsStringAsync();
 
             return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "HTTP {Method} request to {Url} failed.", request.Method, request.RequestUri);
+            throw;
         }
         finally
         {

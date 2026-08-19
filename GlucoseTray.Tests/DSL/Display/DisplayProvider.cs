@@ -1,5 +1,6 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Read;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
@@ -24,6 +25,6 @@ internal class DisplayProvider
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
         AlertService = new AlertService(Options);
         Tray = new Tray(Icon, GlucoseDisplayMapper, Scheduler, AlertService, Options);
-        Runner = new AppRunner(Tray, Reader, Options);
+        Runner = new AppRunner(Tray, Reader, Options, NullLogger<AppRunner>.Instance);
     }
 }

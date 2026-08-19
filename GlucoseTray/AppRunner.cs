@@ -1,10 +1,11 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Read;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace GlucoseTray;
 
-public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options)
+public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options, ILogger<AppRunner> logger)
 {
     private readonly SemaphoreSlim _processLock = new(1, 1);
 
@@ -19,8 +20,9 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
                 await Process();
                 await Task.Delay(TimeSpan.FromMinutes(Math.Max(options.CurrentValue.RefreshIntervalInMinutes, 1)));
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogCritical(ex, "Fatal error in the glucose refresh loop. Disposing tray and shutting down.");
                 tray.Dispose();
                 throw;
             }

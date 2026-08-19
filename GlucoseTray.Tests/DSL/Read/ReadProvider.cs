@@ -1,5 +1,6 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Read;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 
@@ -18,7 +19,7 @@ internal class ReadProvider
     public ReadProvider()
     {
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
-        Reader = new GlucoseReader(Options, ExternalCommunicationAdapter, GlucoseReadingMapper);
-        Runner = new AppRunner(Tray, Reader, Options);
+        Reader = new GlucoseReader(Options, ExternalCommunicationAdapter, GlucoseReadingMapper, NullLogger<GlucoseReader>.Instance);
+        Runner = new AppRunner(Tray, Reader, Options, NullLogger<AppRunner>.Instance);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GlucoseTray.Enums;
 using GlucoseTray.Read.Dexcom;
 using GlucoseTray.Read.Nightscout;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Read;
@@ -10,7 +11,7 @@ public interface IGlucoseReader
     Task<GlucoseReading> GetLatestGlucoseAsync();
 }
 
-public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IGlucoseReader
+public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper, ILogger<GlucoseReader> logger) : IGlucoseReader
 {
     private GlucoseReading? _latestReading;
 
@@ -23,8 +24,9 @@ public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommun
             _latestReading = await strategy.GetLatestGlucoseAsync();
             return _latestReading;
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Failed to read latest glucose value. Falling back to the last known reading.");
             return _latestReading ?? new GlucoseReading() { TimestampUtc = DateTime.UtcNow, Trend = Trend.Unknown };
         }
     }
