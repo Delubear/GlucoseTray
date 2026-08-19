@@ -1,11 +1,20 @@
 <Solution>
-  <Folder Name="/.github/">
+  <Folder Name="/.github/Issue Templates/">
     <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
     <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+  </Folder>
+  <Folder Name="/.github/Workflows/">
     <File Path=".github/workflows/generate-release.yml" />
     <File Path=".github/workflows/pr.yml" />
+  </Folder>
+  <Folder Name="/.github/">
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/.github/instructions/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/instructions/tests.instructions.md" />
+  </Folder>
+
   <Project Path="GlucoseTray.Tests/GlucoseTray.Tests.csproj" />
   <Project Path="GlucoseTray/GlucoseTray.csproj" />
 </Solution>
