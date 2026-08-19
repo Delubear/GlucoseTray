@@ -1,4 +1,5 @@
 ﻿using GlucoseTray.Enums;
+using System.Globalization;
 
 namespace GlucoseTray.Display;
 
@@ -13,7 +14,7 @@ public class GlucoseDisplay
 
     public string GetDisplayMessage(DateTime utcNow)
     {
-        var staleMessage = IsStale ? $"\r\n{Math.Abs((utcNow - TimestampUtc).TotalMinutes):#} minutes ago" : string.Empty;
+        var staleMessage = IsStale ? $"\r\n{Math.Abs((utcNow - TimestampUtc).TotalMinutes).ToString("#", CultureInfo.InvariantCulture)} minutes ago" : string.Empty;
         return $"{DisplayValue} {TimestampUtc.ToLocalTime().ToLongTimeString()} {Trend.GetTrendArrow()} {staleMessage}".Trim();
     }
 }
