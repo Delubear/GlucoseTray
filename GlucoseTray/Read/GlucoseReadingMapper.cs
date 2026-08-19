@@ -39,7 +39,7 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
             MgValue = MgValue,
             MmolValue = MmolValue,
             Trend = input.Trend.GetTrend(),
-            TimestampUtc = !string.IsNullOrEmpty(input.DateString) ? DateTime.Parse(input.DateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind).ToUniversalTime() : DateTimeOffset.FromUnixTimeMilliseconds(input.UnixTicks).UtcDateTime,
+            TimestampUtc = GetNightscoutTimestamp(input),
         };
 
         return result;
@@ -53,5 +53,13 @@ public class GlucoseReadingMapper(IOptionsMonitor<AppSettings> options) : IGluco
             return ((int)(value * 18.0182f), value);
         else
             return ((int)value, value / 18.0182f);
+    }
+
+    private static DateTime GetNightscoutTimestamp(NightScoutResult input)
+    {
+        if (!string.IsNullOrEmpty(input.DateString))
+            return DateTime.Parse(input.DateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind).ToUniversalTime();
+
+        return input.UnixTicks > 0 ? DateTimeOffset.FromUnixTimeMilliseconds(input.UnixTicks).UtcDateTime : DateTime.MinValue;
     }
 }
