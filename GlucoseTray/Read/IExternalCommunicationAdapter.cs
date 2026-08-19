@@ -45,6 +45,7 @@ public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) 
             var client = httpClientFactory.CreateClient();
 
             response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
 
             return result;
