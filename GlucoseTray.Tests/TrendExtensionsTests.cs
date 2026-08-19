@@ -9,7 +9,7 @@ public class TrendExtensionsTests
     [TestCase("SingleUp", Trend.SingleUp)]
     [TestCase("FortyFiveUp", Trend.FortyFiveUp)]
     [TestCase("Flat", Trend.Flat)]
-    [TestCase("FortyFiveDown", Trend.FortFiveDown)]
+    [TestCase("FortyFiveDown", Trend.FortyFiveDown)]
     [TestCase("SingleDown", Trend.SingleDown)]
     [TestCase("DoubleDown", Trend.DoubleDown)]
     [TestCase("TripleDown", Trend.TripleDown)]
