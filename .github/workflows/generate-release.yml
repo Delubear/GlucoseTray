@@ -31,16 +31,16 @@ jobs:
         # Release note format
         #format: - {{subject}} by @{{author}}
     - name: Install dependencies
-      run: dotnet restore -p:SelfContained=true
+      run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Dotnet Tests
       uses: EasyDesk/action-dotnet-test@v1.3.0
       with:
         skip-build: true # optional, default is true
-    - name: Publish
+    - name: Publish (self-contained)
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
-    - name: Publish
+    - name: Publish (framework-dependent / Slim)
       run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore  -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
     - name: Create a new release note
       uses: softprops/action-gh-release@v1
