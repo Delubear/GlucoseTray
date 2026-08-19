@@ -38,14 +38,14 @@ public class Program
                 .AddHttpClient()
                 .AddSingleton<AppWrapper>()
                 .AddSingleton<AppRunner>()
-                .AddScoped<IGlucoseReader, GlucoseReader>()
-                .AddScoped<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
-                .AddScoped<ITray, Tray>()
-                .AddScoped<ITrayIcon, NotificationIcon>()
-                .AddScoped<IScheduler, TaskSchedulerService>()
-                .AddScoped<IAlertService, AlertService>()
-                .AddScoped<IGlucoseReadingMapper, GlucoseReadingMapper>()
-                .AddScoped<IGlucoseDisplayMapper, GlucoseDisplayMapper>();
+                .AddSingleton<IGlucoseReader, GlucoseReader>()
+                .AddSingleton<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
+                .AddSingleton<ITray, Tray>()
+                .AddSingleton<ITrayIcon, NotificationIcon>()
+                .AddSingleton<IScheduler, TaskSchedulerService>()
+                .AddSingleton<IAlertService, AlertService>()
+                .AddSingleton<IGlucoseReadingMapper, GlucoseReadingMapper>()
+                .AddSingleton<IGlucoseDisplayMapper, GlucoseDisplayMapper>();
     }
 
     private static JsonSerializerOptions GetJsonSerializerOptions() => new()
