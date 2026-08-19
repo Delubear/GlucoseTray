@@ -11,7 +11,7 @@ internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAd
         string sessionId = await GetSessionIdAsync(accountId);
         string response = await GetApiResponseAsync(sessionId);
 
-        var data = JsonSerializer.Deserialize<List<DexcomResult>>(response)!.First();
+        var data = JsonSerializer.Deserialize<List<DexcomResult>>(response)?.FirstOrDefault() ?? throw new InvalidOperationException("Dexcom returned no glucose readings.");
 
         var result = mapper.Map(data);
         return result;

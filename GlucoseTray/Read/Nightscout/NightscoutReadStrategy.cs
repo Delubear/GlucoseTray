@@ -7,7 +7,7 @@ internal class NightscoutReadStrategy(AppSettings settings, IExternalCommunicati
     public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
         var response = await GetApiResponseAsync();
-        var data = JsonSerializer.Deserialize<List<NightScoutResult>>(response)!.Last();
+        var data = JsonSerializer.Deserialize<List<NightScoutResult>>(response)?.LastOrDefault() ?? throw new InvalidOperationException("Nightscout returned no glucose readings.");
 
         var result = mapper.Map(data);
         return result;

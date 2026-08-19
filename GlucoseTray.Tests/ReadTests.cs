@@ -102,4 +102,16 @@ public class ReadTests
               .When.CommunicationErrorOccurs()
               .Then.ShouldHaveMgValueOf(100);
     }
+
+    [Test]
+    public void ShouldReturnLatestReceivedReadingWhenNoReadingsAreReturned()
+    {
+        var driver = new ReadDriver();
+        driver.GivenADexcomResult()
+              .WithMgValue(100)
+              .When.GettingLatestDexcomReading()
+              .Then.ShouldHaveMgValueOf(100)
+              .When.NoDexcomReadingsReturned()
+              .Then.ShouldHaveMgValueOf(100);
+    }
 }

@@ -29,7 +29,16 @@ internal class ReadBehaviorDriver(ReadProvider provider, DexcomResult dexcomResu
     public ReadBehaviorDriver CommunicationErrorOccurs()
     {
         provider.ExternalCommunicationAdapter.GetApiResponseAsync(Arg.Any<string>()).ThrowsAsync(x => throw new Exception());
-        provider.ExternalCommunicationAdapter.PostApiResponseAsync(Arg.Any<string>()).ThrowsAsync(x => throw new Exception());
+        provider.Runner.Process().Wait();
+        return this;
+    }
+
+    public ReadBehaviorDriver NoDexcomReadingsReturned()
+    {
+        provider.ExternalCommunicationAdapter.PostApiResponseAsync(Arg.Any<string>(), Arg.Is<string>(x => x.Contains("bob"))).Returns("1account");
+        provider.ExternalCommunicationAdapter.PostApiResponseAsync(Arg.Any<string>(), Arg.Is<string>(x => x.Contains("1account"))).Returns("1session");
+        var data = JsonSerializer.Serialize(new List<DexcomResult>());
+        provider.ExternalCommunicationAdapter.PostApiResponseAsync(Arg.Any<string>(), Arg.Is<string>(x => x.Contains("1session"))).Returns(data);
         provider.Runner.Process().Wait();
         return this;
     }
