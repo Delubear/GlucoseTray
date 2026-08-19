@@ -19,7 +19,8 @@ internal class ReadProvider
     public ReadProvider()
     {
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
-        Reader = new GlucoseReader(Options, ExternalCommunicationAdapter, GlucoseReadingMapper, new DpapiCredentialProtector(), NullLogger<GlucoseReader>.Instance);
+        var strategyFactory = new ReadStrategyFactory(Options, ExternalCommunicationAdapter, GlucoseReadingMapper, new DpapiCredentialProtector());
+        Reader = new GlucoseReader(strategyFactory, NullLogger<GlucoseReader>.Instance);
         Runner = new AppRunner(Tray, Reader, Options, NullLogger<AppRunner>.Instance);
     }
 }

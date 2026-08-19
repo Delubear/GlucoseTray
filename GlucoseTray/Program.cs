@@ -37,6 +37,7 @@ public class Program
                 .AddSingleton<AppWrapper>()
                 .AddSingleton<AppRunner>()
                 .AddSingleton<IGlucoseReader, GlucoseReader>()
+                .AddSingleton<IReadStrategyFactory, ReadStrategyFactory>()
                 .AddSingleton<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddSingleton<ITray, Tray>()
                 .AddSingleton<ITrayIcon, NotificationIcon>()
