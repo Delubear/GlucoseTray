@@ -11,7 +11,7 @@ public interface IGlucoseReader
     Task<GlucoseReading> GetLatestGlucoseAsync();
 }
 
-public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper, ILogger<GlucoseReader> logger) : IGlucoseReader
+public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper, ICredentialProtector protector, ILogger<GlucoseReader> logger) : IGlucoseReader
 {
     private GlucoseReading? _latestReading;
 
@@ -34,8 +34,8 @@ public class GlucoseReader(IOptionsMonitor<AppSettings> options, IExternalCommun
     private IReadStrategy GetReadStrategy()
     {
         if (options.CurrentValue.DataSource == GlucoseSource.Dexcom)
-            return new DexcomReadStrategy(options.CurrentValue, communicator, mapper);
+            return new DexcomReadStrategy(options.CurrentValue, communicator, mapper, protector);
         else
-            return new NightscoutReadStrategy(options.CurrentValue, communicator, mapper);
+            return new NightscoutReadStrategy(options.CurrentValue, communicator, mapper, protector);
     }
 }

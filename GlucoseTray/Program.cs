@@ -16,6 +16,8 @@ public class Program
         if (!File.Exists(filePath))
             CreateDefaultAppSettings(filePath);
 
+        ProtectCredentialsAtRest(filePath);
+
         var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((context, builder) => builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true))
             .ConfigureServices(static (context, services) => ConfigureServices(context.Configuration, services))
@@ -29,6 +31,8 @@ public class Program
     private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
     {
         services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15));
+
+        services.AddSingleton<ICredentialProtector, DpapiCredentialProtector>();
 
         services.Configure<AppSettings>(configuration)
                 .AddHttpClient()
@@ -56,5 +60,29 @@ public class Program
         var options = GetJsonSerializerOptions();
         var json = JsonSerializer.Serialize(settings, options);
         File.WriteAllText(filePath, json);
+    }
+
+    private static void ProtectCredentialsAtRest(string filePath)
+    {
+        var protector = new DpapiCredentialProtector();
+        var options = GetJsonSerializerOptions();
+        var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(filePath), options);
+        if (settings is null)
+            return;
+
+        var changed = false;
+        if (!string.IsNullOrEmpty(settings.DexcomPassword) && !protector.IsProtected(settings.DexcomPassword))
+        {
+            settings.DexcomPassword = protector.Protect(settings.DexcomPassword);
+            changed = true;
+        }
+        if (!string.IsNullOrEmpty(settings.NightscoutToken) && !protector.IsProtected(settings.NightscoutToken))
+        {
+            settings.NightscoutToken = protector.Protect(settings.NightscoutToken);
+            changed = true;
+        }
+
+        if (changed)
+            File.WriteAllText(filePath, JsonSerializer.Serialize(settings, options));
     }
 }

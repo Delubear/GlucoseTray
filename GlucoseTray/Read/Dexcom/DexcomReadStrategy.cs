@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace GlucoseTray.Read.Dexcom;
 
-internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IReadStrategy
+internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper, ICredentialProtector protector) : IReadStrategy
 {
     public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
@@ -30,7 +30,7 @@ internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAd
         {
             accountId,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = settings.DexcomPassword
+            password = protector.Unprotect(settings.DexcomPassword)
         });
 
         var sessionUrl = $"https://{GetDexComServer()}/ShareWebServices/Services/General/LoginPublisherAccountById";
@@ -47,7 +47,7 @@ internal class DexcomReadStrategy(AppSettings settings, IExternalCommunicationAd
         {
             accountName = settings.DexcomUsername,
             applicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-            password = settings.DexcomPassword
+            password = protector.Unprotect(settings.DexcomPassword)
         });
 
         var accountUrl = $"https://{GetDexComServer()}/ShareWebServices/Services/General/AuthenticatePublisherAccount";

@@ -2,7 +2,7 @@
 
 namespace GlucoseTray.Read.Nightscout;
 
-internal class NightscoutReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper) : IReadStrategy
+internal class NightscoutReadStrategy(AppSettings settings, IExternalCommunicationAdapter communicator, IGlucoseReadingMapper mapper, ICredentialProtector protector) : IReadStrategy
 {
     public async Task<GlucoseReading> GetLatestGlucoseAsync()
     {
@@ -16,7 +16,8 @@ internal class NightscoutReadStrategy(AppSettings settings, IExternalCommunicati
     private async Task<string> GetApiResponseAsync()
     {
         var url = $"{settings.NightscoutUrl.TrimEnd('/')}/api/v1/entries/sgv?count=1";
-        url += !string.IsNullOrWhiteSpace(settings.NightscoutToken) ? $"&token={settings.NightscoutToken}" : string.Empty;
+        var token = protector.Unprotect(settings.NightscoutToken);
+        url += !string.IsNullOrWhiteSpace(token) ? $"&token={token}" : string.Empty;
 
         var result = await communicator.GetApiResponseAsync(url);
         return result;
