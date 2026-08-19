@@ -43,5 +43,13 @@ internal class ReadBehaviorDriver(ReadProvider provider, DexcomResult dexcomResu
         return this;
     }
 
+    public ReadBehaviorDriver NoNightScoutReadingsReturned()
+    {
+        var data = JsonSerializer.Serialize(new List<NightScoutResult>());
+        provider.ExternalCommunicationAdapter.GetApiResponseAsync(Arg.Any<string>()).Returns(data);
+        provider.Runner.Process().Wait();
+        return this;
+    }
+
     public ReadAssertionDriver Then => new(provider, this);
 }

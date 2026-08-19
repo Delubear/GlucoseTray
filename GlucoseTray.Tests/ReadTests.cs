@@ -114,4 +114,16 @@ public class ReadTests
               .When.NoDexcomReadingsReturned()
               .Then.ShouldHaveMgValueOf(100);
     }
+
+    [Test]
+    public void ShouldReturnLatestReceivedReadingWhenNoNightScoutReadingsAreReturned()
+    {
+        var driver = new ReadDriver();
+        driver.GivenANightscoutResult()
+              .WithMgValue(100)
+              .When.GettingLatestNightScoutReading()
+              .Then.ShouldHaveMgValueOf(100)
+              .When.NoNightScoutReadingsReturned()
+              .Then.ShouldHaveMgValueOf(100);
+    }
 }

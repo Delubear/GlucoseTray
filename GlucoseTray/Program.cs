@@ -62,27 +62,5 @@ public class Program
         File.WriteAllText(filePath, json);
     }
 
-    private static void ProtectCredentialsAtRest(string filePath)
-    {
-        var protector = new DpapiCredentialProtector();
-        var options = GetJsonSerializerOptions();
-        var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(filePath), options);
-        if (settings is null)
-            return;
-
-        var changed = false;
-        if (!string.IsNullOrEmpty(settings.DexcomPassword) && !protector.IsProtected(settings.DexcomPassword))
-        {
-            settings.DexcomPassword = protector.Protect(settings.DexcomPassword);
-            changed = true;
-        }
-        if (!string.IsNullOrEmpty(settings.NightscoutToken) && !protector.IsProtected(settings.NightscoutToken))
-        {
-            settings.NightscoutToken = protector.Protect(settings.NightscoutToken);
-            changed = true;
-        }
-
-        if (changed)
-            File.WriteAllText(filePath, JsonSerializer.Serialize(settings, options));
-    }
+    private static void ProtectCredentialsAtRest(string filePath) => new CredentialMigrator(new DpapiCredentialProtector()).ProtectFile(filePath);
 }
