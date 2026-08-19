@@ -1,23 +1,16 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace GlucoseTray;
 
 public class CredentialMigrator(ICredentialProtector protector)
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        Converters = { new JsonStringEnumConverter() },
-        WriteIndented = true,
-    };
-
     /// <summary>
     /// Encrypts any plaintext credentials in the settings file in place.
     /// Returns true if the file was modified.
     /// </summary>
     public bool ProtectFile(string filePath)
     {
-        var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(filePath), SerializerOptions);
+        var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(filePath), AppSettingsJson.SerializerOptions);
         if (settings is null)
             return false;
 
@@ -34,7 +27,7 @@ public class CredentialMigrator(ICredentialProtector protector)
         }
 
         if (changed)
-            File.WriteAllText(filePath, JsonSerializer.Serialize(settings, SerializerOptions));
+            File.WriteAllText(filePath, JsonSerializer.Serialize(settings, AppSettingsJson.SerializerOptions));
 
         return changed;
     }

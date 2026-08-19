@@ -5,7 +5,6 @@ using GlucoseTray;
 using GlucoseTray.Display;
 using System.Text.Json;
 using GlucoseTray.Read;
-using System.Text.Json.Serialization;
 
 public class Program
 {
@@ -35,7 +34,6 @@ public class Program
         services.AddSingleton<ICredentialProtector, DpapiCredentialProtector>();
 
         services.Configure<AppSettings>(configuration)
-                .AddHttpClient()
                 .AddSingleton<AppWrapper>()
                 .AddSingleton<AppRunner>()
                 .AddSingleton<IGlucoseReader, GlucoseReader>()
@@ -48,17 +46,10 @@ public class Program
                 .AddSingleton<IGlucoseDisplayMapper, GlucoseDisplayMapper>();
     }
 
-    private static JsonSerializerOptions GetJsonSerializerOptions() => new()
-    {
-        Converters = { new JsonStringEnumConverter() },
-        WriteIndented = true,
-    };
-
     private static void CreateDefaultAppSettings(string filePath)
     {
         var settings = new AppSettings();
-        var options = GetJsonSerializerOptions();
-        var json = JsonSerializer.Serialize(settings, options);
+        var json = JsonSerializer.Serialize(settings, AppSettingsJson.SerializerOptions);
         File.WriteAllText(filePath, json);
     }
 
