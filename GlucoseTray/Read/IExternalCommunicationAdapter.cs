@@ -8,7 +8,7 @@ namespace GlucoseTray.Read;
 public interface IExternalCommunicationAdapter
 {
     Task<string> PostApiResponseAsync(string url, string? content = null);
-    Task<string> GetApiResponseAsync(string url, string? content = null);
+    Task<string> GetApiResponseAsync(string url);
 }
 
 public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, ILogger<ExternalCommunicationAdapter> logger) : IExternalCommunicationAdapter
@@ -26,15 +26,10 @@ public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, 
         return result;
     }
 
-    public async Task<string> GetApiResponseAsync(string url, string? content = null)
+    public async Task<string> GetApiResponseAsync(string url)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        if (content is not null)
-        {
-            var requestContent = new StringContent(content, Encoding.UTF8, "application/json");
-            request.Content = requestContent;
-        }
         var result = await DoApiResponseAsync(request);
         return result;
     }
