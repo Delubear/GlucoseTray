@@ -61,6 +61,10 @@ public class AlertService(IOptionsMonitor<AppSettings> options) : IAlertService
                 return "Low Glucose Alert";
             }
         }
+        else
+        {
+            _currentAlertLevel = AlertLevel.None;
+        }
 
         return string.Empty;
     }
