@@ -5,13 +5,14 @@ using Microsoft.Extensions.Options;
 
 namespace GlucoseTray;
 
-public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options, ILogger<AppRunner> logger)
+public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSettings> options, ILogger<AppRunner> logger) : IDisposable
 {
     private readonly SemaphoreSlim _processLock = new(1, 1);
+    private IDisposable? _onChangeSubscription;
 
     public async Task Start()
     {
-        options.OnChange(async _ => await Process());
+        _onChangeSubscription = options.OnChange(_ => RefreshOnConfigChangeAsync());
 
         while (true)
         {
@@ -29,6 +30,18 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
         }
     }
 
+    private async Task RefreshOnConfigChangeAsync()
+    {
+        try
+        {
+            await Process();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to refresh glucose reading after a configuration change.");
+        }
+    }
+
     public async Task Process()
     {
         await _processLock.WaitAsync();
@@ -41,5 +54,12 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
         {
             _processLock.Release();
         }
+    }
+
+    public void Dispose()
+    {
+        _onChangeSubscription?.Dispose();
+        _processLock.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
