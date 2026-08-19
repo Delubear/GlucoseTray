@@ -12,7 +12,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
 
     public async Task Start()
     {
-        _onChangeSubscription = options.OnChange(_ => RefreshOnConfigChangeAsync());
+        _onChangeSubscription = options.OnChange(settings => { _ = RefreshOnConfigChangeAsync(); });
 
         while (true)
         {
