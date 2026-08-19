@@ -12,6 +12,7 @@ public interface IExternalCommunicationAdapter
 
 public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) : IExternalCommunicationAdapter
 {
+    public const string HttpClientName = "GlucoseTray";
     public async Task<string> PostApiResponseAsync(string url, string? content = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, url);
@@ -42,7 +43,7 @@ public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory) 
         HttpResponseMessage? response = null;
         try
         {
-            var client = httpClientFactory.CreateClient();
+            var client = httpClientFactory.CreateClient(HttpClientName);
 
             response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();

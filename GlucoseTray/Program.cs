@@ -28,6 +28,8 @@ public class Program
 
     private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
     {
+        services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15));
+
         services.Configure<AppSettings>(configuration)
                 .AddHttpClient()
                 .AddSingleton<AppWrapper>()
