@@ -3,10 +3,9 @@ using Microsoft.Extensions.Options;
 
 namespace GlucoseTray.Display;
 
-public interface ITray
+public interface ITray : IDisposable
 {
     void Refresh(GlucoseReading result);
-    void Dispose();
 }
 
 public class Tray : ITray

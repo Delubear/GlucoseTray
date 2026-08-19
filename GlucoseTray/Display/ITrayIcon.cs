@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace GlucoseTray.Display;
 
-public interface ITrayIcon
+public interface ITrayIcon : IDisposable
 {
     void ClearMenu();
     void AddAutoRunMenu(bool isAlreadyOn, EventHandler toggleCallback);
@@ -13,7 +13,6 @@ public interface ITrayIcon
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
     void ShowNotification(string alertText);
-    void Dispose();
 }
 
 public class NotificationIcon : ITrayIcon
