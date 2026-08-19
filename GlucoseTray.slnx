@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/.github/">
+    <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+    <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+    <File Path=".github/workflows/generate-release.yml" />
+    <File Path=".github/workflows/pr.yml" />
+  </Folder>
+  <Project Path="GlucoseTray.Tests/GlucoseTray.Tests.csproj" />
+  <Project Path="GlucoseTray/GlucoseTray.csproj" />
+</Solution>
