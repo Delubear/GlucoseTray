@@ -66,6 +66,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
 
     private IconTextColor GetColor(float mmolValue)
     {
+        mmolValue = (float)Math.Round(mmolValue,1);
         var settings = options.CurrentValue;
         return GetColor(mmolValue, settings.CriticalLowMmolThreshold, settings.LowMmolThreshold, settings.HighMmolThreshold, settings.CriticalHighMmolThreshold);
     }
