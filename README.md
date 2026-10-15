@@ -88,7 +88,9 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 
 ## Your Privacy
 
-Your LibreLinkUp password is entered through a masked dialog and saved directly in Windows Credential Manager, not `appsettings.json`. Use the tray's LibreLinkUp sign-out action to remove the active account's saved credential. Cloud session tokens stay in memory. Older LibreLinkUp passwords are migrated out of settings on startup. Dexcom passwords and Nightscout tokens retain their existing Windows DPAPI protection in the settings file.
+Your Dexcom password and Nightscout token are automatically scrambled (encrypted) inside `appsettings.json` so they aren't stored in plain text. Encryption uses Windows' built-in protection tied to your Windows user account, which means the saved file only works on your PC under your login. If you change a password or token while the app is running, it's re-encrypted the moment you save.
+
+Your LibreLinkUp password is entered through a masked dialog and saved directly in Windows Credential Manager, not `appsettings.json`. Use the tray's LibreLinkUp sign-out action to remove the active account's saved credential. Cloud session tokens stay in memory. Older LibreLinkUp passwords are migrated out of settings on startup.
 
 ## Troubleshooting & FAQ
 
