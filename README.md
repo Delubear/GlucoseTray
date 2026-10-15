@@ -34,7 +34,7 @@ GlucoseTray can read your glucose from one of three places. Pick whichever you a
 
 - **Dexcom** — Sign in with the same username and password you use for the Dexcom Share/Follow app. Make sure Share is turned on in your Dexcom app.
 - **Nightscout** — If you run your own Nightscout site, enter its web address and access token.
-- **LibreLinkUp** — Read shared FreeStyle Libre readings directly from Abbott's cloud using a follower account. No Nightscout server is required. See [LibreLinkUp setup](LIBRELINKUP.md).
+- **LibreLinkUp** — Read shared FreeStyle Libre readings directly from Abbott's cloud using a follower account. No Nightscout server is required.
 
 ## Settings Reference
 
