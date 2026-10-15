@@ -90,18 +90,19 @@ public class SecretLoggingTests
 
     [TestCase("http://example.test/?token=SYNTHETIC-token")]
     [TestCase("https://SYNTHETIC-user:SYNTHETIC-password@example.test/")]
-    public void UnsafeCredentialDestinationsMustBeRejectedBeforeTransport(string url)
+    public async Task ExistingHttpAndUrlCredentialConfigurationsMustStillWorkWithoutLoggingSecrets(string url)
     {
         using var logs = new CapturedLogs();
         var transport = new FakeHandler(false, HttpStatusCode.OK);
         using var client = new HttpClient(new SafeHttpDiagnosticsHandler(logs.Factory.CreateLogger<SafeHttpDiagnosticsHandler>()) { InnerHandler = transport });
-        Assert.ThrowsAsync<HttpRequestException>(() => client.PostAsync(url, new StringContent(Secret)));
-        Assert.That(transport.RequestCount, Is.Zero);
+        using var response = await client.PostAsync(url, new StringContent(Secret));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(transport.RequestCount, Is.EqualTo(1));
         AssertNoSecrets(logs.Text);
     }
 
     [TestCase(ExternalCommunicationAdapter.HttpClientName)]
-    public void ProductionClientsMustNotAutomaticallyForwardCredentialsThroughRedirects(string name)
+    public void DiagnosticsMustPreserveExistingAutomaticRedirectBehavior(string name)
     {
         var services = new ServiceCollection();
         services.AddLogging();
@@ -110,8 +111,13 @@ public class SecretLoggingTests
         using var provider = services.BuildServiceProvider();
         var handler = provider.GetRequiredService<IHttpMessageHandlerFactory>().CreateHandler(name);
         while (handler is DelegatingHandler delegating) handler = delegating.InnerHandler!;
-        Assert.That(handler, Is.TypeOf<HttpClientHandler>());
-        Assert.That(((HttpClientHandler)handler).AllowAutoRedirect, Is.False);
+        var redirectsEnabled = handler switch
+        {
+            HttpClientHandler http => http.AllowAutoRedirect,
+            SocketsHttpHandler sockets => sockets.AllowAutoRedirect,
+            _ => throw new AssertionException("Unexpected primary HTTP handler."),
+        };
+        Assert.That(redirectsEnabled, Is.True);
     }
 
     [Test]

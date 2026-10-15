@@ -32,8 +32,7 @@ public class Program
         services.AddTransient<SafeHttpDiagnosticsHandler>();
         services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15))
             .RemoveAllLoggers()
-            .AddHttpMessageHandler<SafeHttpDiagnosticsHandler>()
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
+            .AddHttpMessageHandler<SafeHttpDiagnosticsHandler>();
 
         services.AddSingleton<ICredentialProtector, DpapiCredentialProtector>();
         services.AddSingleton<ICredentialMigrator, CredentialMigrator>();

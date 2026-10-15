@@ -9,8 +9,6 @@ public sealed class SafeHttpDiagnosticsHandler(ILogger<SafeHttpDiagnosticsHandle
     {
         try
         {
-            if (request.RequestUri is not { IsAbsoluteUri: true, Scheme: "https", UserInfo.Length: 0 })
-                throw new HttpRequestException("Glucose services require HTTPS URLs without embedded credentials.");
             var response = await base.SendAsync(request, cancellationToken);
             var method = request.Method == HttpMethod.Get ? "GET" : request.Method == HttpMethod.Post ? "POST" : "OTHER";
             logger.LogInformation("Glucose HTTP {Method} completed (HTTP {StatusCode}).", method, (int)response.StatusCode);
