@@ -17,14 +17,15 @@ public class DisplayTests
     }
 
     [Test]
-    public void ShouldMapMmolToDisplay()
+    public void ShouldAllowTheOriginalCompactMmolSeparator()
     {
         var driver = new DisplayDriver();
         driver.GivenAGlucoseReading()
               .WithMmolDisplay()
+              .WithMmolSeparator(MmolSeparatorStyle.Apostrophe)
               .WithMmolValue(5.5f)
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithValue("5.5");
+              .Then.ShouldBeRefreshedWithValue("5'5");
     }
 
     [Test]
@@ -371,24 +372,63 @@ public class DisplayTests
               .Then.ShouldNotShowNotification();
     }
 
-    [Test]
-    public void ShouldFormatMmolValueInvariantlyRegardlessOfCulture()
+    [TestCase("en-US", MmolSeparatorStyle.System, "5.5")]
+    [TestCase("de-DE", MmolSeparatorStyle.System, "5,5")]
+    [TestCase("de-CH", MmolSeparatorStyle.System, "5.5")]
+    [TestCase("fr-CH", MmolSeparatorStyle.System, "5,5")]
+    [TestCase("de-DE", MmolSeparatorStyle.DecimalPoint, "5.5")]
+    [TestCase("en-US", MmolSeparatorStyle.Apostrophe, "5'5")]
+    [TestCase("de-DE", MmolSeparatorStyle.Apostrophe, "5'5")]
+    public void ShouldApplyTheSelectedMmolSeparator(string culture, MmolSeparatorStyle separator, string expected)
     {
         var original = Thread.CurrentThread.CurrentCulture;
         try
         {
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(culture);
 
             var driver = new DisplayDriver();
             driver.GivenAGlucoseReading()
                   .WithMmolDisplay()
+                  .WithMmolSeparator(separator)
                   .WithMmolValue(5.5f)
                   .When.RefreshingIcon()
-                  .Then.ShouldBeRefreshedWithValue("5.5");
+                  .Then.ShouldBeRefreshedWithValue(expected);
         }
         finally
         {
             Thread.CurrentThread.CurrentCulture = original;
         }
+    }
+
+    [Test]
+    public void DefaultSeparatorShouldRespectCustomNumberFormatsRatherThanUiLanguage()
+    {
+        var original = Thread.CurrentThread.CurrentCulture;
+        var originalUi = Thread.CurrentThread.CurrentUICulture;
+        try
+        {
+            var culture = (System.Globalization.CultureInfo)new System.Globalization.CultureInfo("en-US").Clone();
+            culture.NumberFormat.NumberDecimalSeparator = ",";
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            new DisplayDriver().GivenAGlucoseReading()
+                .WithMmolDisplay().WithMmolValue(8.1f)
+                .When.RefreshingIcon().Then.ShouldBeRefreshedWithValue("8,1");
+        }
+        finally
+        {
+            Thread.CurrentThread.CurrentCulture = original;
+            Thread.CurrentThread.CurrentUICulture = originalUi;
+        }
+    }
+
+    [TestCase(MmolSeparatorStyle.System)]
+    [TestCase(MmolSeparatorStyle.DecimalPoint)]
+    [TestCase(MmolSeparatorStyle.Apostrophe)]
+    public void MmolSeparatorShouldNotChangeMgDisplay(MmolSeparatorStyle separator)
+    {
+        new DisplayDriver().GivenAGlucoseReading()
+            .WithMmolSeparator(separator).WithMgValue(100)
+            .When.RefreshingIcon().Then.ShouldBeRefreshedWithValue("100");
     }
 }

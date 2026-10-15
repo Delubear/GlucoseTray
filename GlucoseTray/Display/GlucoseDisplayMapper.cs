@@ -51,7 +51,13 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
                 return "NUL";
             if (IsCriticalLow(reading.MmolValue))
                 return "DAN";
-            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture);
+            return options.CurrentValue.MmolSeparator switch
+            {
+                MmolSeparatorStyle.DecimalPoint => reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture),
+                // Keep the original compact form available for users who prefer it in tiny icons.
+                MmolSeparatorStyle.Apostrophe => reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture).Replace('.', '\''),
+                _ => reading.MmolValue.ToString("0.0", CultureInfo.CurrentCulture),
+            };
         }
     }
 

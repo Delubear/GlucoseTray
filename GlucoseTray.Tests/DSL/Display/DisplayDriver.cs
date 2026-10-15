@@ -61,6 +61,13 @@ internal class DisplayDriver
         return this;
     }
 
+    public DisplayDriver WithMmolSeparator(MmolSeparatorStyle separator)
+    {
+        _settings.MmolSeparator = separator;
+        _provider.Options.CurrentValue.Returns(_settings);
+        return this;
+    }
+
     public DisplayDriver WithMgValue(int value)
     {
         _reading.MgValue = value;

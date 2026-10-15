@@ -49,6 +49,7 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 | `MinutesUntilStale` | How old a reading can be before it's shown as out-of-date (default `15`). |
 | `IsDarkMode` | Set to `true` if your taskbar is dark, so numbers stay readable. |
 | `DisplayUnitType` | Units shown to you: `Mg` (mg/dL) or `Mmol` (mmol/L). |
+| `MmolSeparator` | `System` (default) follows your Windows number format, including its decimal separator. Use `DecimalPoint` for `8.1`, or `Apostrophe` for the original compact `8'1`. Applies to mmol/L only. |
 | `EnableAlerts` | Set to `true` to get alerts for high/low readings. |
 | Threshold settings | The numbers that decide when a reading counts as low, high, critically low, or critically high (separate values for mg/dL and mmol/L). |
 
@@ -57,11 +58,11 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 | Reading | Display |
 | --- | --- |
 | Critically high glucose | Red |
-| High glucose | Yellow |
-| Low glucose | Yellow |
+| High glucose | Amber (darker in light mode) |
+| Low glucose | Amber (darker in light mode) |
 | Critically low glucose | `DAN` (for DANGER), red |
-| Normal glucose | Black (white in dark mode) |
-| Out-of-date reading | Strikethrough effect |
+| Normal glucose | Green (brighter in dark mode) |
+| Out-of-date reading | Gray with a strikethrough effect |
 
 ## Features
 

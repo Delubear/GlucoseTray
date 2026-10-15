@@ -38,6 +38,10 @@ public class AppSettings
     public string DISPLAY_UNIT_TYPE_OPTIONS { get; private set; } = "Mg,Mmol";
     [JsonPropertyOrder(13)]
     public GlucoseUnitType DisplayUnitType { get; set; }
+    [JsonPropertyOrder(30)]
+    public string MMOL_SEPARATOR_OPTIONS { get; private set; } = "System,DecimalPoint,Apostrophe";
+    [JsonPropertyOrder(31)]
+    public MmolSeparatorStyle MmolSeparator { get; set; } = MmolSeparatorStyle.System;
     [JsonPropertyOrder(14)]
     public string SERVER_UNIT_TYPE_OPTIONS { get; private set; } = "Mg,Mmol";
     [JsonPropertyOrder(15)]
