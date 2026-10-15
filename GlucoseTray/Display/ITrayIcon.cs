@@ -1,7 +1,6 @@
 ﻿using GlucoseTray.Enums;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace GlucoseTray.Display;
 
@@ -18,6 +17,8 @@ public interface ITrayIcon : IDisposable
 public class NotificationIcon : ITrayIcon
 {
     private readonly NotifyIcon _trayIcon;
+    private Icon? _currentIcon;
+    private readonly Control _dispatcher = new();
     private GlucoseDisplay? _latestGlucose;
 
     public NotificationIcon()
@@ -28,6 +29,7 @@ public class NotificationIcon : ITrayIcon
             Visible = true,
         };
         _trayIcon.DoubleClick += ShowBalloon;
+        _ = _dispatcher.Handle;
     }
 
     public void ShowNotification(string alertText) => _trayIcon.ShowBalloonTip(2000, "Glucose Alert", alertText, ToolTipIcon.Warning);
@@ -48,7 +50,13 @@ public class NotificationIcon : ITrayIcon
         Process.Start(startInfo);
     }
 
-    public void Dispose() => _trayIcon.Dispose();
+    public void Dispose()
+    {
+        _trayIcon.Dispose();
+        _dispatcher.Dispose();
+        _currentIcon?.Dispose();
+        _currentIcon = null;
+    }
 
     private void Exit(object? sender, EventArgs e)
     {
@@ -59,42 +67,24 @@ public class NotificationIcon : ITrayIcon
 
     public void RefreshIcon(GlucoseDisplay display)
     {
+        if (_dispatcher.IsDisposed) return;
+        if (_dispatcher.InvokeRequired)
+        {
+            _dispatcher.BeginInvoke(() => RefreshIcon(display));
+            return;
+        }
         _latestGlucose = display;
+        var status = display.GetDisplayMessage(DateTime.UtcNow);
+        _trayIcon.Text = status.Length <= 63 ? status : status[..60] + "...";
         CreateTextIcon(display);
     }
 
     private void CreateTextIcon(GlucoseDisplay display)
     {
-        var bitmapText = new Bitmap(64, 64);
-        var g = Graphics.FromImage(bitmapText);
-        g.Clear(Color.Transparent);
-
-        var font = new Font("Roboto", display.FontSize, display.IsStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
-        var offset = -10f;
-        g.DrawString(display.DisplayValue, font, new SolidBrush(Convert(display.Color)), offset, 0f);
-        var hIcon = bitmapText.GetHicon();
-        var myIcon = Icon.FromHandle(hIcon);
-        _trayIcon.Icon = myIcon;
-
-        DestroyMyIcon(myIcon.Handle);
-        bitmapText.Dispose();
-        g.Dispose();
-        myIcon.Dispose();
+        var icon = TrayIconRenderer.CreateIcon(display, SystemInformation.SmallIconSize.Width);
+        var previous = _currentIcon;
+        _trayIcon.Icon = icon;
+        _currentIcon = icon;
+        previous?.Dispose();
     }
-
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    private static extern bool DestroyIcon(nint handle);
-
-    private static void DestroyMyIcon(nint handle) => DestroyIcon(handle);
-
-    private static Color Convert(IconTextColor color) => color switch
-    {
-        IconTextColor.White => Color.White,
-        IconTextColor.Black => Color.Black,
-        IconTextColor.Yellow => Color.Yellow,
-        IconTextColor.Gold => Color.DarkGoldenrod,
-        IconTextColor.Red => Color.Red,
-        _ => Color.Black,
-    };
 }

@@ -7,4 +7,6 @@ public enum IconTextColor
     Yellow,
     Gold,
     Red,
+    Green,
+    DarkGreen,
 }

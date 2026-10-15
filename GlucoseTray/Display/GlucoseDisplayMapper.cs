@@ -51,7 +51,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
                 return "NUL";
             if (IsCriticalLow(reading.MmolValue))
                 return "DAN";
-            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture).Replace('.', '\''); // ' uses less space than .
+            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture);
         }
     }
 
@@ -81,6 +81,6 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
         else if (value >= high)
             return options.CurrentValue.IsDarkMode ? IconTextColor.Yellow : IconTextColor.Gold;
         else
-            return options.CurrentValue.IsDarkMode ? IconTextColor.White : IconTextColor.Black;
+            return options.CurrentValue.IsDarkMode ? IconTextColor.Green : IconTextColor.DarkGreen;
     }
 }
