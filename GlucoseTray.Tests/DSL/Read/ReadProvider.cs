@@ -1,5 +1,6 @@
 ﻿using GlucoseTray.Display;
 using GlucoseTray.Read;
+using GlucoseTray.Read.LibreLinkUp;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -19,7 +20,7 @@ internal class ReadProvider
     public ReadProvider()
     {
         GlucoseReadingMapper = new GlucoseReadingMapper(Options);
-        var strategyFactory = new ReadStrategyFactory(Options, ExternalCommunicationAdapter, GlucoseReadingMapper, new DpapiCredentialProtector());
+        var strategyFactory = new ReadStrategyFactory(Options, ExternalCommunicationAdapter, GlucoseReadingMapper, new DpapiCredentialProtector(), Substitute.For<ILibreLinkUpClient>());
         Reader = new GlucoseReader(strategyFactory, NullLogger<GlucoseReader>.Instance);
         Runner = new AppRunner(Tray, Reader, Options, Substitute.For<ICredentialMigrator>(), NullLogger<AppRunner>.Instance);
     }

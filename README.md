@@ -4,7 +4,7 @@ Tray icon for displaying your current blood glucose (BG) information in the Wind
 
 Always verify the time of the last reading by hovering over the tray icon or double-clicking it. If the app crashes, the icon may stay in the taskbar but stop updating.
 
-> **Always check with your Dexcom reader before making any treatment decisions.**
+> **Always check with your CGM's official app or reader before making any treatment decisions.**
 
 ## Contents
 
@@ -30,10 +30,11 @@ Always verify the time of the last reading by hovering over the tray icon or dou
 
 ## Choosing Your Data Source
 
-GlucoseTray can read your glucose from one of two places. Pick whichever you already use:
+GlucoseTray can read your glucose from one of three places. Pick whichever you already use:
 
 - **Dexcom** — Sign in with the same username and password you use for the Dexcom Share/Follow app. Make sure Share is turned on in your Dexcom app.
 - **Nightscout** — If you run your own Nightscout site, enter its web address and access token.
+- **LibreLinkUp** — Read shared FreeStyle Libre readings directly from Abbott's cloud using a follower account. No Nightscout server is required. See [LibreLinkUp setup](LIBRELINKUP.md).
 
 ## Settings Reference
 
@@ -41,10 +42,14 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 
 | Setting | What it does |
 | --- | --- |
-| `DataSource` | Where readings come from: `Dexcom` or `Nightscout`. |
+| `DataSource` | Where readings come from: `Dexcom`, `Nightscout`, or `LibreLinkUp`. |
 | `DexcomServer` | Your Dexcom region: `DexcomShare1` (US), `DexcomShare2`, or `DexcomInternational` (outside the US). |
 | `DexcomUsername` / `DexcomPassword` | Your Dexcom Share login. |
 | `NightscoutUrl` / `NightscoutToken` | Your Nightscout site address and access token. |
+| `LibreLinkUpUsername` | Follower email selected by the sign-in dialog; password is in Windows Credential Manager. |
+| `LibreLinkUpRegion` | Initial API region (default `EU`); account region redirects are followed. |
+| `LibreLinkUpPatientId` | Required when choosing among multiple shared connections. |
+| `LibreLinkUpApiVersion` | API app-version header (default `4.16.0`). |
 | `RefreshIntervalInMinutes` | How often GlucoseTray checks for a new reading (default `5`). |
 | `MinutesUntilStale` | How old a reading can be before it's shown as out-of-date (default `15`). |
 | `IsDarkMode` | Set to `true` if your taskbar is dark, so numbers stay readable. |
@@ -74,7 +79,7 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 
 ## Your Privacy
 
-Your Dexcom password and Nightscout token are automatically scrambled (encrypted) inside `appsettings.json` so they aren't stored in plain text. Encryption uses Windows' built-in protection tied to your Windows user account, which means the saved file only works on your PC under your login. If you change a password or token while the app is running, it's re-encrypted the moment you save.
+Your LibreLinkUp password is entered through a masked dialog and saved directly in Windows Credential Manager, not `appsettings.json`. Use the tray's LibreLinkUp sign-out action to remove the active account's saved credential. Cloud session tokens stay in memory. Older LibreLinkUp passwords are migrated out of settings on startup. Dexcom passwords and Nightscout tokens retain their existing Windows DPAPI protection in the settings file.
 
 ## Troubleshooting & FAQ
 
@@ -88,4 +93,4 @@ Double-check your Dexcom username, password, and that `DexcomServer` matches you
 Look under the hidden-icons arrow (**^**) by the clock and drag it onto the taskbar.
 
 **Is my data safe?**
-Your credentials are encrypted on your own PC (see [Your Privacy](#your-privacy)). GlucoseTray only talks to the Dexcom or Nightscout service you choose.
+Your credentials are encrypted on your own PC (see [Your Privacy](#your-privacy)). GlucoseTray only talks to the Dexcom, Nightscout, or LibreLinkUp service you choose.

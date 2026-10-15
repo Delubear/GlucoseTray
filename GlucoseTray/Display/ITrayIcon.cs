@@ -10,6 +10,7 @@ public interface ITrayIcon : IDisposable
     void ClearMenu();
     void AddAutoRunMenu(bool isAlreadyOn, EventHandler toggleCallback);
     void AddSettingsMenu();
+    void AddLibreLinkUpMenu() { }
     void AddExitMenu();
     void RefreshIcon(GlucoseDisplay display);
     void ShowNotification(string alertText);
@@ -20,8 +21,11 @@ public class NotificationIcon : ITrayIcon
     private readonly NotifyIcon _trayIcon;
     private GlucoseDisplay? _latestGlucose;
 
-    public NotificationIcon()
+    private readonly ILibreLinkUpSignIn? _signIn;
+
+    public NotificationIcon(ILibreLinkUpSignIn? signIn = null)
     {
+        _signIn = signIn;
         _trayIcon = new NotifyIcon
         {
             ContextMenuStrip = new ContextMenuStrip(new Container()),
@@ -37,6 +41,12 @@ public class NotificationIcon : ITrayIcon
     public void AddAutoRunMenu(bool isAlreadyOn, EventHandler toggleCallback) => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem(isAlreadyOn ? "Disable auto-start" : "Run on startup", null, toggleCallback));
     public void AddSettingsMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Settings", null, Settings));
     public void AddExitMenu() => _trayIcon?.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("Exit", null, Exit));
+
+    public void AddLibreLinkUpMenu()
+    {
+        _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("LibreLinkUp sign in...", null, (_, _) => _signIn?.ShowDialog()));
+        _trayIcon.ContextMenuStrip?.Items.Add(new ToolStripMenuItem("LibreLinkUp sign out", null, (_, _) => _signIn?.SignOut()));
+    }
 
     private void Settings(object? sender, EventArgs e)
     {
@@ -60,6 +70,8 @@ public class NotificationIcon : ITrayIcon
     public void RefreshIcon(GlucoseDisplay display)
     {
         _latestGlucose = display;
+        var status = display.GetDisplayMessage(DateTime.UtcNow);
+        _trayIcon.Text = status.Length <= 63 ? status : status[..60] + "...";
         CreateTextIcon(display);
     }
 

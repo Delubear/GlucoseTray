@@ -6,12 +6,15 @@ namespace GlucoseTray.Display;
 
 public interface IAlertService
 {
+    void Reset();
     string GetAlertMessage(int mgValue, float mmolValue, bool isStale);
 }
 
 public class AlertService(IOptionsMonitor<AppSettings> options) : IAlertService
 {
     private AlertLevel _currentAlertLevel = AlertLevel.None;
+
+    public void Reset() => _currentAlertLevel = AlertLevel.None;
 
     public string GetAlertMessage(int mgValue, float mmolValue, bool isStale)
     {

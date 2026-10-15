@@ -16,7 +16,7 @@ public class AppSettings
     public int RefreshIntervalInMinutes { get; set; } = 5;
 
     [JsonPropertyOrder(4)]
-    public string DATA_SOURCE_OPTIONS { get; private set; } = "Dexcom,Nightscout";
+    public string DATA_SOURCE_OPTIONS { get; private set; } = "Dexcom,Nightscout,LibreLinkUp";
     [JsonPropertyOrder(5)]
     public GlucoseSource DataSource { get; set; } = GlucoseSource.Dexcom;
     [JsonPropertyOrder(6)]
@@ -64,4 +64,13 @@ public class AppSettings
 
     [JsonPropertyOrder(24)]
     public bool EnableAlerts { get; set; }
+
+    [JsonPropertyOrder(25)]
+    public string LibreLinkUpUsername { get; set; } = string.Empty;
+    [JsonPropertyOrder(27)]
+    public string LibreLinkUpRegion { get; set; } = "EU";
+    [JsonPropertyOrder(28)]
+    public string LibreLinkUpPatientId { get; set; } = string.Empty;
+    [JsonPropertyOrder(29)]
+    public string LibreLinkUpApiVersion { get; set; } = "4.16.0";
 }

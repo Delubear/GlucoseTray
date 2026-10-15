@@ -16,6 +16,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
     {
         return new GlucoseDisplay
         {
+            ConnectionError = reading.ConnectionError,
             DisplayValue = GetDisplayValue(reading),
             Color = options.CurrentValue.DisplayUnitType == GlucoseUnitType.Mg ? GetColor(reading.MgValue) : GetColor(reading.MmolValue),
             FontSize = GetFontSize(reading),
