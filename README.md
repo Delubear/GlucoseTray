@@ -36,6 +36,15 @@ GlucoseTray can read your glucose from one of three places. Pick whichever you a
 - **Nightscout** — If you run your own Nightscout site, enter its web address and access token.
 - **LibreLinkUp** — Read shared FreeStyle Libre readings directly from Abbott's cloud using a follower account. No Nightscout server is required.
 
+### Setting up LibreLinkUp
+
+1. Create or sign in to a follower account in the official LibreLinkUp phone app. Accept the sharing invitation from the person using the Libre sensor, complete any email verification or terms acceptance, and confirm that you can see their readings there.
+2. Set `DataSource` to `LibreLinkUp` in GlucoseTray's settings.
+3. Right-click the tray icon, choose **LibreLinkUp sign in...**, enter the follower email and password, then choose **Save and connect**. Enter the password in this dialog; do not add it to `appsettings.json`.
+4. Leave `LibreLinkUpRegion` at `EU` for a Swiss account. Supported initial region codes are `AE`, `AP`, `AU`, `CA`, `DE`, `EU`, `EU2`, `FR`, `JP`, `US`, `LA`, and `RU`. These are API region codes; there is no `CH` option. Account region redirects are followed automatically within the supported regions.
+
+A follower account with one shared connection is selected automatically. With multiple shared connections, set `LibreLinkUpPatientId` to the intended connection's patient ID; GlucoseTray does not choose a person automatically or provide a patient picker.
+
 ## Settings Reference
 
 You can change these in the **Settings** window or by editing `appsettings.json`. The most useful ones are near the top.
@@ -88,6 +97,12 @@ Hover over the icon to check the reading time. If it's old, the app may have los
 
 **It says my login is wrong.**
 Double-check your Dexcom username, password, and that `DexcomServer` matches your region. Confirm that Share is enabled in your Dexcom app.
+
+**LibreLinkUp cannot connect or has no readings.**
+First confirm that the same follower account can see current readings in the official LibreLinkUp app. Complete any pending invitation, email verification, consent, or terms acceptance there. Then use **LibreLinkUp sign in...** again if the saved password has changed. Check the tray status for a region or patient-selection error. The data comes through Abbott's cloud, so the sensor phone must upload its readings and this PC needs internet access.
+
+**How do I remove the saved LibreLinkUp password?**
+Right-click the tray icon and choose **LibreLinkUp sign out**. This removes the active account's saved credential from Windows Credential Manager and clears its selected email in settings.
 
 **I don't see any icon after opening it.**
 Look under the hidden-icons arrow (**^**) by the clock and drag it onto the taskbar.
