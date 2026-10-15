@@ -23,7 +23,7 @@ public class GlucoseReader(IReadStrategyFactory strategyFactory, ILogger<Glucose
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to read latest glucose value. Falling back to the last known reading.");
+            SafeDiagnostics.LogFailure(logger, LogLevel.Error, DiagnosticOperation.ReadGlucose, ex);
             return _latestReading ?? new GlucoseReading() { TimestampUtc = DateTime.UtcNow, Trend = Trend.Unknown };
         }
     }

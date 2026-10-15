@@ -49,7 +49,7 @@ public class ExternalCommunicationAdapter(IHttpClientFactory httpClientFactory, 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "HTTP {Method} request to {Url} failed.", request.Method, request.RequestUri);
+            SafeDiagnostics.LogFailure(logger, LogLevel.Error, DiagnosticOperation.HttpRequest, ex);
             throw;
         }
         finally
