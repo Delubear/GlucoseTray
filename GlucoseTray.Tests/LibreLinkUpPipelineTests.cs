@@ -12,6 +12,7 @@ using NSubstitute;
 
 namespace GlucoseTray.Tests;
 
+[SetCulture("de-DE")]
 public class LibreLinkUpPipelineTests
 {
     private static string Login() => JsonSerializer.Serialize(new { status = 0, data = new { user = new { id = "synthetic-review-user" }, authTicket = new { token = "synthetic-token", expires = DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds() } } });
@@ -54,7 +55,7 @@ public class LibreLinkUpPipelineTests
         using(services) {
             await services.GetRequiredService<AppRunner>().Process();
             using(Assert.EnterMultipleScope()) {
-                Assert.That(double.Parse(icon.Last!.DisplayValue.Replace('\'', '.'), CultureInfo.InvariantCulture), Is.EqualTo(10.0));
+                Assert.That(ParseDisplayedValue(icon.Last!.DisplayValue), Is.EqualTo(10.0));
                 Assert.That(icon.Last.IsStale, Is.False);
                 Assert.That(icon.Last.Trend, Is.EqualTo(Trend.FortyFiveUp));
                 Assert.That(icon.Notifications, Is.Empty);
@@ -181,7 +182,7 @@ public class LibreLinkUpPipelineTests
             var app = services.GetRequiredService<AppRunner>();
             await app.Process(); await app.Process();
             Assert.That(icon.Last!.ConnectionError, Is.Null);
-            Assert.That(double.Parse(icon.Last.DisplayValue.Replace('\'', '.'), CultureInfo.InvariantCulture), Is.EqualTo(10.0));
+            Assert.That(ParseDisplayedValue(icon.Last.DisplayValue), Is.EqualTo(10.0));
             Assert.That(icon.Notifications, Has.Count.EqualTo(1));
         }
     }
@@ -262,7 +263,7 @@ public class LibreLinkUpPipelineTests
             var app = services.GetRequiredService<AppRunner>();
             await app.Process(); var original = icon.Last!.TimestampUtc;
             await app.Process();
-            Assert.That(double.Parse(icon.Last!.DisplayValue.Replace('\'', '.'), CultureInfo.InvariantCulture), Is.EqualTo(10.0));
+            Assert.That(ParseDisplayedValue(icon.Last!.DisplayValue), Is.EqualTo(10.0));
             Assert.That(icon.Last.TimestampUtc, Is.EqualTo(original));
             Assert.That(icon.Last.ConnectionError, Is.Not.Empty);
         }
@@ -282,6 +283,9 @@ public class LibreLinkUpPipelineTests
             Assert.That(icon.Last.ConnectionError, Does.Contain("signed out"));
         }
     }
+
+    private static double ParseDisplayedValue(string value) => double.Parse(
+        value.Replace("'", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator), CultureInfo.CurrentCulture);
 
     private sealed class FakeCloud : HttpMessageHandler
     {
