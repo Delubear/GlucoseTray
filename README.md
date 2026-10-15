@@ -33,7 +33,7 @@ Always verify the time of the last reading by hovering over the tray icon or dou
 GlucoseTray can read your glucose from one of two places. Pick whichever you already use:
 
 - **Dexcom** — Sign in with the same username and password you use for the Dexcom Share/Follow app. Make sure Share is turned on in your Dexcom app.
-- **Nightscout** — If you run your own Nightscout site, enter its web address and access token.
+- **Nightscout** — If you run your own Nightscout site, enter its final HTTPS web address and access token. HTTP addresses, URLs with embedded usernames/passwords, and HTTP redirects are not supported.
 
 ## Settings Reference
 
@@ -77,6 +77,11 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 Your Dexcom password and Nightscout token are automatically scrambled (encrypted) inside `appsettings.json` so they aren't stored in plain text. Encryption uses Windows' built-in protection tied to your Windows user account, which means the saved file only works on your PC under your login. If you change a password or token while the app is running, it's re-encrypted the moment you save.
 
 ## Troubleshooting & FAQ
+
+Connection diagnostics report operation/failure categories and numeric HTTP status codes. They omit request URLs, headers, bodies, and raw exception details to keep credentials out of these logs. When reporting a problem, include the status or failure category and check any material you share for personal information.
+
+**Nightscout stopped connecting after an update.**
+Use the final `https://` address in `NightscoutUrl`, without a username or password embedded in the URL. If your old address redirects to another address, enter that destination directly. HTTP-only installations need HTTPS configured before they can connect.
 
 **The number stopped updating.**
 Hover over the icon to check the reading time. If it's old, the app may have lost its connection or crashed — close it from the taskbar and start it again.
