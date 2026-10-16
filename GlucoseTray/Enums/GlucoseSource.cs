@@ -4,4 +4,5 @@ public enum GlucoseSource
 {
     Dexcom,
     Nightscout,
+    LibreLinkUp,
 }

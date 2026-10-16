@@ -15,6 +15,7 @@ public class Tray : ITray
     private readonly IScheduler _scheduler;
     private readonly IAlertService _alertService;
     private readonly IOptionsMonitor<AppSettings> _options;
+    private string? _lastConnectionError;
 
     public Tray(ITrayIcon icon, IGlucoseDisplayMapper mapper, IScheduler scheduler, IAlertService alertService, IOptionsMonitor<AppSettings> options)
     {
@@ -32,6 +33,8 @@ public class Tray : ITray
         _icon.ClearMenu();
         _icon.AddAutoRunMenu(_scheduler.HasTaskEnabled(), ToggleAutoRun);
         _icon.AddSettingsMenu();
+        if (_options.CurrentValue?.DataSource == Enums.GlucoseSource.LibreLinkUp)
+            _icon.AddLibreLinkUpMenu();
         _icon.AddExitMenu();
     }
 
@@ -43,8 +46,19 @@ public class Tray : ITray
 
     public void Refresh(GlucoseReading result)
     {
+        if (result.SubjectChanged)
+            _alertService.Reset();
         var display = _mapper.Map(result);
         _icon.RefreshIcon(display);
+
+        if (result.ConnectionError is not null)
+        {
+            if (result.ConnectionError != _lastConnectionError)
+                _icon.ShowNotification(result.ConnectionError);
+            _lastConnectionError = result.ConnectionError;
+            return;
+        }
+        _lastConnectionError = null;
 
         if (_options.CurrentValue.EnableAlerts)
             NotifyUser(result, display);

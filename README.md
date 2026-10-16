@@ -4,7 +4,7 @@ Tray icon for displaying your current blood glucose (BG) information in the Wind
 
 Always verify the time of the last reading by hovering over the tray icon or double-clicking it. If the app crashes, the icon may stay in the taskbar but stop updating.
 
-> **Always check with your Dexcom reader before making any treatment decisions.**
+> **Always check with your CGM's official app or reader before making any treatment decisions.**
 
 ## Contents
 
@@ -30,10 +30,20 @@ Always verify the time of the last reading by hovering over the tray icon or dou
 
 ## Choosing Your Data Source
 
-GlucoseTray can read your glucose from one of two places. Pick whichever you already use:
+GlucoseTray can read your glucose from one of three places. Pick whichever you already use:
 
 - **Dexcom** — Sign in with the same username and password you use for the Dexcom Share/Follow app. Make sure Share is turned on in your Dexcom app.
 - **Nightscout** — If you run your own Nightscout site, enter its web address and access token.
+- **LibreLinkUp** — Read shared FreeStyle Libre readings directly from Abbott's cloud using a follower account. No Nightscout server is required.
+
+### Setting up LibreLinkUp
+
+1. Create or sign in to a follower account in the official LibreLinkUp phone app. Accept the sharing invitation from the person using the Libre sensor, complete any email verification or terms acceptance, and confirm that you can see their readings there.
+2. Set `DataSource` to `LibreLinkUp` in GlucoseTray's settings.
+3. Right-click the tray icon, choose **LibreLinkUp sign in...**, enter the follower email and password, then choose **Save and connect**. Enter the password in this dialog; do not add it to `appsettings.json`.
+4. `LibreLinkUpRegion` defaults to `EU`. Supported initial region codes are `AE`, `AP`, `AU`, `CA`, `DE`, `EU`, `EU2`, `FR`, `JP`, `US`, `LA`, and `RU`. These are API region codes. Account region redirects are followed automatically within the supported regions.
+
+A follower account with one shared connection is selected automatically. With multiple shared connections, set `LibreLinkUpPatientId` to the intended connection's patient ID; GlucoseTray does not choose a person automatically or provide a patient picker.
 
 ## Settings Reference
 
@@ -41,10 +51,14 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 
 | Setting | What it does |
 | --- | --- |
-| `DataSource` | Where readings come from: `Dexcom` or `Nightscout`. |
+| `DataSource` | Where readings come from: `Dexcom`, `Nightscout`, or `LibreLinkUp`. |
 | `DexcomServer` | Your Dexcom region: `DexcomShare1` (US), `DexcomShare2`, or `DexcomInternational` (outside the US). |
 | `DexcomUsername` / `DexcomPassword` | Your Dexcom Share login. |
 | `NightscoutUrl` / `NightscoutToken` | Your Nightscout site address and access token. |
+| `LibreLinkUpUsername` | Follower email selected by the sign-in dialog; password is in Windows Credential Manager. |
+| `LibreLinkUpRegion` | Initial API region (default `EU`); account region redirects are followed. |
+| `LibreLinkUpPatientId` | Required when choosing among multiple shared connections. |
+| `LibreLinkUpApiVersion` | API app-version header (default `4.16.0`). |
 | `RefreshIntervalInMinutes` | How often GlucoseTray checks for a new reading (default `5`). |
 | `MinutesUntilStale` | How old a reading can be before it's shown as out-of-date (default `15`). |
 | `IsDarkMode` | Set to `true` if your taskbar is dark, so numbers stay readable. |
@@ -76,6 +90,8 @@ You can change these in the **Settings** window or by editing `appsettings.json`
 
 Your Dexcom password and Nightscout token are automatically scrambled (encrypted) inside `appsettings.json` so they aren't stored in plain text. Encryption uses Windows' built-in protection tied to your Windows user account, which means the saved file only works on your PC under your login. If you change a password or token while the app is running, it's re-encrypted the moment you save.
 
+Your LibreLinkUp password is entered through a masked dialog and saved directly in Windows Credential Manager, not `appsettings.json`. Use the tray's LibreLinkUp sign-out action to remove the active account's saved credential. Cloud session tokens stay in memory. Older LibreLinkUp passwords are migrated out of settings on startup.
+
 ## Troubleshooting & FAQ
 
 **The number stopped updating.**
@@ -84,8 +100,14 @@ Hover over the icon to check the reading time. If it's old, the app may have los
 **It says my login is wrong.**
 Double-check your Dexcom username, password, and that `DexcomServer` matches your region. Confirm that Share is enabled in your Dexcom app.
 
+**LibreLinkUp cannot connect or has no readings.**
+First confirm that the same follower account can see current readings in the official LibreLinkUp app. Complete any pending invitation, email verification, consent, or terms acceptance there. Then use **LibreLinkUp sign in...** again if the saved password has changed. Check the tray status for a region or patient-selection error. The data comes through Abbott's cloud, so the sensor phone must upload its readings and this PC needs internet access.
+
+**How do I remove the saved LibreLinkUp password?**
+Right-click the tray icon and choose **LibreLinkUp sign out**. This removes the active account's saved credential from Windows Credential Manager and clears its selected email in settings.
+
 **I don't see any icon after opening it.**
 Look under the hidden-icons arrow (**^**) by the clock and drag it onto the taskbar.
 
 **Is my data safe?**
-Your credentials are encrypted on your own PC (see [Your Privacy](#your-privacy)). GlucoseTray only talks to the Dexcom or Nightscout service you choose.
+Your credentials are encrypted on your own PC (see [Your Privacy](#your-privacy)). GlucoseTray only talks to the Dexcom, Nightscout, or LibreLinkUp service you choose.
