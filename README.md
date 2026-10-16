@@ -41,7 +41,7 @@ GlucoseTray can read your glucose from one of three places. Pick whichever you a
 1. Create or sign in to a follower account in the official LibreLinkUp phone app. Accept the sharing invitation from the person using the Libre sensor, complete any email verification or terms acceptance, and confirm that you can see their readings there.
 2. Set `DataSource` to `LibreLinkUp` in GlucoseTray's settings.
 3. Right-click the tray icon, choose **LibreLinkUp sign in...**, enter the follower email and password, then choose **Save and connect**. Enter the password in this dialog; do not add it to `appsettings.json`.
-4. Leave `LibreLinkUpRegion` at `EU` for a Swiss account. Supported initial region codes are `AE`, `AP`, `AU`, `CA`, `DE`, `EU`, `EU2`, `FR`, `JP`, `US`, `LA`, and `RU`. These are API region codes; there is no `CH` option. Account region redirects are followed automatically within the supported regions.
+4. `LibreLinkUpRegion` defaults to `EU`. Supported initial region codes are `AE`, `AP`, `AU`, `CA`, `DE`, `EU`, `EU2`, `FR`, `JP`, `US`, `LA`, and `RU`. These are API region codes. Account region redirects are followed automatically within the supported regions.
 
 A follower account with one shared connection is selected automatically. With multiple shared connections, set `LibreLinkUpPatientId` to the intended connection's patient ID; GlucoseTray does not choose a person automatically or provide a patient picker.
 
