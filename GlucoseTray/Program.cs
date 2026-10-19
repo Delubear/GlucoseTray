@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using GlucoseTray;
@@ -42,6 +42,8 @@ public class Program
                 .AddSingleton<IExternalCommunicationAdapter, ExternalCommunicationAdapter>()
                 .AddSingleton<ITray, Tray>()
                 .AddSingleton<ITrayIcon, NotificationIcon>()
+                .AddSingleton<GlucoseTextRasterizer>()
+                .AddSingleton<IGlucoseIconRenderer, ImageGlucoseIconRenderer>()
                 .AddSingleton<IScheduler, TaskSchedulerService>()
                 .AddSingleton<IAlertService, AlertService>()
                 .AddSingleton<IGlucoseReadingMapper, GlucoseReadingMapper>()

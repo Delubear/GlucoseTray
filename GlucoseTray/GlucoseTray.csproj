@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icons\*.png" LogicalName="GlucoseIcons.%(Filename)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

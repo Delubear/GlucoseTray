@@ -26,12 +26,6 @@ internal class DisplayAssertionDriver(DisplayProvider provider, DisplayBehaviorD
         return this;
     }
 
-    public DisplayAssertionDriver ShouldBeRefreshedWithFontSize(int fontSize)
-    {
-        provider.Icon.Received().RefreshIcon(Arg.Is<GlucoseDisplay>(x => x.FontSize == fontSize));
-        return this;
-    }
-
     public DisplayAssertionDriver ShouldNotShowNotification()
     {
         provider.Icon.DidNotReceive().ShowNotification(Arg.Any<string>());

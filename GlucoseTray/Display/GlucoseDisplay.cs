@@ -9,7 +9,6 @@ public class GlucoseDisplay
     public bool IsStale { get; set; }
     public DateTime TimestampUtc { get; set; }
     public Trend Trend { get; set; }
-    public int FontSize { get; set; }
     public IconTextColor Color { get; set; } = IconTextColor.White;
 
     public string GetDisplayMessage(DateTime utcNow)

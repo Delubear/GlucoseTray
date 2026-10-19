@@ -1,4 +1,5 @@
-﻿using GlucoseTray.Enums;
+using GlucoseTray.Enums;
+using Microsoft.Win32;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -17,11 +18,16 @@ public interface ITrayIcon : IDisposable
 
 public class NotificationIcon : ITrayIcon
 {
+    // Icons are pre-drawn at 16x16; Windows scales them up on high-DPI displays.
+    private const int IconSize = 16;
+
     private readonly NotifyIcon _trayIcon;
+    private readonly IGlucoseIconRenderer _renderer;
     private GlucoseDisplay? _latestGlucose;
 
-    public NotificationIcon()
+    public NotificationIcon(IGlucoseIconRenderer renderer)
     {
+        _renderer = renderer;
         _trayIcon = new NotifyIcon
         {
             ContextMenuStrip = new ContextMenuStrip(new Container()),
@@ -48,7 +54,10 @@ public class NotificationIcon : ITrayIcon
         Process.Start(startInfo);
     }
 
-    public void Dispose() => _trayIcon.Dispose();
+    public void Dispose()
+    {
+        _trayIcon.Dispose();
+    }
 
     private void Exit(object? sender, EventArgs e)
     {
@@ -65,23 +74,13 @@ public class NotificationIcon : ITrayIcon
 
     private void CreateTextIcon(GlucoseDisplay display)
     {
-        var bitmapText = new Bitmap(64, 64);
-        var g = Graphics.FromImage(bitmapText);
-        g.Clear(Color.Transparent);
-
-        var font = new Font("Roboto", display.FontSize, display.IsStale ? FontStyle.Strikeout : FontStyle.Regular, GraphicsUnit.Pixel);
-        var offset = -10f;
-        g.DrawString(display.DisplayValue, font, new SolidBrush(Convert(display.Color)), offset, 0f);
-        var hIcon = bitmapText.GetHicon();
-        var myIcon = Icon.FromHandle(hIcon);
+        using var bitmap = _renderer.Render(display.DisplayValue, Convert(display.Color), display.IsStale, IconSize);
+        var hIcon = bitmap.GetHicon();
+        using var myIcon = Icon.FromHandle(hIcon);
         _trayIcon.Icon = myIcon;
 
-        DestroyMyIcon(myIcon.Handle);
-        bitmapText.Dispose();
-        g.Dispose();
-        myIcon.Dispose();
+        DestroyMyIcon(hIcon);
     }
-
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     private static extern bool DestroyIcon(nint handle);
