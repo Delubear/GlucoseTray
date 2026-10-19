@@ -9,7 +9,7 @@ public class GlucoseIconRendererTests
 
     [TestCase("55", 16)]
     [TestCase("123", 16)]
-    [TestCase("12'5", 16)]
+    [TestCase("12.5", 16)]
     [TestCase("DAN", 16)]
     [TestCase("NUL", 24)]
     [TestCase("300", 32)]

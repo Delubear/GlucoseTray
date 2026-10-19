@@ -6,7 +6,7 @@ namespace GlucoseTray.Tests;
 
 /// <summary>
 /// Exports auto-drawn icons into GlucoseTray/Icons so they can be hand-edited as overrides.
-/// Set GLUCOSETRAY_EXPORT_ICON to e.g. "12'7@16;144@20".
+/// Set GLUCOSETRAY_EXPORT_ICON to e.g. "12.7@16;144@20".
 /// </summary>
 [Explicit("Writes override images into GlucoseTray/Icons. Run manually.")]
 public class GlucoseIconExporter
@@ -16,7 +16,7 @@ public class GlucoseIconExporter
     {
         var request = Environment.GetEnvironmentVariable("GLUCOSETRAY_EXPORT_ICON");
         if (string.IsNullOrWhiteSpace(request))
-            Assert.Ignore("Set GLUCOSETRAY_EXPORT_ICON, e.g. \"12'7@16\".");
+            Assert.Ignore("Set GLUCOSETRAY_EXPORT_ICON, e.g. \"12.7@16\".");
 
         var outputDir = Path.GetFullPath(Path.Combine(RepoRoot(), "GlucoseTray", "Icons"));
         using var rasterizer = new GlucoseTextRasterizer();
@@ -59,7 +59,7 @@ public class GlucoseIconExporter
         for (var mg = 1; mg <= 600; mg++)
             yield return mg.ToString();
         for (var tenths = 10; tenths <= 333; tenths++)
-            yield return $"{tenths / 10}'{tenths % 10}";
+            yield return $"{tenths / 10}.{tenths % 10}";
     }
 
     private static string RepoRoot([CallerFilePath] string thisFile = "") =>

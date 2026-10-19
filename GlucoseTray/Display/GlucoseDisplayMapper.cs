@@ -1,4 +1,4 @@
-﻿using GlucoseTray.Enums;
+using GlucoseTray.Enums;
 using GlucoseTray.Read;
 using Microsoft.Extensions.Options;
 using System.Globalization;
@@ -42,7 +42,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
                 return "NUL";
             if (IsCriticalLow(reading.MmolValue))
                 return "DAN";
-            return reading.MmolValue.ToString("0.0");
+            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture);
         }
     }
 

@@ -9,10 +9,10 @@ public class ImageGlucoseIconRendererTests
 	private readonly ImageGlucoseIconRenderer _renderer = new(Rasterizer);
 
 	[TestCase("123", 16)]
-	[TestCase("12'5", 20)]
+	[TestCase("12.5", 20)]
 	[TestCase("DAN", 24)]
 	[TestCase("NUL", 32)]
-	[TestCase("5'5", 16)]
+	[TestCase("5.5", 16)]
 	[TestCase("144", 28)]
 	[TestCase("999", 48)]
 	public void ShouldRenderReadingsInTheRequestedColor(string text, int size)
@@ -39,7 +39,7 @@ public class ImageGlucoseIconRendererTests
 
 	[Test]
 	public void ShouldNameOverridesWithUnderscoreForTheDecimalPoint() =>
-		Assert.That(ImageGlucoseIconRenderer.OverrideFileName("12'7", 16), Is.EqualTo("16_12_7.png"));
+		Assert.That(ImageGlucoseIconRenderer.OverrideFileName("12.7", 16), Is.EqualTo("16_12_7.png"));
 
 	private static IEnumerable<Color> Pixels(Bitmap bitmap, int? maxY = null) =>
 		Enumerable.Range(0, bitmap.Width).SelectMany(x => Enumerable.Range(0, maxY ?? bitmap.Height).Select(y => bitmap.GetPixel(x, y)));

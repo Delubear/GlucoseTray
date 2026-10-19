@@ -1,4 +1,4 @@
-﻿using GlucoseTray.Display;
+using GlucoseTray.Display;
 using GlucoseTray.Enums;
 using GlucoseTray.Tests.DSL.Display;
 
@@ -24,7 +24,7 @@ public class DisplayTests
               .WithMmolDisplay()
               .WithMmolValue(5.5f)
               .When.RefreshingIcon()
-              .Then.ShouldBeRefreshedWithValue("5'5");
+              .Then.ShouldBeRefreshedWithValue("5.5");
     }
 
     [Test]
@@ -352,7 +352,7 @@ public class DisplayTests
                   .WithMmolDisplay()
                   .WithMmolValue(5.5f)
                   .When.RefreshingIcon()
-                  .Then.ShouldBeRefreshedWithValue("5'5");
+                  .Then.ShouldBeRefreshedWithValue("5.5");
         }
         finally
         {
@@ -361,10 +361,10 @@ public class DisplayTests
     }
 
 
-    [Test] public void CheckMgDlToMmol68() => CheckMgdlToMmol(68, "3'8", IconTextColor.Yellow);
-    [Test] public void CheckMgDlToMmol69() => CheckMgdlToMmol(69, "3'8", IconTextColor.Yellow);       
-    [Test] public void CheckMgDlToMmol70() => CheckMgdlToMmol(70, "3'9", IconTextColor.White);
-    [Test] public void CheckMgDlToMmol71() => CheckMgdlToMmol(71, "3'9", IconTextColor.White);
+    [Test] public void CheckMgDlToMmol68() => CheckMgdlToMmol(68, "3.8", IconTextColor.Yellow);
+    [Test] public void CheckMgDlToMmol69() => CheckMgdlToMmol(69, "3.8", IconTextColor.Yellow);       
+    [Test] public void CheckMgDlToMmol70() => CheckMgdlToMmol(70, "3.9", IconTextColor.White);
+    [Test] public void CheckMgDlToMmol71() => CheckMgdlToMmol(71, "3.9", IconTextColor.White);
 
     private static void CheckMgdlToMmol(int mgdl , string shouldBeValue, IconTextColor shouldBeColor)
     {
