@@ -23,7 +23,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
             }
             catch (Exception ex)
             {
-                logger.LogCritical(ex, "Fatal error in the glucose refresh loop. Disposing tray and shutting down.");
+                SafeDiagnostics.LogFailure(logger, LogLevel.Critical, DiagnosticOperation.RefreshLoop, ex);
                 tray.Dispose();
                 throw;
             }
@@ -39,7 +39,7 @@ public class AppRunner(ITray tray, IGlucoseReader reader, IOptionsMonitor<AppSet
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to refresh glucose reading after a configuration change.");
+            SafeDiagnostics.LogFailure(logger, LogLevel.Error, DiagnosticOperation.ConfigurationRefresh, ex);
         }
     }
 

@@ -29,7 +29,10 @@ public class Program
 
     private static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
     {
-        services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15));
+        services.AddTransient<SafeHttpDiagnosticsHandler>();
+        services.AddHttpClient(ExternalCommunicationAdapter.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(15))
+            .RemoveAllLoggers()
+            .AddHttpMessageHandler<SafeHttpDiagnosticsHandler>();
 
         services.AddSingleton<ICredentialProtector, DpapiCredentialProtector>();
         services.AddSingleton<ICredentialMigrator, CredentialMigrator>();
