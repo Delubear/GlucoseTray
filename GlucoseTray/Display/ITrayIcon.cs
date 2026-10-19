@@ -1,5 +1,4 @@
 using GlucoseTray.Enums;
-using Microsoft.Win32;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;

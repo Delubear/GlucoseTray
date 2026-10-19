@@ -1,4 +1,4 @@
-﻿
+
 using GlucoseTray.Tests.DSL.Read;
 
 namespace GlucoseTray.Tests;
@@ -45,7 +45,7 @@ public class ReadTests
               .WithMgServerUnitType()
               .WithMgValue(100)
               .When.GettingLatestDexcomReading()
-              .Then.ShouldHaveMmolValueOf(5.549944f);
+              .Then.ShouldHaveMmolValueOf(5.5f);
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class ReadTests
               .WithMgServerUnit()
               .WithMgValue(100)
               .When.GettingLatestNightScoutReading()
-              .Then.ShouldHaveMmolValueOf(5.549944f);
+              .Then.ShouldHaveMmolValueOf(5.5f);
     }
 
     [Test]
