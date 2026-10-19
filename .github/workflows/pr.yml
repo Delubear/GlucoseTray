@@ -26,6 +26,6 @@ jobs:
       with:
         skip-build: true # optional, default is true
     - name: Publish (self-contained)
-      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
+      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExe.pubxml
     - name: Publish (framework-dependent / Slim)
-      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release --no-restore -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
+      run: dotnet publish GlucoseTray\GlucoseTray.csproj --configuration Release -p:PublishProfile=GlucoseTray\Properties\PublishProfiles\PublishToSingleSelfContainedExeWthoutFramework.pubxml
