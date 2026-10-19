@@ -78,6 +78,8 @@ Your Dexcom password and Nightscout token are automatically scrambled (encrypted
 
 ## Troubleshooting & FAQ
 
+Connection diagnostics report operation/failure categories and numeric HTTP status codes. They omit request URLs, headers, bodies, and raw exception details to keep credentials out of these logs. When reporting a problem, include the status or failure category and check any material you share for personal information.
+
 **The number stopped updating.**
 Hover over the icon to check the reading time. If it's old, the app may have lost its connection or crashed — close it from the taskbar and start it again.
 
