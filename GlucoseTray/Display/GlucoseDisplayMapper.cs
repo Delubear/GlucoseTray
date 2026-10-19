@@ -42,7 +42,7 @@ public class GlucoseDisplayMapper(IOptionsMonitor<AppSettings> options) : IGluco
                 return "NUL";
             if (IsCriticalLow(reading.MmolValue))
                 return "DAN";
-            return reading.MmolValue.ToString("0.0", CultureInfo.InvariantCulture).Replace('.', '\''); // ' uses less space than .
+            return reading.MmolValue.ToString("0.0");
         }
     }
 

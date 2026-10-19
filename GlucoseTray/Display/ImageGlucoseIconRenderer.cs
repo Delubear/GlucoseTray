@@ -28,7 +28,7 @@ public class ImageGlucoseIconRenderer(GlucoseTextRasterizer rasterizer) : IGluco
 		return bitmap;
 	}
 
-	public static string OverrideFileName(string text, int size) => $"{size}_{text.Replace('\'', '_').Replace('.', '_')}.png";
+	public static string OverrideFileName(string text, int size) => $"{size}_{text.Replace('.', '_')}.png";
 
 	private Bitmap? LoadOverride(string text, int size)
 	{

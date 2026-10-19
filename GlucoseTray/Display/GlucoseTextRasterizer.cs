@@ -33,7 +33,6 @@ public sealed class GlucoseTextRasterizer : IDisposable
     /// <param name="text">Display text; an apostrophe is drawn as a decimal point.</param>
     public Bitmap Render(string text, int size)
     {
-        text = text.Replace('\'', '.');
         var bitmap = new Bitmap(size, size, PixelFormat.Format32bppArgb);
         lock (_gate)
         {
