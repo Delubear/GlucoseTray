@@ -359,4 +359,28 @@ public class DisplayTests
             Thread.CurrentThread.CurrentCulture = original;
         }
     }
+
+
+    [Test] public void CheckMgDlToMmol68() => CheckMgdlToMmol(68, "3'8", IconTextColor.Yellow);
+    [Test] public void CheckMgDlToMmol69() => CheckMgdlToMmol(69, "3'8", IconTextColor.Yellow);       
+    [Test] public void CheckMgDlToMmol70() => CheckMgdlToMmol(70, "3'9", IconTextColor.White);
+    [Test] public void CheckMgDlToMmol71() => CheckMgdlToMmol(71, "3'9", IconTextColor.White);
+
+    private static void CheckMgdlToMmol(int mgdl , string shouldBeValue, IconTextColor shouldBeColor)
+    {
+        const float MMOL_TO_MGDL = 18.0182f;
+
+        var mmolValue = mgdl / MMOL_TO_MGDL;
+
+        var driver = new DisplayDriver();
+        var icon = driver.GivenAGlucoseReading()
+              .WithMmolDisplay()
+              .WithDarkMode()
+              .WithMmolValue(mmolValue)
+              .When.RefreshingIcon();
+
+        icon.Then.ShouldBeRefreshedWithValue(shouldBeValue);
+        icon.Then.ShouldBeRefreshedWithTextColor(shouldBeColor);
+
+    }
 }
