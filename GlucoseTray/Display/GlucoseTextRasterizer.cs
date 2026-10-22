@@ -43,8 +43,11 @@ public sealed class GlucoseTextRasterizer : IDisposable
             var dot = text.IndexOf('.');
             if (dot < 0)
             {
-                using var path = BuildText(text);
-                DrawFitted(g, path, new RectangleF(0, 0, size, size), centered: true);
+                if (!TryDrawEqualBars(g, text, new Rectangle(0, 0, size, size)))
+                {
+                    using var path = BuildText(text);
+                    DrawFitted(g, path, new RectangleF(0, 0, size, size), centered: true);
+                }
                 return bitmap;
             }
 
@@ -60,9 +63,11 @@ public sealed class GlucoseTextRasterizer : IDisposable
             var dotLeft = fractionLeft; // the dot tucks under the tenths digit so the whole number keeps the width
             var wholeWidth = fractionLeft - 1;
 
-            DrawFitted(g, whole, new RectangleF(0, 0, wholeWidth, size), centered: false);
+            if (!TryDrawEqualBars(g, text[..dot], new Rectangle(0, 0, wholeWidth, size)))
+                DrawFitted(g, whole, new RectangleF(0, 0, wholeWidth, size), centered: false);
             g.FillRectangle(Brushes.White, dotLeft, size - dotSize, dotSize, dotSize);
-            DrawFitted(g, fraction, new RectangleF(fractionLeft, 0, fractionWidth, fractionHeight), centered: false);
+            if (!TryDrawEqualBars(g, text[(dot + 1)..], new Rectangle(fractionLeft, 0, fractionWidth, fractionHeight)))
+                DrawFitted(g, fraction, new RectangleF(fractionLeft, 0, fractionWidth, fractionHeight), centered: false);
         }
         return bitmap;
     }
@@ -83,7 +88,24 @@ public sealed class GlucoseTextRasterizer : IDisposable
         matrix.Scale(scaleX, scaleY, MatrixOrder.Append);
         matrix.Translate(offsetX, box.Y, MatrixOrder.Append);
         path.Transform(matrix);
-        g.FillPath(Brushes.White, path);
+        // Snap edges to whole pixels so straight bars (like a run of 1s) render without soft columns.
+        var points = path.PathPoints.Select(p => new PointF(MathF.Round(p.X), MathF.Round(p.Y))).ToArray();
+        using var snapped = new GraphicsPath(points, path.PathTypes, FillMode.Winding);
+        g.FillPath(Brushes.White, snapped);
+    }
+
+    // Runs of 1s are laid out directly in whole pixels so every bar gets the same width.
+    private static bool TryDrawEqualBars(Graphics g, string text, Rectangle box)
+    {
+        if (text.Length == 0 || text.Any(c => c != '1')) return false;
+        var count = text.Length;
+        var gap = count > 1 ? Math.Max(1, box.Width / 8) : 0;
+        var barWidth = Math.Min(Math.Max(1, box.Height / 4), (box.Width - gap * (count - 1)) / count);
+        if (barWidth < 1) return false;
+        var left = box.X + (box.Width - (barWidth * count + gap * (count - 1))) / 2;
+        for (var i = 0; i < count; i++)
+            g.FillRectangle(Brushes.White, left + i * (barWidth + gap), box.Y, barWidth, box.Height);
+        return true;
     }
 
     private GraphicsPath BuildText(string text)
@@ -92,7 +114,7 @@ public sealed class GlucoseTextRasterizer : IDisposable
         var cursor = 0f;
         foreach (var c in text)
         {
-            using var charPath = c == '4' ? SquareFour() : FontChar(c);
+            using var charPath = c switch { '4' => SquareFour(), '1' => BarOne(), _ => FontChar(c) };
             var b = charPath.GetBounds();
             if (b.Height <= 0)
                 continue;
@@ -128,6 +150,14 @@ public sealed class GlucoseTextRasterizer : IDisposable
         p.AddRectangle(new RectangleF(0, 0, t, barBottom));
         p.AddRectangle(new RectangleF(0, barBottom - t, w, t));
         p.AddRectangle(new RectangleF(w - t, 0, t, h));
+        return p;
+    }
+
+    // A plain bar 1 saves the columns the font spends on the flag.
+    private GraphicsPath BarOne()
+    {
+        var p = new GraphicsPath(FillMode.Winding);
+        p.AddRectangle(new RectangleF(0, 0, _digitBounds.Width * 0.3f, _digitBounds.Height));
         return p;
     }
 }
