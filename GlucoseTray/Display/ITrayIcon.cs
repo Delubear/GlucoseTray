@@ -17,8 +17,8 @@ public interface ITrayIcon : IDisposable
 
 public class NotificationIcon : ITrayIcon
 {
-    // Icons are pre-drawn at 16x16; Windows scales them up on high-DPI displays.
-    private const int IconSize = 16;
+    // Pre-drawn 16x16 icons are used at 100% scaling; other DPI sizes are drawn live so Windows never stretches (blurs) them.
+    private static int IconSize => Math.Max(16, SystemInformation.SmallIconSize.Width);
 
     private readonly NotifyIcon _trayIcon;
     private readonly IGlucoseIconRenderer _renderer;
