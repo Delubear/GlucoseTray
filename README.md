@@ -21,7 +21,7 @@ Always verify the time of the last reading by hovering over the tray icon or dou
 
 1. Download and run one of the following:
    - **GlucoseTray.exe** — the easiest option. Nothing else to install.
-   - **GlucoseTray-Slim.exe** — a smaller download, but it requires the appropriate .NET runtime to already be installed on your PC.
+   - **GlucoseTray-Slim.exe** — a smaller download, but it requires the .NET 11 Desktop Runtime to already be installed on your PC.
 2. On first run, the program creates a settings file named `appsettings.json` right next to the program.
 3. Right-click the new taskbar icon and click **Settings**, or open `appsettings.json` in any text editor (like Notepad).
 4. Enter your settings and save. GlucoseTray updates immediately — no need to restart.

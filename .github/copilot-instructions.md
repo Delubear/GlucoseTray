@@ -33,7 +33,7 @@ reliability matter more than cleverness.
 - Credentials must stay protected even as users edit the file (see Security).
 
 ## Tech stack
-- **.NET 10**, Windows Forms tray app targeting `net10.0-windows7.0`.
+- **.NET 11**, Windows Forms tray app targeting `net11.0-windows7.0`.
 - Test project uses **NUnit** + **NSubstitute**.
 - Configuration via `appsettings.json` bound to `AppSettings`, reloaded on change.
 
